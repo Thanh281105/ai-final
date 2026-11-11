@@ -1,0 +1,3 @@
+puzzle,solutions,all_valid,unique,nodes,time_s
+example_5x5,1,True,True,12,0.00145
+complex_9x9,1,True,True,48,0.01212

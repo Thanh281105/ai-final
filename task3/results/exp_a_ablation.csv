@@ -1,0 +1,15 @@
+puzzle,config,status,valid,nodes,backtracks,rejected,revisions,checks,prunings,max_depth,max_trail,time_s
+example_5x5,1. BT,solved,True,4349,4337,34744,0,59439,0,12,96,0.10533
+example_5x5,2. BT + MRV,solved,True,202,190,1568,0,27291,0,12,96,0.02807
+example_5x5,3. BT + FC,solved,True,768,756,0,1559,23205,5691,12,96,0.04376
+example_5x5,4. BT + FC + MRV/Deg,solved,True,173,161,0,434,4854,1430,12,96,0.0112
+example_5x5,5. BT + FC + MRV/Deg + LCV,solved,True,24,12,0,51,2955,199,12,96,0.00529
+example_5x5,6. BT + MAC + MRV/Deg,solved,True,14,2,0,88,630,180,12,96,0.0016
+example_5x5,7. BT + MAC + MRV/Deg + LCV + AC3-pre,solved,True,12,0,0,83,388,96,12,96,0.00125
+complex_9x9,1. BT,solved,True,14038,13990,112121,0,150706,0,48,384,0.32447
+complex_9x9,2. BT + MRV,solved,True,44797,44749,358193,0,13792014,0,48,384,14.54069
+complex_9x9,3. BT + FC,solved,True,275,227,3,918,5760,2427,48,384,0.02009
+complex_9x9,4. BT + FC + MRV/Deg,solved,True,1575,1527,39,5202,39279,11433,48,384,0.17302
+complex_9x9,5. BT + FC + MRV/Deg + LCV,solved,True,1594,1546,41,5249,77166,11533,48,384,0.2761
+complex_9x9,6. BT + MAC + MRV/Deg,solved,True,49,1,0,527,1930,385,48,384,0.00974
+complex_9x9,7. BT + MAC + MRV/Deg + LCV + AC3-pre,solved,True,48,0,0,496,1809,384,48,384,0.0091

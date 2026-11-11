@@ -1,0 +1,9 @@
+// Example board from the assignment (5x5).
+// Tokens: "#" = black cell, "." = white cell (a variable),
+//         "D\R" = clue cell: D = sum of the run going DOWN, R = sum of the run going RIGHT.
+//         "21\" = only a down clue, "\21" = only an across clue.
+#     #     21\   14\   #
+#     14\12 .     .     11\
+\21   .     .     .     .
+\11   .     .     .     .
+#     \16   .     .     #

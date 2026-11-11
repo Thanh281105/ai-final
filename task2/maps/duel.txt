@@ -1,0 +1,9 @@
+# Small 7x7 duel map (used for experiments: shallow trees, fast games).
+# max_turns 100
+2.WBW..
+...W...
+.W...W.
+..W.W..
+.W...W.
+...W...
+..WAW.1

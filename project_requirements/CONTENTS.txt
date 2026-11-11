@@ -1,0 +1,21 @@
+AI Final Project - Markdown split
+
+README.md
+  Course information, formation, submission instructions, and project policy.
+
+task-1-local-search-propositional-logic.md
+  Task 1: N-Queen, Propositional Logic, CNF, Glucose3/PySAT, Min-Conflicts.
+
+task-2-adversarial-search.md
+  Task 2: Tank Battle Game, game rules, health values, adversarial search, experiments, PyGame UI.
+
+task-3-constraint-satisfaction-problems.md
+  Task 3: Kakuro, CSP formulation, constraint propagation, Backtracking Search, and UI.
+
+task-4-report-and-interview.md
+  Task 4: IEEE report contents, formatting limit, and interview.
+
+assets/
+  tank-battle-city-reference.png
+  kakuro-example-5x5.png
+  kakuro-complex-test-case.png

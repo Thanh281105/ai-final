@@ -1,0 +1,46 @@
+scenario,config,depth,plies,action,value,time_s,nodes,states,leaves,cutoffs,max_ply,b_star,timed_out
+classic-opening,Heuristic Minimax,1,2,MOVE_LEFT,0.0,0.0005,43,36,36,0,2,6.0,False
+classic-opening,Heuristic Minimax,2,4,MOVE_LEFT,0.0,0.0138,1330,1125,1089,0,4,5.76,False
+classic-opening,Heuristic Minimax,3,6,MOVE_LEFT,0.0,0.3821,40460,34249,33124,0,6,5.67,False
+classic-opening,Heuristic Minimax,4,8,MOVE_LEFT,0.0,11.3597,1229015,1040258,1006009,0,8,5.63,False
+classic-opening,Heuristic Minimax,5,10,FIRE,,30.0007,3288960,2784615,2693128,0,10,4.37,True
+classic-opening,Heuristic Alpha-Beta,1,2,MOVE_LEFT,0.0,0.0003,18,11,11,5,2,3.65,False
+classic-opening,Heuristic Alpha-Beta,2,4,MOVE_LEFT,0.0,0.0015,121,76,65,42,4,3.0,False
+classic-opening,Heuristic Alpha-Beta,3,6,MOVE_LEFT,0.0,0.0087,698,439,363,255,6,2.76,False
+classic-opening,Heuristic Alpha-Beta,4,8,MOVE_LEFT,0.0,0.0487,3887,2444,2005,1438,8,2.65,False
+classic-opening,Heuristic Alpha-Beta,5,10,MOVE_LEFT,0.0,0.3204,21481,13505,11061,7970,10,2.58,False
+classic-opening,H-Alpha-Beta (no ordering),1,2,MOVE_LEFT,0.0,0.0002,24,17,17,4,2,4.32,False
+classic-opening,H-Alpha-Beta (no ordering),2,4,MOVE_LEFT,0.0,0.0027,270,200,183,57,4,3.75,False
+classic-opening,H-Alpha-Beta (no ordering),3,6,MOVE_LEFT,0.0,0.0146,1804,1335,1193,432,6,3.28,False
+classic-opening,H-Alpha-Beta (no ordering),4,8,MOVE_LEFT,0.0,0.0999,12746,9343,8303,3180,8,3.11,False
+classic-opening,H-Alpha-Beta (no ordering),5,10,MOVE_LEFT,0.0,0.9057,114120,84549,75638,27252,10,3.08,False
+duel-midgame,Heuristic Minimax,1,2,MOVE_UP,-9.8,0.0003,31,25,25,0,2,5.0,False
+duel-midgame,Heuristic Minimax,2,4,MOVE_RIGHT,-4.4,0.0083,863,722,697,0,4,5.13,False
+duel-midgame,Heuristic Minimax,3,6,MOVE_RIGHT,-2.73,0.2353,24005,20157,19435,0,6,5.18,False
+duel-midgame,Heuristic Minimax,4,8,MOVE_RIGHT,-6.07,6.6259,672515,565602,545445,0,8,5.21,False
+duel-midgame,Heuristic Minimax,5,10,MOVE_RIGHT,,30.0003,3052288,2568238,2475885,0,10,4.34,True
+duel-midgame,Heuristic Alpha-Beta,1,2,MOVE_UP,-9.8,0.0003,22,16,16,3,2,4.11,False
+duel-midgame,Heuristic Alpha-Beta,2,4,MOVE_RIGHT,-4.4,0.0028,221,155,139,53,4,3.55,False
+duel-midgame,Heuristic Alpha-Beta,3,6,MOVE_RIGHT,-2.73,0.0277,2175,1562,1350,550,6,3.4,False
+duel-midgame,Heuristic Alpha-Beta,4,8,MOVE_RIGHT,-6.07,0.2018,15333,10799,9183,4265,8,3.18,False
+duel-midgame,Heuristic Alpha-Beta,5,10,FIRE,-9.4,1.3992,104001,73844,62343,28871,10,3.05,False
+duel-midgame,H-Alpha-Beta (no ordering),1,2,MOVE_UP,-9.8,0.0002,25,19,19,3,2,4.42,False
+duel-midgame,H-Alpha-Beta (no ordering),2,4,MOVE_RIGHT,-4.4,0.0022,261,185,170,64,4,3.72,False
+duel-midgame,H-Alpha-Beta (no ordering),3,6,MOVE_RIGHT,-2.73,0.0209,2462,1797,1615,579,6,3.47,False
+duel-midgame,H-Alpha-Beta (no ordering),4,8,MOVE_RIGHT,-6.07,0.1966,23582,16892,14937,6140,8,3.37,False
+duel-midgame,H-Alpha-Beta (no ordering),5,10,FIRE,-9.4,3.0837,350503,263844,233035,79577,10,3.46,False
+open-combat,Heuristic Minimax,1,2,STAY,0.0,0.0004,36,30,30,0,2,5.44,False
+open-combat,Heuristic Minimax,2,4,MOVE_DOWN,0.0,0.0115,1036,880,850,0,4,5.39,False
+open-combat,Heuristic Minimax,3,6,MOVE_RIGHT,0.0,0.3301,30605,25921,25041,0,6,5.41,False
+open-combat,Heuristic Minimax,4,8,MOVE_RIGHT,0.0,9.8798,926477,784683,758762,0,8,5.43,False
+open-combat,Heuristic Minimax,5,10,MOVE_RIGHT,,30.0018,2897408,2453865,2374621,0,10,4.31,True
+open-combat,Heuristic Alpha-Beta,1,2,FIRE,0.0,0.0003,17,11,11,4,2,3.53,False
+open-combat,Heuristic Alpha-Beta,2,4,FIRE,0.0,0.0019,122,86,76,30,4,3.01,False
+open-combat,Heuristic Alpha-Beta,3,6,FIRE,0.0,0.0139,887,634,550,226,6,2.89,False
+open-combat,Heuristic Alpha-Beta,4,8,FIRE,0.0,0.0958,5872,4201,3578,1574,8,2.8,False
+open-combat,Heuristic Alpha-Beta,5,10,FIRE,0.0,0.5835,37621,27308,23465,9661,10,2.74,False
+open-combat,H-Alpha-Beta (no ordering),1,2,STAY,0.0,0.0004,31,25,25,2,2,5.0,False
+open-combat,H-Alpha-Beta (no ordering),2,4,MOVE_DOWN,0.0,0.0027,273,212,193,48,4,3.76,False
+open-combat,H-Alpha-Beta (no ordering),3,6,MOVE_RIGHT,0.0,0.0163,1697,1283,1152,359,6,3.25,False
+open-combat,H-Alpha-Beta (no ordering),4,8,MOVE_RIGHT,0.0,0.1188,12602,9487,8475,2760,8,3.1,False
+open-combat,H-Alpha-Beta (no ordering),5,10,MOVE_RIGHT,0.0,0.9259,97688,74333,66215,21035,10,3.03,False

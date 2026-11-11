@@ -1,0 +1,41 @@
+board,variables,config,status,valid,nodes,backtracks,time_s
+gen_7x7_1000,30,FC + MRV/Deg,solved,True,60,30,0.00707
+gen_7x7_1000,30,MAC + MRV/Deg + LCV + AC3-pre,solved,True,30,0,0.01969
+gen_8x8_1001,24,FC + MRV/Deg,solved,True,42,18,0.00229
+gen_8x8_1001,24,MAC + MRV/Deg + LCV + AC3-pre,solved,True,25,1,0.00407
+gen_9x9_1002,32,FC + MRV/Deg,solved,True,161,129,0.0138
+gen_9x9_1002,32,MAC + MRV/Deg + LCV + AC3-pre,solved,True,32,0,0.00744
+gen_10x10_1003,57,FC + MRV/Deg,limit reached,False,124432,124395,10.00004
+gen_10x10_1003,57,MAC + MRV/Deg + LCV + AC3-pre,solved,True,57,0,0.10033
+gen_11x11_1004,58,FC + MRV/Deg,solved,True,4999,4941,0.6801
+gen_11x11_1004,58,MAC + MRV/Deg + LCV + AC3-pre,solved,True,58,0,0.02598
+gen_12x12_1005,71,FC + MRV/Deg,limit reached,False,90229,90182,10.00049
+gen_12x12_1005,71,MAC + MRV/Deg + LCV + AC3-pre,solved,True,137,66,0.16209
+gen_7x7_1006,18,FC + MRV/Deg,solved,True,42,24,0.00373
+gen_7x7_1006,18,MAC + MRV/Deg + LCV + AC3-pre,solved,True,18,0,0.00558
+gen_8x8_1007,24,FC + MRV/Deg,solved,True,185,161,0.02046
+gen_8x8_1007,24,MAC + MRV/Deg + LCV + AC3-pre,solved,True,24,0,0.01038
+gen_9x9_1008,42,FC + MRV/Deg,solved,True,132,90,0.02151
+gen_9x9_1008,42,MAC + MRV/Deg + LCV + AC3-pre,solved,True,42,0,0.03726
+gen_10x10_1009,43,FC + MRV/Deg,solved,True,29515,29472,3.09815
+gen_10x10_1009,43,MAC + MRV/Deg + LCV + AC3-pre,solved,True,43,0,0.03336
+gen_11x11_1010,54,FC + MRV/Deg,solved,True,41059,41005,5.15003
+gen_11x11_1010,54,MAC + MRV/Deg + LCV + AC3-pre,solved,True,54,0,0.02751
+gen_12x12_1011,63,FC + MRV/Deg,solved,True,372,309,0.10688
+gen_12x12_1011,63,MAC + MRV/Deg + LCV + AC3-pre,solved,True,63,0,0.1061
+gen_7x7_1012,22,FC + MRV/Deg,solved,True,99,77,0.00874
+gen_7x7_1012,22,MAC + MRV/Deg + LCV + AC3-pre,solved,True,22,0,0.00528
+gen_8x8_1013,24,FC + MRV/Deg,solved,True,31,7,0.00154
+gen_8x8_1013,24,MAC + MRV/Deg + LCV + AC3-pre,solved,True,24,0,0.00374
+gen_9x9_1014,34,FC + MRV/Deg,solved,True,108,74,0.01091
+gen_9x9_1014,34,MAC + MRV/Deg + LCV + AC3-pre,solved,True,34,0,0.00989
+gen_10x10_1015,44,FC + MRV/Deg,solved,True,303,259,0.03259
+gen_10x10_1015,44,MAC + MRV/Deg + LCV + AC3-pre,solved,True,44,0,0.01698
+gen_11x11_1016,61,FC + MRV/Deg,solved,True,38467,38406,4.77548
+gen_11x11_1016,61,MAC + MRV/Deg + LCV + AC3-pre,solved,True,61,0,0.03961
+gen_12x12_1017,64,FC + MRV/Deg,solved,True,2412,2348,0.3129
+gen_12x12_1017,64,MAC + MRV/Deg + LCV + AC3-pre,solved,True,65,1,0.02456
+gen_7x7_1018,20,FC + MRV/Deg,solved,True,40,20,0.00418
+gen_7x7_1018,20,MAC + MRV/Deg + LCV + AC3-pre,solved,True,20,0,0.00966
+gen_8x8_1019,37,FC + MRV/Deg,solved,True,37,0,0.01038
+gen_8x8_1019,37,MAC + MRV/Deg + LCV + AC3-pre,solved,True,37,0,0.07537
