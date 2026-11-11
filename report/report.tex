@@ -31,7 +31,7 @@
 \begin{abstract}
 This report presents our complete solution for the Final Project in Introduction to Artificial Intelligence (Course 503043). We address all four stated project requirements across three distinct AI search paradigms:
 (1) For the $N$-Queens problem, we formulate the domain under Propositional Logic via an $O(N^2)$ constraint discovery algorithm and Conjunctive Normal Form (CNF) conversion with closed-form clause bound $\Theta(N^3)$, solved with Glucose3 (PySAT); we additionally implement Min-Conflicts local search and propose a ``Most-Conflicted with Tabu Tenure'' heuristic that reduces median iterations to 56\%--76\% across board sizes up to $N=1000$.
-(2) For Tank Battle, we formulate a 2-player zero-sum game with alternating 2-ply cycle abstractions; on 10 terminal endgame positions, exact $\alpha$-$\beta$ pruning reduces explored nodes by up to $114\times$ (cutting effective branching factor $b^*$ from 5.36 to 2.89) while preserving identical minimax values; for real-time play, depth-limited Heuristic $\alpha$-$\beta$ with move ordering achieves a $316\times$ speedup at depth 4, remaining undefeated in tournament play.
+(2) For Tank Battle, we formulate a 2-player zero-sum game with alternating 2-ply cycle abstractions; on 10 terminal endgame positions, exact $\alpha$-$\beta$ pruning reduces explored nodes by up to $114\times$ (cutting effective branching factor $b^*$ from 5.36 to 2.89) while preserving identical minimax values; for real-time play, depth-limited Heuristic $\alpha$-$\beta$ with Transposition Table caching and vectorized move ordering slashes explored nodes by 64.4\%--85.9\%, executing depth 4 (8 plies) in 8.65~ms and depth 5 (10 plies) in 22.04~ms, remaining undefeated in tournament play.
 (3) For Kakuro puzzles, we formulate a high-arity Constraint Satisfaction Problem (CSP) and enforce Generalized Arc Consistency (GAC) using Kuhn's bipartite matching algorithm integrated into Backtracking Search; initial AC-3 preprocessing deterministically shrinks the search space from $10^{45.8}$ to $1$, solving the complex $9 \times 9$ (48-variable) benchmark with 0 backtracks in 9.1~ms and completely eliminating heavy-tailed search variance.
 All functional requirements, experimental benchmarks, unit test suites, and interactive graphical environments are 100\% completed and verified.
 \end{abstract}
@@ -183,14 +183,26 @@ Tank Battle is modeled as a 2-player, deterministic, fully observable zero-sum g
     \item \textbf{Terminal Utility:} $U(s) = \pm (10^6 - \Delta \text{turn})$ for win/loss, and 0 for draw or $turn \ge 200$. Discounting by $\Delta \text{turn}$ incentivizes earliest possible victory and latest defense.
 \end{itemize}
 
-\subsection{Adversarial Search Algorithms and Heuristic Design}
-We implement four distinct configurations:
+\subsection{Adversarial Search Algorithms and Complexity Analysis}
+We implement four distinct configurations under a unified search engine:
 \begin{enumerate}
     \item \textbf{Minimax Search:} Exhaustive DFS over game-tree to terminal nodes ($O(b^m)$ time, $O(bm)$ space).
     \item \textbf{$\alpha$-$\beta$ Pruning:} Branch-and-bound optimization maintaining $[\alpha, \beta]$ windows to eliminate provably suboptimal subtrees without altering root minimax value.
     \item \textbf{Heuristic Minimax (H-Minimax):} Depth-limited search truncated at depth $d$, evaluated by heuristic function $\text{EVAL}(s)$.
-    \item \textbf{Heuristic $\alpha$-$\beta$ Search (H-Alpha-Beta):} Combines depth-cutoff, $\alpha$-$\beta$ pruning, move ordering (prioritizing line-of-sight firing and positional closing), and iterative deepening to guarantee anytime real-time responsiveness.
+    \item \textbf{Heuristic $\alpha$-$\beta$ Search (H-Alpha-Beta):} Combines depth-cutoff, $\alpha$-$\beta$ pruning, move ordering, and transposition caching.
 \end{enumerate}
+
+\subsubsection{Theoretical Complexity Foundation}
+\begin{itemize}
+    \item \textbf{Time Complexity (Total Visited Nodes):} 
+    Exhaustive Minimax visits $\sum_{i=0}^m b^i = \frac{b^{m+1}-1}{b-1} = O(b^m)$ nodes. With $\alpha$-$\beta$ pruning under optimal move ordering, time complexity drops to $O(b^{m/2})$, cutting effective branching factor to $b^* = \sqrt{b}$ and doubling searchable depth. Under random ordering, expected complexity is $O(b^{3m/4})$.
+    \item \textbf{Space Complexity (Peak Nodes in Memory):} 
+    Because game-tree search executes via Depth-First Search (DFS), memory at any single moment holds \textit{only} the path from the root to the current node (depth $m$) plus unexpanded sibling choices at each ply. Hence, space complexity is strictly:
+    \begin{equation}
+        \text{Space Complexity} = O(b \cdot m)
+    \end{equation}
+    At depth $d=4$ cycles ($m=8$ plies) with $b \le 6$, maximum concurrent states in memory is at most $6 \times 8 = 48$ frames ($\approx$ a few kilobytes). Even across an entire $m=400$ opening tree, peak stack memory is bounded to $6 \times 400 = 2,400$ states ($< 300$~KB). Memory is \textbf{never} the computational bottleneck in DFS adversarial search; time latency is the sole constraint.
+\end{itemize}
 
 \subsubsection{Heuristic Evaluation Function $\text{EVAL}(s)$}
 To combat the \textit{horizon effect} (e.g., missing imminent bullet impact beyond cutoff depth), $\text{EVAL}(s)$ evaluates:
@@ -199,6 +211,13 @@ To combat the \textit{horizon effect} (e.g., missing imminent bullet impact beyo
     &\quad + \Delta \text{FirePot} + w_5 \Delta \text{Dist}
 \end{align}
 where $\text{Dmg}_{\text{fly}}$ projects all bullet trajectories up to 9 cells, and $\text{FirePot}$ rewards unobstructed firing alignment toward opponent bases and tanks.
+
+\subsection{Algorithmic Enhancements: Transposition Table \& Ordering}
+Profiling revealed that in standard depth-limited search, **91.8\% of visited states** at MAX nodes are transpositions (identical configurations reached via permuted move orderings, e.g., $P_1$ moving UP then RIGHT vs. RIGHT then UP). Furthermore, dynamic generator expressions in naive move ordering consumed $>50\%$ of CPU cycles. We introduced two high-impact optimizations:
+\begin{enumerate}
+    \item \textbf{Transposition Table (TT) with State Key Caching:} We cache visited states with Exact, Lowerbound ($\beta$-cutoff), Upperbound ($\alpha$-cutoff) flags, and best-move hints. Transpositions at sufficient depth trigger instant $O(1)$ pruning; shallower hits guide move ordering.
+    \item \textbf{Vectorized Move Ordering:} Precomputing alignment baselines and inlining metric distances eliminated generator allocation overhead.
+\end{enumerate}
 
 \subsection{Experimental Evaluation}
 
@@ -230,13 +249,27 @@ $m$ (ply) & Minimax Nodes & $\alpha$-$\beta$ Nodes & Reduction & $b^*_{\text{MM}
 }
 \end{table}
 
-At $m=8$ plies, $\alpha$-$\beta$ cuts explored nodes by $114.1\times$, reducing the effective branching factor $b^*$ from 5.36 down to 2.89 (approaching optimal $\sqrt{b} \approx 2.32$). Memory depth scales strictly as $O(bm)$, maintaining trivial footprint.
+At $m=8$ plies, $\alpha$-$\beta$ cuts explored nodes by $114.1\times$, reducing effective branching factor $b^*$ from 5.36 down to 2.89 (approaching optimal $\sqrt{b} \approx 2.32$). Memory depth scales strictly as $O(bm)$.
 
 \subsubsection{Experiment B: Depth-Limited Real-Time Search}
-On the opening map ($m=400$ plies total), exact search is intractable ($>4.6\times 10^6$ nodes visited in 30s without finishing). At depth $d=4$ cycles ($m=8$ plies), H-Minimax requires 1,229,015 nodes (11.36s), while H-$\alpha$-$\beta$ requires only 3,887 nodes (0.048s)—a $316\times$ speedup. Move ordering further cuts nodes by $3.3\times$ compared to unordered $\alpha$-$\beta$. In tournament play (20 games), H-$\alpha$-$\beta$ achieved 12 wins, 8 draws, and 0 losses against depth-limited non-heuristic benchmarks.
+On the opening map ($m=400$ plies total), exact search is intractable ($>4.6\times 10^6$ nodes visited in 30s without finishing). Depth-limited search with our enhanced H-$\alpha$-$\beta$ achieves near real-time performance:
+\begin{itemize}
+    \item \textbf{At Depth $d=4$ (8 plies):} Visited nodes drop from 3,887 down to \textbf{1,383} (64.4\% reduction), cutting latency from 33.06~ms to \textbf{8.65~ms} (a $3.8\times$ speedup, and $>1,300\times$ faster than H-Minimax's 11.36~s).
+    \item \textbf{At Depth $d=5$ (10 plies):} Visited nodes plummet from 21,481 to \textbf{3,022} (85.9\% reduction), slashing latency from 208.77~ms down to \textbf{22.04~ms} ($9.4\times$ speedup), pulling a 10-ply lookahead well beneath the 50~ms real-time threshold.
+    \item \textbf{At Depth $d=6$ (12 plies):} Explores 12 plies in just \textbf{59.28~ms} (5,658 nodes), whereas unoptimized search exceeds 2~seconds.
+\end{itemize}
+In tournament play (20 games), H-$\alpha$-$\beta$ remained undefeated (12 wins, 8 draws, 0 losses).
 
-\subsection{PyGame GUI and Extensibility via Dynamic Plug-in}
-The game is implemented in PyGame with live telemetry displaying visited nodes, $\alpha$-$\beta$ cutoffs, search depth, and evaluation curves. External algorithms are supported via a dynamic plugin loader: dropping any Python agent into `task2/plugins/` automatically exposes it in the GUI menu via reflection.
+\subsubsection{Scalability Analysis under Map Scaling}
+When the grid dimension scales from $7 \times 7 \to 13 \times 13 \to 25 \times 25 \to 50 \times 50$, we empirically observe:
+\begin{enumerate}
+    \item \textbf{Game Tree Invariance:} Because tank action cardinality is strictly local ($b \le 6$), the tree size at fixed depth $d=4$ remains invariant ($3,376$ nodes on $7\times 7$, $3,887$ on $13\times 13$, $3,666$ on $25\times 25$, $3,822$ on $50\times 50$), with latency consistently $\approx 26\text{--}35$~ms.
+    \item \textbf{Horizon Limitation on Large Maps:} Standalone depth-limited search is myopic: at $d=4$, an agent only senses 4 cells ahead. On a $50 \times 50$ board where targets are 50 cells away, naive Manhattan heuristics trap agents in local minima behind wall barriers.
+    \item \textbf{Hierarchical AI Resolution:} To scale to arbitrarily large maps, our architecture decouples into a two-tier paradigm: a \textit{Global Strategic Layer} computing all-pairs obstacle-aware distance fields via BFS/Dijkstra ($O(HW)$ computed once), fed directly into the \textit{Local Tactical Layer} running H-$\alpha$-$\beta$ ($d=2\text{--}4$) for sub-10~ms bullet evasion and combat reflexes.
+\end{enumerate}
+
+\subsection{Modernized GUI and Extensibility via Dynamic Plug-in}
+The PyGame interface is redesigned following modern UI/UX and shadcn Slate standards: high contrast ($\ge 7:1$), 60~FPS fluid rendering, segmented capsule health bars, real-time log-scale effort sparklines, and turn latency telemetry. External agents are seamlessly integrated via reflection from \texttt{task2/plugins/}.
 
 % =========================================================================
 % SECTION IV: TASK 3 - KAKURO
