@@ -13,26 +13,17 @@
 
 \begin{document}
 
-\title{Comprehensive AI Search Strategies: Local Search, Adversarial Search, and Constraint Satisfaction in N-Queens, Tank Battle, and Kakuro}
+\title{Introduction to Artificial Intelligence}
 
 \author{
     \IEEEauthorblockN{Ho\`ang Xu\^an Th\`anh}
-    \IEEEauthorblockA{\textit{Faculty of Information Technology} \\
-    \textit{Ton Duc Thang University}\\
-    Ho Chi Minh City, Vietnam \\
-    523h0178@student.tdtu.edu.vn}
+    \IEEEauthorblockA{523h0178@student.tdtu.edu.vn}
     \and
     \IEEEauthorblockN{Nguy\~{\^e}n L\^e Ph\'u Huy}
-    \IEEEauthorblockA{\textit{Faculty of Information Technology} \\
-    \textit{Ton Duc Thang University}\\
-    Ho Chi Minh City, Vietnam \\
-    524h0090@student.tdtu.edu.vn}
+    \IEEEauthorblockA{524h0090@student.tdtu.edu.vn}
     \and
     \IEEEauthorblockN{Nguy\~{\^e}n Th\`anh An, M.Sc.}
-    \IEEEauthorblockA{\textit{Faculty of Information Technology} \\
-    \textit{Ton Duc Thang University}\\
-    Ho Chi Minh City, Vietnam \\
-    nguyenthanhan@tdtu.edu.vn}
+    \IEEEauthorblockA{nguyenthanhan@tdtu.edu.vn}
 }
 
 \maketitle
@@ -53,7 +44,20 @@ Search algorithms form the core foundation of classic Artificial Intelligence. D
     \item \textbf{Constraint Satisfaction:} Formulating Kakuro puzzles with high-arity constraints, enforcing Generalized Arc Consistency (GAC), and analyzing the elimination of heavy-tailed search costs.
 \end{enumerate}
 
-All components are engineered under strict Object-Oriented Programming (OOP) principles, complete with comprehensive unit test suites and graphical interfaces.
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{uml_architecture.pdf}
+\caption{Unified Object-Oriented Architecture and Class Design across the three project tasks, illustrating domain models, solver hierarchies, and Strategy patterns.}
+\label{fig:uml_arch}
+\end{figure*}
+
+\subsection{Object-Oriented System Architecture}
+As illustrated in the unified UML class diagram (Figure~\ref{fig:uml_arch}), all modules are developed under strict Object-Oriented Programming (OOP) principles, employing modular Strategy patterns to decouple domain states from search and inference policies:
+\begin{itemize}
+    \item \textbf{Task 1 (N-Queens):} \texttt{NQueensCNF} encapsulates $O(N^2)$ key-based constraint discovery and DIMACS translation. The local search engine \texttt{MinConflictsSolver} decouples state evaluation from variable/value selection policies via the \texttt{IVariableSelector} interface.
+    \item \textbf{Task 2 (Tank Battle):} The immutable game engine \texttt{GameState} models entities (\texttt{Tank}, \texttt{Base}, \texttt{Bullet}). The abstract \texttt{BaseAgent} class provides a unified interface inherited by \texttt{AdversarialSearchAgent}, which configures Minimax, $\alpha$-$\beta$, and heuristic evaluations seamlessly.
+    \item \textbf{Task 3 (Kakuro CSP):} \texttt{KakuroCSP} manages variables and runs. \texttt{BacktrackingSolver} interacts with pluggable inference engines (\texttt{IInference}: FC, MAC) and variable ordering strategies (\texttt{IVariableOrder}: MRV, Degree).
+\end{itemize}
 
 % =========================================================================
 % SECTION II: TASK 1 - N-QUEENS
@@ -77,7 +81,7 @@ Two distinct squares attack each other if and only if they share at least one ke
 The problem constraints are stated and converted as follows:
 \begin{enumerate}
     \item \textit{Row at-least-one:} $\bigvee_{c=0}^{N-1} x(r, c)$, yielding 1 clause of $N$ positive literals per row ($N$ clauses total).
-    \item \textit{Row at-most-one:} For each row $r$ and $c_1 < c_2$, $x(r, c_1) \implies \neg x(r, c_2) \equiv \neg x(r, c_1) \vee \neg x(r, c_2)$. This generates $\binom{N}{2}$ binary negative clauses per row ($N \binom{N}{2}$ clauses total).
+    \item \textit{Row at-most-one:} For each row $r$ and $c_1 < c_2$, $x(r, c_1) \implies \neg x(r, c_2) \equiv \neg x(r, c_1) \vee \neg x(r, c_2)$, generating $N \binom{N}{2}$ binary negative clauses.
     \item \textit{Column at-most-one:} Identically, $N \binom{N}{2}$ binary clauses. Notice that ``column at-least-one'' is mathematically redundant by the Pigeonhole Principle ($N$ queens distributed into $N$ columns with $\le 1$ queen per column guarantees exactly 1 queen per column).
     \item \textit{Diagonal at-most-one:} For each diagonal with $L \ge 2$ squares, $\binom{L}{2}$ binary negative clauses are generated. Summing over all main and anti-diagonals:
     \begin{equation}
@@ -116,7 +120,7 @@ $N$ & Vars & CNF Clauses & Solve (ms) & Decisions & Propagations & Conflicts \\
 \end{tabular}
 \end{table}
 
-As shown in Table~\ref{tab:glucose3}, clauses grow as $\Theta(N^3)$ (e.g., $N=40 \to 80$ yields an $8.1\times$ increase). Interestingly, runtime is non-monotonic ($N=60$ is faster than $N=50$; $N=100$ is faster than $N=80$). This reflects the nature of CDCL search: runtime correlates directly with variable decision heuristics and the frequency of learned conflicts rather than raw formula size.
+As shown in Table~\ref{tab:glucose3}, clauses grow as $\Theta(N^3)$ (e.g., $N=40 \to 80$ yields an $8.1\times$ increase). Runtime correlates directly with variable decision heuristics and the frequency of learned conflicts rather than raw formula size.
 
 \subsection{Min-Conflicts and Proposed Variable Selection Heuristic}
 The $N$-Queens problem is formulated as a CSP with $N$ variables $X_r \in \{0, \dots, N-1\}$ denoting the column of the queen on row $r$. Conflicts are tracked incrementally in $O(1)$ time using three lookup arrays (columns, main diagonals, and anti-diagonals).
@@ -196,7 +200,7 @@ where $\text{Dmg}_{\text{inflight}}$ projects all bullet trajectories up to 9 ce
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\columnwidth]{exact_search.png}
+\includegraphics[width=0.82\columnwidth]{exact_search.png}
 \caption{Exact Game-Tree Search: Minimax vs. $\alpha$-$\beta$ Pruning on endgame positions across increasing search plies $m$.}
 \label{fig:exact_search}
 \end{figure}
@@ -260,7 +264,7 @@ Backtracking search maintains domain alterations on an undo trail stack, allowin
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.88\columnwidth]{ablation_complex_9x9.png}
+\includegraphics[width=0.85\columnwidth]{ablation_complex_9x9.png}
 \caption{Ablation of CSP configurations on the complex $9 \times 9$ Kakuro puzzle.}
 \label{fig:kakuro_ablation}
 \end{figure}
@@ -291,17 +295,19 @@ Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
 \end{tabular}
 \end{table}
 
-\begin{figure*}[t]
+\begin{figure}[htbp]
 \centering
-\begin{minipage}{0.28\textwidth}
+\begin{minipage}{0.42\columnwidth}
     \centering
     \includegraphics[width=\linewidth]{kakuro-complex-test-case.png}
-    \caption{Assignment Complex $9 \times 9$ Puzzle.}
-    \label{fig:kakuro_input}
+    \vspace{1mm}
+    \centerline{\scriptsize (a) Assignment Problem}
 \end{minipage}
 \hfill
-\begin{minipage}{0.68\textwidth}
+\begin{minipage}{0.54\columnwidth}
     \centering
+    \scriptsize
+    \setlength{\tabcolsep}{1.8pt}
     \begin{tabular}{ccccccccc}
     \toprule
     $\#$ & $\#$ & $\#$ & $\#$ & $\#$ & $\#$ & $\#$ & $\#$ & $\#$ \\
@@ -315,11 +321,12 @@ Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
     $\#$ & $\#$ & \textbf{7} & \textbf{9} & $\#$ & \textbf{1} & \textbf{4} & \textbf{3} & $\#$ \\
     \bottomrule
     \end{tabular}
-    \vspace{2mm}
-    \caption{Certified Unique Solution Matrix for Complex $9 \times 9$ Testcase.}
-    \label{tab:kakuro_sol}
+    \vspace{1mm}
+    \centerline{\scriptsize (b) Unique Solution Matrix}
 \end{minipage}
-\end{figure*}
+\caption{Complex $9 \times 9$ Kakuro puzzle and its certified unique solution.}
+\label{fig:kakuro_sol}
+\end{figure}
 
 \textbf{Key Insights:}
 \begin{enumerate}
@@ -328,7 +335,7 @@ Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
 \end{enumerate}
 
 \subsubsection{Correctness and Uniqueness}
-Exhaustive post-solution search confirms that both the $5 \times 5$ and $9 \times 9$ benchmarks yield \textbf{exactly 1 solution} (Figure~\ref{fig:kakuro_input} and Table~\ref{tab:kakuro_sol}), independently verified against game rules.
+Exhaustive post-solution search confirms that both the $5 \times 5$ and $9 \times 9$ benchmarks yield \textbf{exactly 1 solution} (Figure~\ref{fig:kakuro_sol}), independently verified against game rules.
 
 \subsubsection{Stability and Heavy-Tail Elimination}
 Over 30 randomized tie-breaking seeds on the $9 \times 9$ puzzle:

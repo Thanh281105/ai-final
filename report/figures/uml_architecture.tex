@@ -1,0 +1,113 @@
+\documentclass[tikz,border=2mm]{standalone}
+\usepackage{amsmath,amssymb}
+\usetikzlibrary{shapes.multipart,positioning,arrows.meta,fit,calc}
+
+\begin{document}
+\begin{tikzpicture}[
+    scale=0.76, every node/.style={transform shape},
+    class/.style={
+        draw=blue!80!black, line width=0.6pt, rectangle split, rectangle split parts=2,
+        fill=blue!3, rounded corners=1pt,
+        text width=4.6cm, font=\scriptsize\sffamily
+    },
+    abstract/.style={
+        draw=orange!80!black, line width=0.6pt, rectangle split, rectangle split parts=2,
+        fill=orange!5, rounded corners=1pt,
+        text width=4.6cm, font=\scriptsize\sffamily
+    },
+    interf/.style={
+        draw=green!60!black, line width=0.6pt, rectangle split, rectangle split parts=1,
+        fill=green!4, rounded corners=1pt, dashed,
+        text width=4.4cm, font=\scriptsize\sffamily, align=center
+    },
+    arrow/.style={-{Latex[length=2mm]}, thick, draw=gray!80!black},
+    inherit/.style={-{Triangle[open,length=2.5mm]}, thick, draw=orange!80!black},
+    comp/.style={{Diamond[fill=black,length=2.5mm]}-, thick, draw=blue!80!black},
+    pack/.style={draw=gray!50, fill=gray!2, rounded corners=3pt, inner sep=5pt, dashed, line width=0.5pt}
+]
+
+% ==================== COLUMN 1: TASK 1 ====================
+\node[class] (cnf) at (0, 0) {
+    \textbf{NQueensCNF}
+    \nodepart{second}
+    + n: int, clauses: List[Clause]\\
+    + discover\_constraints()\\
+    + to\_dimacs()
+};
+
+\node[class, below=0.7cm of cnf] (minconf) {
+    \textbf{MinConflictsSolver}
+    \nodepart{second}
+    - state: ConflictState\\
+    - var\_sel: IVariableSelector\\
+    - val\_sel: IValueSelector\\
+    + solve(max\_steps): Board
+};
+
+\node[interf, below=0.5cm of minconf] (ivar) {
+    $\ll\text{interface}\gg$ \textbf{IVariableSelector}\\
+    \textit{+ select(conflicted): int}\\
+    \tiny [RandomSelector / MostConflictedTabu]
+};
+
+\draw[comp] (minconf) -- (ivar);
+\node[pack, fit=(cnf) (minconf) (ivar), label={[font=\bfseries\scriptsize,text=blue!70!black]above:Task 1: N-Queens (SAT \& Local Search)}] (t1pack) {};
+
+% ==================== COLUMN 2: TASK 2 ====================
+\node[class, right=0.9cm of cnf] (gstate) {
+    \textbf{GameState}
+    \nodepart{second}
+    + tanks, bases, bullets, walls\\
+    + apply\_cycle(a1, a2): GameState\\
+    + legal\_actions(p): List[Action]
+};
+
+\node[abstract, below=0.7cm of gstate] (bagent) {
+    \textit{$\ll\text{abstract}\gg$ \textbf{BaseAgent}}\\
+    \textit{+ select\_action(state): Action}
+    \nodepart{second}
+    \tiny Subclasses: AdversarialSearchAgent, SimpleAgent
+};
+
+\node[class, below=0.5cm of bagent] (advagent) {
+    \textbf{AdversarialSearchAgent}
+    \nodepart{second}
+    - depth: int, use\_alpha\_beta: bool\\
+    - evaluator: HeuristicEvaluator\\
+    + minimax() / alpha\_beta()
+};
+
+\draw[inherit] (advagent) -- (bagent);
+\draw[arrow] (advagent.north west) -- node[left,font=\tiny]{eval} (gstate.south east);
+\node[pack, fit=(gstate) (bagent) (advagent), label={[font=\bfseries\scriptsize,text=blue!70!black]above:Task 2: Tank Battle (Adversarial Search)}] (t2pack) {};
+
+% ==================== COLUMN 3: TASK 3 ====================
+\node[class, right=0.9cm of gstate] (kboard) {
+    \textbf{KakuroCSP}
+    \nodepart{second}
+    + variables: Dict[Cell, Domain]\\
+    + constraints: List[SumAllDiff]\\
+    + neighbors: Dict[Cell, Set[Cell]]
+};
+
+\node[class, below=0.7cm of kboard] (btsolver) {
+    \textbf{BacktrackingSolver}
+    \nodepart{second}
+    - csp: KakuroCSP\\
+    - inference: IInference\\
+    - var\_order: IVariableOrder\\
+    + backtrack(assignment): Sol
+};
+
+\node[interf, below=0.5cm of btsolver] (iinf) {
+    $\ll\text{interface}\gg$ \textbf{IInference}\\
+    \textit{+ revise(var, constraint)}\\
+    \tiny [MAC / ForwardChecking / None]
+};
+
+\draw[comp] (btsolver) -- (kboard);
+\draw[comp] (btsolver) -- (iinf);
+\node[pack, fit=(kboard) (btsolver) (iinf), label={[font=\bfseries\scriptsize,text=blue!70!black]above:Task 3: Kakuro (Constraint Satisfaction)}] (t3pack) {};
+
+\end{tikzpicture}
+\end{document}
