@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Dong goi do an Introduction to AI theo dung format quy dinh cua de bai:
     AI_final_<Project Group ID>_<Student ID>/
@@ -83,3 +83,4 @@ Write-Host "Da dong goi thanh cong:" -ForegroundColor Green
 Write-Host "File nop bai: $zipFile" -ForegroundColor Yellow
 Write-Host "Kiem tra lai link trong demo.txt truoc khi nop nhe!" -ForegroundColor Yellow
 Write-Host "==========================================" -ForegroundColor Green
+

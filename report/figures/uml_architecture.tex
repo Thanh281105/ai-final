@@ -8,36 +8,36 @@
     class/.style={
         draw=blue!80!black, line width=0.6pt, rectangle split, rectangle split parts=2,
         fill=blue!3, rounded corners=1pt,
-        text width=4.6cm, font=\scriptsize\sffamily
+        text width=4.5cm, font=\scriptsize\sffamily
     },
     abstract/.style={
         draw=orange!80!black, line width=0.6pt, rectangle split, rectangle split parts=2,
         fill=orange!5, rounded corners=1pt,
-        text width=4.6cm, font=\scriptsize\sffamily
+        text width=4.5cm, font=\scriptsize\sffamily
     },
     interf/.style={
         draw=green!60!black, line width=0.6pt, rectangle split, rectangle split parts=1,
         fill=green!4, rounded corners=1pt, dashed,
-        text width=4.4cm, font=\scriptsize\sffamily, align=center
+        text width=4.3cm, font=\scriptsize\sffamily, align=center
     },
     arrow/.style={-{Latex[length=2mm]}, thick, draw=gray!80!black},
     inherit/.style={-{Triangle[open,length=2.5mm]}, thick, draw=orange!80!black},
     comp/.style={{Diamond[fill=black,length=2.5mm]}-, thick, draw=blue!80!black},
-    pack/.style={draw=gray!50, fill=gray!2, rounded corners=3pt, inner sep=5pt, dashed, line width=0.5pt}
+    pack/.style={draw=gray!50, rounded corners=3pt, inner sep=6pt, dashed, line width=0.5pt}
 ]
 
 % ==================== COLUMN 1: TASK 1 ====================
 \node[class] (cnf) at (0, 0) {
     \textbf{NQueensCNF}
-    \nodepart{second}
+    \nodepart{two}
     + n: int, clauses: List[Clause]\\
     + discover\_constraints()\\
     + to\_dimacs()
 };
 
-\node[class, below=0.7cm of cnf] (minconf) {
+\node[class, below=0.6cm of cnf] (minconf) {
     \textbf{MinConflictsSolver}
-    \nodepart{second}
+    \nodepart{two}
     - state: ConflictState\\
     - var\_sel: IVariableSelector\\
     - val\_sel: IValueSelector\\
@@ -51,48 +51,48 @@
 };
 
 \draw[comp] (minconf) -- (ivar);
-\node[pack, fit=(cnf) (minconf) (ivar), label={[font=\bfseries\scriptsize,text=blue!70!black]above:Task 1: N-Queens (SAT \& Local Search)}] (t1pack) {};
+\node[pack, fit=(cnf) (minconf) (ivar), label={[font=\bfseries\scriptsize,text=blue!70!black]above:\shortstack{Task 1: N-Queens\\(SAT \& Local Search)}}] (t1pack) {};
 
 % ==================== COLUMN 2: TASK 2 ====================
-\node[class, right=0.9cm of cnf] (gstate) {
+\node[class, right=1.3cm of cnf] (gstate) {
     \textbf{GameState}
-    \nodepart{second}
+    \nodepart{two}
     + tanks, bases, bullets, walls\\
     + apply\_cycle(a1, a2): GameState\\
     + legal\_actions(p): List[Action]
 };
 
-\node[abstract, below=0.7cm of gstate] (bagent) {
-    \textit{$\ll\text{abstract}\gg$ \textbf{BaseAgent}}\\
+\node[abstract, below=0.6cm of gstate] (bagent) {
+    \textit{$\ll\text{abstract}\gg$ \textbf{BaseAgent}}
+    \nodepart{two}
+    + player\_id: int\\
     \textit{+ select\_action(state): Action}
-    \nodepart{second}
-    \tiny Subclasses: AdversarialSearchAgent, SimpleAgent
 };
 
-\node[class, below=0.5cm of bagent] (advagent) {
+\node[class, below=0.6cm of bagent] (advagent) {
     \textbf{AdversarialSearchAgent}
-    \nodepart{second}
+    \nodepart{two}
     - depth: int, use\_alpha\_beta: bool\\
     - evaluator: HeuristicEvaluator\\
     + minimax() / alpha\_beta()
 };
 
 \draw[inherit] (advagent) -- (bagent);
-\draw[arrow] (advagent.north west) -- node[left,font=\tiny]{eval} (gstate.south east);
-\node[pack, fit=(gstate) (bagent) (advagent), label={[font=\bfseries\scriptsize,text=blue!70!black]above:Task 2: Tank Battle (Adversarial Search)}] (t2pack) {};
+\draw[arrow] (advagent.east) -- ++(0.4, 0) |- node[pos=0.25,right,font=\tiny]{queries} (gstate.east);
+\node[pack, fit=(gstate) (bagent) (advagent), label={[font=\bfseries\scriptsize,text=blue!70!black]above:\shortstack{Task 2: Tank Battle\\(Adversarial Search)}}] (t2pack) {};
 
 % ==================== COLUMN 3: TASK 3 ====================
-\node[class, right=0.9cm of gstate] (kboard) {
+\node[class, right=1.3cm of gstate] (kboard) {
     \textbf{KakuroCSP}
-    \nodepart{second}
+    \nodepart{two}
     + variables: Dict[Cell, Domain]\\
     + constraints: List[SumAllDiff]\\
     + neighbors: Dict[Cell, Set[Cell]]
 };
 
-\node[class, below=0.7cm of kboard] (btsolver) {
+\node[class, below=0.6cm of kboard] (btsolver) {
     \textbf{BacktrackingSolver}
-    \nodepart{second}
+    \nodepart{two}
     - csp: KakuroCSP\\
     - inference: IInference\\
     - var\_order: IVariableOrder\\
@@ -107,7 +107,7 @@
 
 \draw[comp] (btsolver) -- (kboard);
 \draw[comp] (btsolver) -- (iinf);
-\node[pack, fit=(kboard) (btsolver) (iinf), label={[font=\bfseries\scriptsize,text=blue!70!black]above:Task 3: Kakuro (Constraint Satisfaction)}] (t3pack) {};
+\node[pack, fit=(kboard) (btsolver) (iinf), label={[font=\bfseries\scriptsize,text=blue!70!black]above:\shortstack{Task 3: Kakuro\\(Constraint Satisfaction)}}] (t3pack) {};
 
 \end{tikzpicture}
 \end{document}
