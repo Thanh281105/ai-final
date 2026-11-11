@@ -102,11 +102,10 @@ We evaluate the CDCL-based Glucose3 solver across $N \in [4, 100]$. Every return
 \caption{Glucose3 Performance Across Increasing Board Sizes $N$}
 \label{tab:glucose3}
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3.5pt}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{rrrrrrr}
 \toprule
-$N$ & Vars & CNF Clauses & Solve (ms) & Decisions & Propagations & Conflicts \\
+$N$ & Vars & Clauses & Solve (ms) & Decisions & Propagations & Conflicts \\
 \midrule
 4   & 16     & 80        & 0.02    & 10      & 32        & 3       \\
 8   & 64     & 736       & 0.03    & 40      & 194       & 12      \\
@@ -117,7 +116,8 @@ $N$ & Vars & CNF Clauses & Solve (ms) & Decisions & Propagations & Conflicts \\
 80  & 6,400  & 840,640   & 10,055.5& 138,947 & 4,168,619 & 104,415 \\
 100 & 10,000 & 1,646,800 & 8,120.3 & 91,881  & 5,499,245 & 70,981  \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 As shown in Table~\ref{tab:glucose3}, clauses grow as $\Theta(N^3)$ (e.g., $N=40 \to 80$ yields an $8.1\times$ increase). Runtime correlates directly with variable decision heuristics and the frequency of learned conflicts rather than raw formula size.
@@ -136,8 +136,7 @@ Standard Min-Conflicts selects a conflicted variable uniformly at random. We pro
 \caption{Min-Conflicts: Standard vs. Proposed Heuristic (50 Runs)}
 \label{tab:min_conflicts}
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3.5pt}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{rcccccc}
 \toprule
 \multirow{2}{*}{$N$} & \multicolumn{2}{c}{Success Rate} & \multicolumn{2}{c}{Median Steps} & \multirow{2}{*}{\shortstack{Step\\Ratio}} & \multirow{2}{*}{\shortstack{Time (ms)\\Heur.}} \\
@@ -153,7 +152,8 @@ Standard Min-Conflicts selects a conflicted variable uniformly at random. We pro
 512  & 100\% & 100\% & 404.5 & 294.0 & 73\% & 47.88 \\
 1000 & 100\% & 100\% & 710.5 & 539.0 & 76\% & 176.77\\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsubsection{Ablation Study and Analysis}
@@ -168,8 +168,8 @@ Table~\ref{tab:min_conflicts} demonstrates that our proposed heuristic consisten
 Tank Battle is modeled as a 2-player, deterministic, fully observable zero-sum game played on an $H \times W$ grid.
 \begin{itemize}
     \item \textbf{Game State $s$:} $s = (\text{walls}, \text{tanks}, \text{bases}, \text{bullets}, \text{turn})$, tracking positions, directions, and health points (Tank: 6 HP, Base: 9 HP, Wall: 3 HP).
-    \item \textbf{Actions $A(s, p)$:} $\text{MOVE\_\{UP, DOWN, LEFT, RIGHT\}}$, $\text{FIRE}$, and $\text{STAY}$. Redundant moves that replicate $\text{STAY}$ (e.g., driving into an obstacle while already oriented toward it, or firing while a bullet is in-flight) are pruned, reducing the effective branching factor $b$ from 6 to $\approx 4\text{--}5$.
-    \item \textbf{Cycle-to-Ply Abstraction:} Although actions in the original game occur simultaneously, minimax search assumes alternating turns. We decouple 1 game cycle into 2 sequential plies:
+    \item \textbf{Actions $A(s, p)$:} \texttt{MOVE\_\{UP, DOWN, LEFT, RIGHT\}}, \texttt{FIRE}, and \texttt{STAY}. Redundant moves that replicate \texttt{STAY} (e.g., driving into an obstacle while already oriented toward it, or firing while a bullet is in-flight) are pruned, reducing effective branching factor $b$ from 6 to $\approx 4\text{--}5$.
+    \item \textbf{Cycle-to-Ply Abstraction:} Although actions occur simultaneously in real time, minimax assumes alternating turns. We decouple 1 game cycle into 2 plies:
     \begin{align}
         \text{MAX: } & (s, \emptyset) \xrightarrow{a_{\text{MAX}}} (s, a_{\text{MAX}}) \\
         \text{MIN: } & (s, a_{\text{MAX}}) \xrightarrow{a_{\text{MIN}}} (s', \emptyset)
@@ -191,10 +191,10 @@ We implement four distinct configurations:
 \subsubsection{Heuristic Evaluation Function $\text{EVAL}(s)$}
 To combat the \textit{horizon effect} (e.g., missing imminent bullet impact beyond cutoff depth), $\text{EVAL}(s)$ evaluates:
 \begin{align}
-    \text{EVAL}(s) &= w_1 \Delta \text{HP}_{\text{tank}} + w_2 \Delta \text{HP}_{\text{base}} + w_3 \sum \text{Dmg}_{\text{inflight}} \nonumber \\
-    &\quad + \Delta \text{FirePot} + w_5 (\text{Dist}_{\text{enemy}} - \text{Dist}_{\text{own}})
+    \text{EVAL}(s) &= w_1 \Delta \text{HP}_{\text{tank}} + w_2 \Delta \text{HP}_{\text{base}} + w_3 \sum \text{Dmg}_{\text{fly}} \nonumber \\
+    &\quad + \Delta \text{FirePot} + w_5 \Delta \text{Dist}
 \end{align}
-where $\text{Dmg}_{\text{inflight}}$ projects all bullet trajectories up to 9 cells, and $\text{FirePot}$ rewards unobstructed firing alignment toward opponent bases and tanks.
+where $\text{Dmg}_{\text{fly}}$ projects all bullet trajectories up to 9 cells, and $\text{FirePot}$ rewards unobstructed firing alignment toward opponent bases and tanks.
 
 \subsection{Experimental Evaluation}
 
@@ -212,8 +212,7 @@ Evaluated across 10 distinct endgame positions (Figure~\ref{fig:exact_search} an
 \caption{Exact Terminal Search Comparison (10 Endgame Positions)}
 \label{tab:tank_exact}
 \centering
-\scriptsize
-\setlength{\tabcolsep}{4pt}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{crrrrrr}
 \toprule
 $m$ (ply) & Minimax Nodes & $\alpha$-$\beta$ Nodes & Reduction & $b^*_{\text{MM}}$ & $b^*_{\alpha\beta}$ & Value Match \\
@@ -223,7 +222,8 @@ $m$ (ply) & Minimax Nodes & $\alpha$-$\beta$ Nodes & Reduction & $b^*_{\text{MM}
 6 & 28,780  & 1,166 & $24.7\times$  & 5.35 & 3.04 & 10/10 \\
 8 & 838,067 & 7,347 & $114.1\times$ & 5.36 & 2.89 & 10/10 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 At $m=8$ plies, $\alpha$-$\beta$ cuts explored nodes by $114.1\times$, reducing the effective branching factor $b^*$ from 5.36 down to 2.89 (approaching optimal $\sqrt{b} \approx 2.32$). Memory depth scales strictly as $O(bm)$, maintaining trivial footprint.
@@ -278,8 +278,7 @@ Table~\ref{tab:kakuro_ablation} and Figure~\ref{fig:kakuro_ablation} show the pr
 \caption{Ablation on Complex $9 \times 9$ Kakuro Puzzle}
 \label{tab:kakuro_ablation}
 \centering
-\scriptsize
-\setlength{\tabcolsep}{2.5pt}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrrrrr}
 \toprule
 Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
@@ -292,7 +291,8 @@ Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
 6. BT + MAC + MRV/Deg& 49    & 1      & 1,930      & 384 & 0.0097 \\
 \textbf{7. BT + MAC + All + Pre}& \textbf{48} & \textbf{0} & \textbf{1,809} & \textbf{384} & \textbf{0.0091} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[htbp]
@@ -358,9 +358,8 @@ Both team members contributed equally (50\%--50\%) across conceptual formulation
 \caption{Individual Member Contributions and Task Completion}
 \label{tab:contributions}
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{p{2.1cm}p{4.8cm}c}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{p{2.3cm}p{5.0cm}c}
 \toprule
 Member & Assigned Responsibilities & Completion \\
 \midrule
@@ -374,7 +373,8 @@ Member & Assigned Responsibilities & Completion \\
 - Task 3: CSP model, Kuhn bipartite matching GAC, Backtracking solver, PyGame replay visualizer. \newline
 - Unit testing suites and experiment validation. & 100\% \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \section{Self-Evaluation}
@@ -384,9 +384,8 @@ We self-evaluate our project against the assignment criteria in Table~\ref{tab:s
 \caption{Self-Evaluation and Estimated Score Breakdown}
 \label{tab:self_eval}
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{p{2.6cm}ccp{3.8cm}}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{p{2.8cm}ccp{4.0cm}}
 \toprule
 Task & Max & Est. & Justification \\
 \midrule
@@ -409,7 +408,8 @@ Task & Max & Est. & Justification \\
 \midrule
 \textbf{Total}            & \textbf{10.0} & \textbf{10.0} & Full theoretical and empirical coverage. \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \section{Conclusion}
