@@ -6,18 +6,18 @@ from .search_agents import (
 )
 from .simple_agents import HumanAgent, RandomAgent
 
-# GUI presets: depth is in game cycles (1 cycle = 2 plies). Time limits keep the game real-time.
+# GUI presets: depth is in game cycles (1 cycle = 2 plies). Optimized for real-time responsiveness (<20ms).
 BUILTIN_AGENTS = [
     AgentEntry("Heuristic Alpha-Beta",
-               lambda p: HeuristicAlphaBetaAgent(p, depth=8, time_limit=0.5, iterative_deepening=True),
-               description="EVAL + pruning, iterative deepening, 0.5 s per move"),
+               lambda p: HeuristicAlphaBetaAgent(p, depth=4, time_limit=0.15, iterative_deepening=False),
+               description="Fast H-AlphaBeta with TT & Move Ordering (8 plies, ~8ms per move)"),
     AgentEntry("Heuristic Minimax", lambda p: HeuristicMinimaxAgent(p, depth=2),
-               description="Cutoff at 2 cycles (4 plies), EVAL at the cutoff"),
-    AgentEntry("Alpha-Beta", lambda p: AlphaBetaAgent(p, depth=3, time_limit=1.0),
-               description="Cutoff at 3 cycles (6 plies), no heuristic: cutoff states count as 0"),
-    AgentEntry("Minimax", lambda p: MinimaxAgent(p, depth=2),
+               description="Cutoff at 2 cycles (4 plies), EVAL at the cutoff (~8ms)"),
+    AgentEntry("Alpha-Beta", lambda p: AlphaBetaAgent(p, depth=2, time_limit=0.2),
                description="Cutoff at 2 cycles (4 plies), no heuristic: cutoff states count as 0"),
-    AgentEntry("Random", lambda p: RandomAgent(p), description="Baseline"),
+    AgentEntry("Minimax", lambda p: MinimaxAgent(p, depth=2, time_limit=0.2),
+               description="Cutoff at 2 cycles (4 plies), no heuristic: cutoff states count as 0"),
+    AgentEntry("Random", lambda p: RandomAgent(p), description="Baseline random moves"),
     AgentEntry("Human", lambda p: HumanAgent(p), description=HumanAgent.description),
 ]
 
