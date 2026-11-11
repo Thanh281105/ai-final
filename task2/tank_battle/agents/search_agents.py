@@ -36,6 +36,10 @@ from .heuristics import HeuristicEvaluator
 
 WIN_SCORE = 1_000_000.0
 
+TT_EXACT = 0
+TT_LOWER = 1
+TT_UPPER = 2
+
 
 class SearchTimeout(Exception):
     pass
@@ -45,7 +49,7 @@ class AdversarialSearchAgent(BaseAgent):
     name = "Adversarial Search"
 
     def __init__(self, player, depth=2, use_alpha_beta=False, evaluator=None, move_ordering=None,
-                 time_limit=None, iterative_deepening=False, seed=0, **kwargs):
+                 time_limit=None, iterative_deepening=False, seed=0, use_tt=False, **kwargs):
         super().__init__(player)
         self.depth = depth
         self.use_alpha_beta = use_alpha_beta
@@ -60,6 +64,8 @@ class AdversarialSearchAgent(BaseAgent):
         self.iterative_deepening = iterative_deepening
         self.seed = seed
         self.rng = random.Random(seed)
+        self.use_tt = use_tt
+        self._tt = {}
         self._deadline = None
         self._root_turn = 0
         self._partial = None
@@ -68,6 +74,14 @@ class AdversarialSearchAgent(BaseAgent):
     def reset(self):
         super().reset()
         self.rng = random.Random(self.seed)
+        self._tt.clear()
+
+    def _state_key(self, state):
+        t0, t1 = state.tanks[0], state.tanks[1]
+        bullets = tuple((b.owner, b.row, b.col, b.direction) for b in state.bullets)
+        return (t0.row, t0.col, t0.direction, t0.hp,
+                t1.row, t1.col, t1.direction, t1.hp,
+                bullets, len(state.walls), sum(state.walls.values()))
 
     # ------------------------------------------------------------------ entry point
     def choose_action(self, state):
@@ -75,6 +89,8 @@ class AdversarialSearchAgent(BaseAgent):
         start = time.perf_counter()
         self._deadline = start + self.time_limit if self.time_limit else None
         self._root_turn = state.turn
+        if self.use_tt:
+            self._tt.clear()
 
         root_actions = state.legal_actions(self.player)
         self.rng.shuffle(root_actions)   # random tie-breaking among equally good moves
@@ -135,14 +151,48 @@ class AdversarialSearchAgent(BaseAgent):
             stats.evaluations += 1
             return self.evaluator.evaluate(state, self.player) if self.evaluator else 0.0
 
+        key = None
+        best_move_hint = None
+        if self.use_tt:
+            key = self._state_key(state)
+            tt_entry = self._tt.get(key)
+            if tt_entry is not None:
+                tt_depth, tt_flag, tt_val, tt_move = tt_entry
+                best_move_hint = tt_move
+                if tt_depth >= (depth if depth is not None else 999):
+                    if tt_flag == TT_EXACT:
+                        return tt_val
+                    elif tt_flag == TT_LOWER and tt_val >= beta:
+                        stats.cutoffs += 1
+                        return tt_val
+                    elif tt_flag == TT_UPPER and tt_val <= alpha:
+                        return tt_val
+
+        actions = self._order(state, self.player, state.legal_actions(self.player))
+        if best_move_hint in actions:
+            actions.remove(best_move_hint)
+            actions.insert(0, best_move_hint)
+
+        orig_alpha = alpha
         value = -math.inf
-        for action in self._order(state, self.player, state.legal_actions(self.player)):
-            value = max(value, self._min_value(state, action, depth, alpha, beta, ply + 1))
+        best_act = actions[0] if actions else None
+
+        for action in actions:
+            v = self._min_value(state, action, depth, alpha, beta, ply + 1)
+            if v > value:
+                value = v
+                best_act = action
             if self.use_alpha_beta:
                 if value >= beta:
                     stats.cutoffs += 1
+                    if self.use_tt and key is not None:
+                        self._tt[key] = (depth if depth is not None else 999, TT_LOWER, value, best_act)
                     return value
                 alpha = max(alpha, value)
+
+        if self.use_tt and key is not None:
+            flag = TT_EXACT if (value > orig_alpha and value < beta) else (TT_UPPER if value <= orig_alpha else TT_LOWER)
+            self._tt[key] = (depth if depth is not None else 999, flag, value, best_act)
         return value
 
     def _min_value(self, state, my_action, depth, alpha, beta, ply):
@@ -224,8 +274,8 @@ class HeuristicMinimaxAgent(AdversarialSearchAgent):
 
 class HeuristicAlphaBetaAgent(AdversarialSearchAgent):
     name = "Heuristic Alpha-Beta"
-    description = "H-Minimax + alpha-beta pruning + move ordering"
+    description = "H-Minimax + alpha-beta pruning + move ordering + transposition table"
 
-    def __init__(self, player, depth=2, evaluator=None, **kwargs):
+    def __init__(self, player, depth=2, evaluator=None, use_tt=True, **kwargs):
         super().__init__(player, depth=depth, use_alpha_beta=True,
-                         evaluator=evaluator or HeuristicEvaluator(), **kwargs)
+                         evaluator=evaluator or HeuristicEvaluator(), use_tt=use_tt, **kwargs)

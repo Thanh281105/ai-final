@@ -27,8 +27,9 @@ def direction_towards(src_row, src_col, dst_row, dst_col):
 def alignment_distance(r1, c1, r2, c2):
     """Moves needed to reach the target's row or column (where shooting is possible),
     plus a small term for the remaining Manhattan distance."""
-    dr, dc = abs(r1 - r2), abs(c1 - c2)
-    return min(dr, dc) + 0.1 * (dr + dc)
+    dr = r1 - r2 if r1 >= r2 else r2 - r1
+    dc = c1 - c2 if c1 >= c2 else c2 - c1
+    return (dr if dr < dc else dc) + 0.1 * (dr + dc)
 
 
 class HeuristicEvaluator:
@@ -127,11 +128,23 @@ class HeuristicEvaluator:
         Ordering never changes the minimax value, only how many nodes are pruned."""
         tank = state.tanks[player]
         opp = 1 - player
-        targets = [(state.tanks[opp].row, state.tanks[opp].col), (state.bases[opp].row, state.bases[opp].col)]
+        tr0, tc0 = state.tanks[opp].row, state.tanks[opp].col
+        tr1, tc1 = state.bases[opp].row, state.bases[opp].col
+
+        # Precompute current alignment distance to targets
+        dr0 = tank.row - tr0 if tank.row >= tr0 else tr0 - tank.row
+        dc0 = tank.col - tc0 if tank.col >= tc0 else tc0 - tank.col
+        d0 = (dr0 if dr0 < dc0 else dc0) + 0.1 * (dr0 + dc0)
+
+        dr1 = tank.row - tr1 if tank.row >= tr1 else tr1 - tank.row
+        dc1 = tank.col - tc1 if tank.col >= tc1 else tc1 - tank.col
+        d1 = (dr1 if dr1 < dc1 else dc1) + 0.1 * (dr1 + dc1)
+
+        before = d0 if d0 < d1 else d1
 
         def score(action):
             if action == Action.FIRE:
-                for tr, tc in targets:
+                for tr, tc in ((tr0, tc0), (tr1, tc1)):
                     if (direction_towards(tank.row, tank.col, tr, tc) == tank.direction
                             and self.shots_to_hit(state, tank, tr, tc) is not None):
                         return 4.0
@@ -142,8 +155,16 @@ class HeuristicEvaluator:
             nr, nc = tank.row + DR[d], tank.col + DC[d]
             if not state.is_free_for_tank(nr, nc):
                 nr, nc = tank.row, tank.col     # only turns
-            before = min(alignment_distance(tank.row, tank.col, tr, tc) for tr, tc in targets)
-            after = min(alignment_distance(nr, nc, tr, tc) for tr, tc in targets)
+
+            dr0_after = nr - tr0 if nr >= tr0 else tr0 - nr
+            dc0_after = nc - tc0 if nc >= tc0 else tc0 - nc
+            d0_after = (dr0_after if dr0_after < dc0_after else dc0_after) + 0.1 * (dr0_after + dc0_after)
+
+            dr1_after = nr - tr1 if nr >= tr1 else tr1 - nr
+            dc1_after = nc - tc1 if nc >= tc1 else tc1 - nc
+            d1_after = (dr1_after if dr1_after < dc1_after else dc1_after) + 0.1 * (dr1_after + dc1_after)
+
+            after = d0_after if d0_after < d1_after else d1_after
             return 2.0 + (before - after)
 
         return sorted(actions, key=score, reverse=True)
