@@ -8,8 +8,7 @@
 <script>
   /* Áp dụng giao diện sáng/tối trước khi vẽ để không bị nháy */
   (function () {
-    var t = localStorage.getItem('nq-theme');
-    if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var t = localStorage.getItem('nq-theme-v2') || 'light';
     document.documentElement.dataset.theme = t;
   })();
 </script>

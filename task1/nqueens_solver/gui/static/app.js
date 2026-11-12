@@ -66,12 +66,9 @@ function applyTheme(t) {
 }
 $('#theme-btn').onclick = () => {
   const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('nq-theme', t);
+  localStorage.setItem('nq-theme-v2', t);
   applyTheme(t);
 };
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-  if (!localStorage.getItem('nq-theme')) applyTheme(e.matches ? 'dark' : 'light');
-});
 
 /* ========================================================== ANIMATION */
 const anims = new Map();
