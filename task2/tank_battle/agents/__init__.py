@@ -9,8 +9,8 @@ from .simple_agents import HumanAgent, RandomAgent
 # GUI presets: depth is in game cycles (1 cycle = 2 plies). Optimized for real-time responsiveness (<20ms).
 BUILTIN_AGENTS = [
     AgentEntry("Heuristic Alpha-Beta",
-               lambda p: HeuristicAlphaBetaAgent(p, depth=4, time_limit=0.15, iterative_deepening=False),
-               description="Fast H-AlphaBeta with TT & Move Ordering (8 plies, ~8ms per move)"),
+               lambda p: HeuristicAlphaBetaAgent(p, depth=3, time_limit=0.15, iterative_deepening=True),
+               description="Tactical H-AlphaBeta with TT, ID & BFS Flanking (6 plies, real-time)"),
     AgentEntry("Heuristic Minimax", lambda p: HeuristicMinimaxAgent(p, depth=2),
                description="Cutoff at 2 cycles (4 plies), EVAL at the cutoff (~8ms)"),
     AgentEntry("Alpha-Beta", lambda p: AlphaBetaAgent(p, depth=2, time_limit=0.2),

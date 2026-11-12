@@ -19,7 +19,7 @@ DEFAULT_MAX_TURNS = 200   # safety limit -> draw, guarantees every game is finit
 PLAYER_1 = 0
 PLAYER_2 = 1
 DRAW = -1
-PLAYER_NAMES = ("P1 (Yellow)", "P2 (Green)")
+PLAYER_NAMES = ("P1 (Blue)", "P2 (Red)")
 
 # Directions are small ints so states stay cheap to copy.
 UP, DOWN, LEFT, RIGHT = 0, 1, 2, 3
