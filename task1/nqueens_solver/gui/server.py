@@ -96,7 +96,7 @@ class JobManager:
                 rows = SATExperiment(repeats=params["repeats"]).run(params["ns"], progress)
                 files = [writer.write_csv("sat_results", rows), writer.write_json("sat_results", rows)]
                 writer.write_markdown(rows, _load_rows("min_conflicts_results"),
-                                      _load_rows("min_conflicts_ablation"))
+                                      _load_rows("min_conflicts_ablation"), _load_rows("sat_column_alo"))
             else:
                 exp = MinConflictsExperiment(params["runs"], params["max_steps"])
                 rows = exp.run(params["ns"], progress)
@@ -104,7 +104,8 @@ class JobManager:
                     writer.write_csv("min_conflicts_results", rows),
                     writer.write_json("min_conflicts_results", rows),
                 ]
-                writer.write_markdown(_load_rows("sat_results"), rows, _load_rows("min_conflicts_ablation"))
+                writer.write_markdown(_load_rows("sat_results"), rows, _load_rows("min_conflicts_ablation"),
+                                      _load_rows("sat_column_alo"))
             job.update(
                 rows=rows,
                 status="done",

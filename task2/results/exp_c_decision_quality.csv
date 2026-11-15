@@ -1,151 +1,151 @@
 scenario,config,depth,optimal,time_s,nodes,action,exact_value_of_choice,best_value
 endgame-35,Random (expected),-,0.16666666666666666,0.0,0,,,
-endgame-35,Minimax,terminal,True,6.1442,1100892,MOVE_DOWN,0.0,0.0
-endgame-35,Alpha-Beta,terminal,True,0.0663,12180,MOVE_DOWN,0.0,0.0
+endgame-35,Minimax,terminal,True,6.7983,1100892,MOVE_DOWN,0.0,0.0
+endgame-35,Alpha-Beta,terminal,True,0.07,12180,MOVE_DOWN,0.0,0.0
 endgame-35,"Minimax (cutoff, EVAL = 0)",1,False,0.0003,43,FIRE,-999998.0,0.0
-endgame-35,"Minimax (cutoff, EVAL = 0)",2,True,0.0074,1349,MOVE_DOWN,0.0,0.0
-endgame-35,"Minimax (cutoff, EVAL = 0)",3,True,0.2094,38919,MOVE_DOWN,0.0,0.0
+endgame-35,"Minimax (cutoff, EVAL = 0)",2,True,0.0078,1349,MOVE_DOWN,0.0,0.0
+endgame-35,"Minimax (cutoff, EVAL = 0)",3,True,0.2205,38919,MOVE_DOWN,0.0,0.0
 endgame-35,"Alpha-Beta (cutoff, EVAL = 0)",1,False,0.0001,18,FIRE,-999998.0,0.0
-endgame-35,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0012,234,MOVE_DOWN,0.0,0.0
-endgame-35,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0085,1613,MOVE_DOWN,0.0,0.0
-endgame-35,Heuristic Minimax,1,False,0.0004,43,MOVE_UP,-999998.0,0.0
-endgame-35,Heuristic Minimax,2,True,0.0129,1349,MOVE_DOWN,0.0,0.0
-endgame-35,Heuristic Minimax,3,True,0.3686,38919,MOVE_DOWN,0.0,0.0
-endgame-35,Heuristic Alpha-Beta,1,False,0.0003,23,MOVE_UP,-999998.0,0.0
-endgame-35,Heuristic Alpha-Beta,2,True,0.0022,192,MOVE_DOWN,0.0,0.0
-endgame-35,Heuristic Alpha-Beta,3,True,0.0141,1146,MOVE_DOWN,0.0,0.0
+endgame-35,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0013,234,MOVE_DOWN,0.0,0.0
+endgame-35,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0089,1613,MOVE_DOWN,0.0,0.0
+endgame-35,Heuristic Minimax,1,False,0.0011,43,MOVE_UP,-999998.0,0.0
+endgame-35,Heuristic Minimax,2,True,0.0254,1349,MOVE_DOWN,0.0,0.0
+endgame-35,Heuristic Minimax,3,True,0.7672,38919,MOVE_DOWN,0.0,0.0
+endgame-35,Heuristic Alpha-Beta,1,False,0.0005,23,MOVE_UP,-999998.0,0.0
+endgame-35,Heuristic Alpha-Beta,2,True,0.0051,284,MOVE_DOWN,0.0,0.0
+endgame-35,Heuristic Alpha-Beta,3,True,0.0196,1037,MOVE_DOWN,0.0,0.0
 endgame-56,Random (expected),-,0.2,0.0,0,,,
-endgame-56,Minimax,terminal,True,4.055,658176,MOVE_UP,0.0,0.0
-endgame-56,Alpha-Beta,terminal,True,0.0311,5590,MOVE_UP,0.0,0.0
+endgame-56,Minimax,terminal,True,4.4775,658182,MOVE_UP,0.0,0.0
+endgame-56,Alpha-Beta,terminal,True,0.0329,5590,MOVE_UP,0.0,0.0
 endgame-56,"Minimax (cutoff, EVAL = 0)",1,True,0.0002,31,MOVE_UP,0.0,0.0
-endgame-56,"Minimax (cutoff, EVAL = 0)",2,True,0.0045,768,MOVE_UP,0.0,0.0
-endgame-56,"Minimax (cutoff, EVAL = 0)",3,True,0.1317,22076,MOVE_UP,0.0,0.0
+endgame-56,"Minimax (cutoff, EVAL = 0)",2,True,0.0048,768,MOVE_UP,0.0,0.0
+endgame-56,"Minimax (cutoff, EVAL = 0)",3,True,0.1386,22076,MOVE_UP,0.0,0.0
 endgame-56,"Alpha-Beta (cutoff, EVAL = 0)",1,True,0.0001,22,MOVE_UP,0.0,0.0
 endgame-56,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0009,157,MOVE_UP,0.0,0.0
-endgame-56,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0051,949,MOVE_UP,0.0,0.0
-endgame-56,Heuristic Minimax,1,True,0.0003,31,MOVE_UP,0.0,0.0
-endgame-56,Heuristic Minimax,2,True,0.0081,768,MOVE_UP,0.0,0.0
-endgame-56,Heuristic Minimax,3,True,0.2317,22076,MOVE_UP,0.0,0.0
-endgame-56,Heuristic Alpha-Beta,1,True,0.0002,19,MOVE_UP,0.0,0.0
-endgame-56,Heuristic Alpha-Beta,2,True,0.0014,99,MOVE_UP,0.0,0.0
-endgame-56,Heuristic Alpha-Beta,3,True,0.0113,820,MOVE_UP,0.0,0.0
+endgame-56,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0054,949,MOVE_UP,0.0,0.0
+endgame-56,Heuristic Minimax,1,True,0.0006,31,MOVE_UP,0.0,0.0
+endgame-56,Heuristic Minimax,2,True,0.0156,768,MOVE_UP,0.0,0.0
+endgame-56,Heuristic Minimax,3,True,0.4473,22076,MOVE_UP,0.0,0.0
+endgame-56,Heuristic Alpha-Beta,1,True,0.0005,23,MOVE_UP,0.0,0.0
+endgame-56,Heuristic Alpha-Beta,2,True,0.0035,158,MOVE_UP,0.0,0.0
+endgame-56,Heuristic Alpha-Beta,3,True,0.0165,864,MOVE_UP,0.0,0.0
 endgame-76,Random (expected),-,0.3333333333333333,0.0,0,,,
-endgame-76,Minimax,terminal,True,5.3873,958218,MOVE_DOWN,0.0,0.0
-endgame-76,Alpha-Beta,terminal,True,0.0548,10041,MOVE_DOWN,0.0,0.0
-endgame-76,"Minimax (cutoff, EVAL = 0)",1,False,0.0002,43,FIRE,-999998.0,0.0
-endgame-76,"Minimax (cutoff, EVAL = 0)",2,True,0.0072,1273,MOVE_DOWN,0.0,0.0
-endgame-76,"Minimax (cutoff, EVAL = 0)",3,True,0.1902,35036,MOVE_DOWN,0.0,0.0
+endgame-76,Minimax,terminal,True,6.1521,958218,MOVE_DOWN,0.0,0.0
+endgame-76,Alpha-Beta,terminal,True,0.0597,10041,MOVE_DOWN,0.0,0.0
+endgame-76,"Minimax (cutoff, EVAL = 0)",1,False,0.0003,43,FIRE,-999998.0,0.0
+endgame-76,"Minimax (cutoff, EVAL = 0)",2,True,0.0079,1273,MOVE_DOWN,0.0,0.0
+endgame-76,"Minimax (cutoff, EVAL = 0)",3,True,0.2187,35036,MOVE_DOWN,0.0,0.0
 endgame-76,"Alpha-Beta (cutoff, EVAL = 0)",1,False,0.0001,18,FIRE,-999998.0,0.0
-endgame-76,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0015,250,MOVE_DOWN,0.0,0.0
-endgame-76,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.009,1713,MOVE_DOWN,0.0,0.0
-endgame-76,Heuristic Minimax,1,True,0.0005,43,MOVE_DOWN,0.0,0.0
-endgame-76,Heuristic Minimax,2,True,0.0135,1273,MOVE_UP,0.0,0.0
-endgame-76,Heuristic Minimax,3,True,0.3517,35036,MOVE_UP,0.0,0.0
-endgame-76,Heuristic Alpha-Beta,1,True,0.0003,18,MOVE_DOWN,0.0,0.0
-endgame-76,Heuristic Alpha-Beta,2,True,0.0022,167,MOVE_UP,0.0,0.0
-endgame-76,Heuristic Alpha-Beta,3,True,0.01,797,MOVE_UP,0.0,0.0
+endgame-76,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0016,250,MOVE_DOWN,0.0,0.0
+endgame-76,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0103,1713,MOVE_DOWN,0.0,0.0
+endgame-76,Heuristic Minimax,1,True,0.001,43,MOVE_DOWN,0.0,0.0
+endgame-76,Heuristic Minimax,2,True,0.0256,1273,MOVE_DOWN,0.0,0.0
+endgame-76,Heuristic Minimax,3,True,0.7137,35036,MOVE_DOWN,0.0,0.0
+endgame-76,Heuristic Alpha-Beta,1,True,0.0005,18,MOVE_DOWN,0.0,0.0
+endgame-76,Heuristic Alpha-Beta,2,True,0.0024,125,MOVE_DOWN,0.0,0.0
+endgame-76,Heuristic Alpha-Beta,3,True,0.0062,346,MOVE_DOWN,0.0,0.0
 endgame-103,Random (expected),-,0.2,0.0,0,,,
-endgame-103,Minimax,terminal,True,5.0626,841463,MOVE_RIGHT,0.0,0.0
-endgame-103,Alpha-Beta,terminal,True,0.0195,3794,MOVE_RIGHT,0.0,0.0
+endgame-103,Minimax,terminal,True,5.5328,841463,MOVE_RIGHT,0.0,0.0
+endgame-103,Alpha-Beta,terminal,True,0.0208,3794,MOVE_RIGHT,0.0,0.0
 endgame-103,"Minimax (cutoff, EVAL = 0)",1,True,0.0002,36,MOVE_RIGHT,0.0,0.0
-endgame-103,"Minimax (cutoff, EVAL = 0)",2,True,0.0054,963,MOVE_RIGHT,0.0,0.0
-endgame-103,"Minimax (cutoff, EVAL = 0)",3,True,0.1593,28068,MOVE_RIGHT,0.0,0.0
+endgame-103,"Minimax (cutoff, EVAL = 0)",2,True,0.0057,963,MOVE_RIGHT,0.0,0.0
+endgame-103,"Minimax (cutoff, EVAL = 0)",3,True,0.1703,28068,MOVE_RIGHT,0.0,0.0
 endgame-103,"Alpha-Beta (cutoff, EVAL = 0)",1,True,0.0001,16,MOVE_RIGHT,0.0,0.0
-endgame-103,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0005,107,MOVE_RIGHT,0.0,0.0
-endgame-103,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0032,648,MOVE_RIGHT,0.0,0.0
-endgame-103,Heuristic Minimax,1,True,0.0003,36,MOVE_RIGHT,0.0,0.0
-endgame-103,Heuristic Minimax,2,True,0.0088,963,MOVE_RIGHT,0.0,0.0
-endgame-103,Heuristic Minimax,3,True,0.2617,28068,MOVE_RIGHT,0.0,0.0
-endgame-103,Heuristic Alpha-Beta,1,True,0.0003,21,MOVE_RIGHT,0.0,0.0
-endgame-103,Heuristic Alpha-Beta,2,True,0.0017,140,MOVE_RIGHT,0.0,0.0
-endgame-103,Heuristic Alpha-Beta,3,True,0.0125,1012,MOVE_RIGHT,0.0,0.0
+endgame-103,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0006,107,MOVE_RIGHT,0.0,0.0
+endgame-103,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0035,648,MOVE_RIGHT,0.0,0.0
+endgame-103,Heuristic Minimax,1,True,0.0009,36,MOVE_RIGHT,0.0,0.0
+endgame-103,Heuristic Minimax,2,True,0.0191,963,MOVE_RIGHT,0.0,0.0
+endgame-103,Heuristic Minimax,3,True,0.5222,28068,MOVE_RIGHT,0.0,0.0
+endgame-103,Heuristic Alpha-Beta,1,True,0.0005,26,MOVE_RIGHT,0.0,0.0
+endgame-103,Heuristic Alpha-Beta,2,True,0.0039,202,MOVE_RIGHT,0.0,0.0
+endgame-103,Heuristic Alpha-Beta,3,True,0.023,1285,MOVE_RIGHT,0.0,0.0
 endgame-266,Random (expected),-,0.4,0.0,0,,,
-endgame-266,Minimax,terminal,True,5.4241,873354,MOVE_LEFT,0.0,0.0
-endgame-266,Alpha-Beta,terminal,True,0.0194,3709,MOVE_LEFT,0.0,0.0
+endgame-266,Minimax,terminal,True,6.0065,873354,MOVE_LEFT,0.0,0.0
+endgame-266,Alpha-Beta,terminal,True,0.0205,3709,MOVE_LEFT,0.0,0.0
 endgame-266,"Minimax (cutoff, EVAL = 0)",1,True,0.0002,36,MOVE_LEFT,0.0,0.0
-endgame-266,"Minimax (cutoff, EVAL = 0)",2,True,0.0059,1008,MOVE_LEFT,0.0,0.0
-endgame-266,"Minimax (cutoff, EVAL = 0)",3,True,0.1713,29014,MOVE_LEFT,0.0,0.0
+endgame-266,"Minimax (cutoff, EVAL = 0)",2,True,0.0061,1008,MOVE_LEFT,0.0,0.0
+endgame-266,"Minimax (cutoff, EVAL = 0)",3,True,0.1789,29014,MOVE_LEFT,0.0,0.0
 endgame-266,"Alpha-Beta (cutoff, EVAL = 0)",1,True,0.0001,16,MOVE_LEFT,0.0,0.0
 endgame-266,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0006,108,MOVE_LEFT,0.0,0.0
-endgame-266,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0031,632,MOVE_LEFT,0.0,0.0
-endgame-266,Heuristic Minimax,1,True,0.0004,36,MOVE_LEFT,0.0,0.0
-endgame-266,Heuristic Minimax,2,True,0.0103,1008,MOVE_LEFT,0.0,0.0
-endgame-266,Heuristic Minimax,3,True,0.3009,29014,MOVE_LEFT,0.0,0.0
-endgame-266,Heuristic Alpha-Beta,1,True,0.0003,26,MOVE_LEFT,0.0,0.0
-endgame-266,Heuristic Alpha-Beta,2,True,0.0036,274,MOVE_LEFT,0.0,0.0
-endgame-266,Heuristic Alpha-Beta,3,True,0.0321,2461,MOVE_LEFT,0.0,0.0
+endgame-266,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0034,632,MOVE_LEFT,0.0,0.0
+endgame-266,Heuristic Minimax,1,True,0.0008,36,MOVE_LEFT,0.0,0.0
+endgame-266,Heuristic Minimax,2,True,0.02,1008,MOVE_LEFT,0.0,0.0
+endgame-266,Heuristic Minimax,3,True,0.5841,29014,MOVE_LEFT,0.0,0.0
+endgame-266,Heuristic Alpha-Beta,1,True,0.0006,26,MOVE_LEFT,0.0,0.0
+endgame-266,Heuristic Alpha-Beta,2,True,0.0058,295,MOVE_LEFT,0.0,0.0
+endgame-266,Heuristic Alpha-Beta,3,True,0.0198,1157,MOVE_LEFT,0.0,0.0
 endgame-290,Random (expected),-,0.16666666666666666,0.0,0,,,
-endgame-290,Minimax,terminal,True,6.5799,1051446,MOVE_RIGHT,0.0,0.0
-endgame-290,Alpha-Beta,terminal,True,0.082,13652,MOVE_RIGHT,0.0,0.0
+endgame-290,Minimax,terminal,True,7.2497,1051446,MOVE_RIGHT,0.0,0.0
+endgame-290,Alpha-Beta,terminal,True,0.0849,13652,MOVE_RIGHT,0.0,0.0
 endgame-290,"Minimax (cutoff, EVAL = 0)",1,True,0.0003,43,MOVE_RIGHT,0.0,0.0
-endgame-290,"Minimax (cutoff, EVAL = 0)",2,True,0.0076,1201,MOVE_RIGHT,0.0,0.0
-endgame-290,"Minimax (cutoff, EVAL = 0)",3,True,0.2302,35239,MOVE_RIGHT,0.0,0.0
-endgame-290,"Alpha-Beta (cutoff, EVAL = 0)",1,True,0.0002,39,MOVE_RIGHT,0.0,0.0
-endgame-290,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.002,330,MOVE_RIGHT,0.0,0.0
-endgame-290,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0127,2207,MOVE_RIGHT,0.0,0.0
-endgame-290,Heuristic Minimax,1,True,0.0004,43,MOVE_RIGHT,0.0,0.0
-endgame-290,Heuristic Minimax,2,True,0.0125,1201,MOVE_RIGHT,0.0,0.0
-endgame-290,Heuristic Minimax,3,True,0.3615,35239,MOVE_RIGHT,0.0,0.0
-endgame-290,Heuristic Alpha-Beta,1,True,0.0003,23,MOVE_RIGHT,0.0,0.0
-endgame-290,Heuristic Alpha-Beta,2,True,0.0023,183,MOVE_RIGHT,0.0,0.0
-endgame-290,Heuristic Alpha-Beta,3,True,0.0222,1756,MOVE_RIGHT,0.0,0.0
+endgame-290,"Minimax (cutoff, EVAL = 0)",2,True,0.0078,1201,MOVE_RIGHT,0.0,0.0
+endgame-290,"Minimax (cutoff, EVAL = 0)",3,True,0.2227,35239,MOVE_RIGHT,0.0,0.0
+endgame-290,"Alpha-Beta (cutoff, EVAL = 0)",1,True,0.0003,39,MOVE_RIGHT,0.0,0.0
+endgame-290,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0021,330,MOVE_RIGHT,0.0,0.0
+endgame-290,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0133,2207,MOVE_RIGHT,0.0,0.0
+endgame-290,Heuristic Minimax,1,True,0.0009,43,MOVE_RIGHT,0.0,0.0
+endgame-290,Heuristic Minimax,2,True,0.0238,1201,MOVE_RIGHT,0.0,0.0
+endgame-290,Heuristic Minimax,3,True,0.6991,35239,MOVE_RIGHT,0.0,0.0
+endgame-290,Heuristic Alpha-Beta,1,True,0.0008,33,MOVE_RIGHT,0.0,0.0
+endgame-290,Heuristic Alpha-Beta,2,True,0.0054,259,MOVE_RIGHT,0.0,0.0
+endgame-290,Heuristic Alpha-Beta,3,True,0.0185,1048,MOVE_RIGHT,0.0,0.0
 endgame-315,Random (expected),-,0.2,0.0,0,,,
-endgame-315,Minimax,terminal,True,3.7408,660598,MOVE_DOWN,0.0,0.0
-endgame-315,Alpha-Beta,terminal,True,0.0355,6717,MOVE_DOWN,0.0,0.0
+endgame-315,Minimax,terminal,True,4.0863,660598,MOVE_DOWN,0.0,0.0
+endgame-315,Alpha-Beta,terminal,True,0.0396,6717,MOVE_DOWN,0.0,0.0
 endgame-315,"Minimax (cutoff, EVAL = 0)",1,False,0.0002,31,MOVE_RIGHT,-999998.0,0.0
-endgame-315,"Minimax (cutoff, EVAL = 0)",2,True,0.0046,862,MOVE_DOWN,0.0,0.0
-endgame-315,"Minimax (cutoff, EVAL = 0)",3,True,0.1277,23638,MOVE_DOWN,0.0,0.0
+endgame-315,"Minimax (cutoff, EVAL = 0)",2,True,0.0051,862,MOVE_DOWN,0.0,0.0
+endgame-315,"Minimax (cutoff, EVAL = 0)",3,True,0.1533,23638,MOVE_DOWN,0.0,0.0
 endgame-315,"Alpha-Beta (cutoff, EVAL = 0)",1,False,0.0001,15,MOVE_RIGHT,-999998.0,0.0
-endgame-315,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0008,165,MOVE_DOWN,0.0,0.0
-endgame-315,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0052,1030,MOVE_DOWN,0.0,0.0
-endgame-315,Heuristic Minimax,1,False,0.0003,31,MOVE_UP,-999998.0,0.0
-endgame-315,Heuristic Minimax,2,True,0.008,862,MOVE_DOWN,0.0,0.0
-endgame-315,Heuristic Minimax,3,True,0.2198,23638,MOVE_DOWN,0.0,0.0
-endgame-315,Heuristic Alpha-Beta,1,False,0.0002,19,MOVE_UP,-999998.0,0.0
-endgame-315,Heuristic Alpha-Beta,2,True,0.0015,131,MOVE_DOWN,0.0,0.0
-endgame-315,Heuristic Alpha-Beta,3,True,0.0072,575,MOVE_DOWN,0.0,0.0
+endgame-315,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0009,165,MOVE_DOWN,0.0,0.0
+endgame-315,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0056,1030,MOVE_DOWN,0.0,0.0
+endgame-315,Heuristic Minimax,1,False,0.0007,31,MOVE_UP,-999998.0,0.0
+endgame-315,Heuristic Minimax,2,True,0.0163,862,MOVE_DOWN,0.0,0.0
+endgame-315,Heuristic Minimax,3,True,0.4398,23638,MOVE_DOWN,0.0,0.0
+endgame-315,Heuristic Alpha-Beta,1,False,0.0004,19,MOVE_UP,-999998.0,0.0
+endgame-315,Heuristic Alpha-Beta,2,True,0.0033,187,MOVE_DOWN,0.0,0.0
+endgame-315,Heuristic Alpha-Beta,3,True,0.0087,532,MOVE_DOWN,0.0,0.0
 endgame-362,Random (expected),-,0.2,0.0,0,,,
-endgame-362,Minimax,terminal,True,3.4046,596601,MOVE_DOWN,0.0,0.0
-endgame-362,Alpha-Beta,terminal,True,0.0409,7556,MOVE_DOWN,0.0,0.0
+endgame-362,Minimax,terminal,True,4.1499,596601,MOVE_DOWN,0.0,0.0
+endgame-362,Alpha-Beta,terminal,True,0.0435,7556,MOVE_DOWN,0.0,0.0
 endgame-362,"Minimax (cutoff, EVAL = 0)",1,False,0.0002,31,MOVE_LEFT,-999998.0,0.0
-endgame-362,"Minimax (cutoff, EVAL = 0)",2,True,0.0044,835,MOVE_DOWN,0.0,0.0
-endgame-362,"Minimax (cutoff, EVAL = 0)",3,True,0.1253,22156,MOVE_DOWN,0.0,0.0
-endgame-362,"Alpha-Beta (cutoff, EVAL = 0)",1,False,0.0002,15,MOVE_LEFT,-999998.0,0.0
-endgame-362,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0015,154,MOVE_DOWN,0.0,0.0
-endgame-362,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0061,1141,MOVE_DOWN,0.0,0.0
-endgame-362,Heuristic Minimax,1,False,0.0003,31,MOVE_UP,-999998.0,0.0
-endgame-362,Heuristic Minimax,2,True,0.0082,835,MOVE_DOWN,0.0,0.0
-endgame-362,Heuristic Minimax,3,True,0.2217,22156,MOVE_DOWN,0.0,0.0
-endgame-362,Heuristic Alpha-Beta,1,False,0.0002,15,MOVE_UP,-999998.0,0.0
-endgame-362,Heuristic Alpha-Beta,2,True,0.0016,137,MOVE_DOWN,0.0,0.0
-endgame-362,Heuristic Alpha-Beta,3,True,0.0079,665,MOVE_DOWN,0.0,0.0
+endgame-362,"Minimax (cutoff, EVAL = 0)",2,True,0.0047,835,MOVE_DOWN,0.0,0.0
+endgame-362,"Minimax (cutoff, EVAL = 0)",3,True,0.1296,22156,MOVE_DOWN,0.0,0.0
+endgame-362,"Alpha-Beta (cutoff, EVAL = 0)",1,False,0.0001,15,MOVE_LEFT,-999998.0,0.0
+endgame-362,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0009,154,MOVE_DOWN,0.0,0.0
+endgame-362,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0065,1141,MOVE_DOWN,0.0,0.0
+endgame-362,Heuristic Minimax,1,False,0.001,31,MOVE_UP,-999998.0,0.0
+endgame-362,Heuristic Minimax,2,True,0.0168,835,MOVE_DOWN,0.0,0.0
+endgame-362,Heuristic Minimax,3,True,0.4367,22156,MOVE_DOWN,0.0,0.0
+endgame-362,Heuristic Alpha-Beta,1,False,0.0004,15,MOVE_UP,-999998.0,0.0
+endgame-362,Heuristic Alpha-Beta,2,True,0.0037,208,MOVE_DOWN,0.0,0.0
+endgame-362,Heuristic Alpha-Beta,3,True,0.0108,726,MOVE_DOWN,0.0,0.0
 endgame-377,Random (expected),-,0.16666666666666666,0.0,0,,,
-endgame-377,Minimax,terminal,True,5.4311,885522,MOVE_LEFT,0.0,0.0
-endgame-377,Alpha-Beta,terminal,True,0.0274,5336,MOVE_LEFT,0.0,0.0
+endgame-377,Minimax,terminal,True,6.3281,885522,MOVE_LEFT,0.0,0.0
+endgame-377,Alpha-Beta,terminal,True,0.03,5336,MOVE_LEFT,0.0,0.0
 endgame-377,"Minimax (cutoff, EVAL = 0)",1,True,0.0002,37,MOVE_LEFT,0.0,0.0
-endgame-377,"Minimax (cutoff, EVAL = 0)",2,True,0.0058,957,MOVE_LEFT,0.0,0.0
-endgame-377,"Minimax (cutoff, EVAL = 0)",3,True,0.1675,28969,MOVE_LEFT,0.0,0.0
+endgame-377,"Minimax (cutoff, EVAL = 0)",2,True,0.0064,957,MOVE_LEFT,0.0,0.0
+endgame-377,"Minimax (cutoff, EVAL = 0)",3,True,0.1852,28969,MOVE_LEFT,0.0,0.0
 endgame-377,"Alpha-Beta (cutoff, EVAL = 0)",1,True,0.0001,21,MOVE_LEFT,0.0,0.0
-endgame-377,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0008,144,MOVE_LEFT,0.0,0.0
-endgame-377,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0044,881,MOVE_LEFT,0.0,0.0
-endgame-377,Heuristic Minimax,1,True,0.0004,37,MOVE_LEFT,0.0,0.0
-endgame-377,Heuristic Minimax,2,True,0.0097,957,MOVE_LEFT,0.0,0.0
-endgame-377,Heuristic Minimax,3,True,0.2851,28969,MOVE_LEFT,0.0,0.0
-endgame-377,Heuristic Alpha-Beta,1,True,0.0002,21,MOVE_LEFT,0.0,0.0
-endgame-377,Heuristic Alpha-Beta,2,True,0.0016,124,MOVE_LEFT,0.0,0.0
-endgame-377,Heuristic Alpha-Beta,3,True,0.011,879,MOVE_LEFT,0.0,0.0
+endgame-377,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0009,144,MOVE_LEFT,0.0,0.0
+endgame-377,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0049,881,MOVE_LEFT,0.0,0.0
+endgame-377,Heuristic Minimax,1,True,0.0008,37,MOVE_LEFT,0.0,0.0
+endgame-377,Heuristic Minimax,2,True,0.0199,957,MOVE_LEFT,0.0,0.0
+endgame-377,Heuristic Minimax,3,True,0.5819,28969,MOVE_LEFT,0.0,0.0
+endgame-377,Heuristic Alpha-Beta,1,True,0.0007,29,MOVE_LEFT,0.0,0.0
+endgame-377,Heuristic Alpha-Beta,2,True,0.0043,197,MOVE_LEFT,0.0,0.0
+endgame-377,Heuristic Alpha-Beta,3,True,0.02,1104,MOVE_LEFT,0.0,0.0
 endgame-395,Random (expected),-,0.2,0.0,0,,,
-endgame-395,Minimax,terminal,True,4.6817,754398,MOVE_DOWN,0.0,0.0
-endgame-395,Alpha-Beta,terminal,True,0.0265,4892,MOVE_DOWN,0.0,0.0
+endgame-395,Minimax,terminal,True,5.0322,754398,MOVE_DOWN,0.0,0.0
+endgame-395,Alpha-Beta,terminal,True,0.0292,4892,MOVE_DOWN,0.0,0.0
 endgame-395,"Minimax (cutoff, EVAL = 0)",1,True,0.0002,31,MOVE_DOWN,0.0,0.0
-endgame-395,"Minimax (cutoff, EVAL = 0)",2,True,0.0048,821,MOVE_DOWN,0.0,0.0
-endgame-395,"Minimax (cutoff, EVAL = 0)",3,True,0.1493,24685,MOVE_DOWN,0.0,0.0
+endgame-395,"Minimax (cutoff, EVAL = 0)",2,True,0.0053,821,MOVE_DOWN,0.0,0.0
+endgame-395,"Minimax (cutoff, EVAL = 0)",3,True,0.1568,24685,MOVE_DOWN,0.0,0.0
 endgame-395,"Alpha-Beta (cutoff, EVAL = 0)",1,True,0.0001,19,MOVE_DOWN,0.0,0.0
 endgame-395,"Alpha-Beta (cutoff, EVAL = 0)",2,True,0.0008,140,MOVE_DOWN,0.0,0.0
-endgame-395,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0045,844,MOVE_DOWN,0.0,0.0
-endgame-395,Heuristic Minimax,1,True,0.0003,31,MOVE_DOWN,0.0,0.0
-endgame-395,Heuristic Minimax,2,True,0.008,821,MOVE_DOWN,0.0,0.0
-endgame-395,Heuristic Minimax,3,True,0.2466,24685,MOVE_DOWN,0.0,0.0
-endgame-395,Heuristic Alpha-Beta,1,True,0.0002,19,MOVE_DOWN,0.0,0.0
-endgame-395,Heuristic Alpha-Beta,2,True,0.0019,151,MOVE_DOWN,0.0,0.0
-endgame-395,Heuristic Alpha-Beta,3,True,0.0135,1066,MOVE_DOWN,0.0,0.0
+endgame-395,"Alpha-Beta (cutoff, EVAL = 0)",3,True,0.0047,844,MOVE_DOWN,0.0,0.0
+endgame-395,Heuristic Minimax,1,True,0.0006,31,MOVE_DOWN,0.0,0.0
+endgame-395,Heuristic Minimax,2,True,0.0158,821,MOVE_DOWN,0.0,0.0
+endgame-395,Heuristic Minimax,3,True,0.4825,24685,MOVE_DOWN,0.0,0.0
+endgame-395,Heuristic Alpha-Beta,1,True,0.0006,27,MOVE_DOWN,0.0,0.0
+endgame-395,Heuristic Alpha-Beta,2,True,0.0046,226,MOVE_DOWN,0.0,0.0
+endgame-395,Heuristic Alpha-Beta,3,True,0.0246,1404,MOVE_DOWN,0.0,0.0

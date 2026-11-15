@@ -52,8 +52,8 @@ Copy-Item (Join-Path $PSScriptRoot "README.md") (Join-Path $sourceDir "REAME.md"
 # Gop requirement.txt cho source/
 $reqMerged = @(
     "python-sat>=0.1.8.dev1",
-    "pygame>=2.5.0",
-    "matplotlib>=3.5.0"
+    "pygame>=2.1",
+    "matplotlib>=3.3"
 )
 $reqMerged | Set-Content (Join-Path $sourceDir "requirement.txt")
 $reqMerged | Set-Content (Join-Path $sourceDir "requirements.txt")

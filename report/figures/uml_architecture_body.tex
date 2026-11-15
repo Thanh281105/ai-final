@@ -1,0 +1,109 @@
+% Class diagram shared by report.tex (\input inside a figure) and by the standalone uml_architecture.tex.
+% Needs: \usepackage{tikz} and \usetikzlibrary{shapes.multipart,positioning,arrows.meta,fit,calc}
+\begin{tikzpicture}[
+    scale=0.76, every node/.style={transform shape},
+    class/.style={
+        draw=blue!80!black, line width=0.6pt, rectangle split, rectangle split parts=2,
+        fill=blue!3, rounded corners=1pt,
+        text width=4.5cm, font=\scriptsize\sffamily
+    },
+    abstract/.style={
+        draw=orange!80!black, line width=0.6pt, rectangle split, rectangle split parts=2,
+        fill=orange!5, rounded corners=1pt,
+        text width=4.5cm, font=\scriptsize\sffamily
+    },
+    interf/.style={
+        draw=green!60!black, line width=0.6pt, rectangle split, rectangle split parts=1,
+        fill=green!4, rounded corners=1pt, dashed,
+        text width=4.3cm, font=\scriptsize\sffamily, align=center
+    },
+    arrow/.style={-{Latex[length=2mm]}, thick, draw=gray!80!black},
+    inherit/.style={-{Triangle[open,length=2.5mm]}, thick, draw=orange!80!black},
+    comp/.style={{Diamond[fill=black,length=2.5mm]}-, thick, draw=blue!80!black},
+    pack/.style={draw=gray!50, rounded corners=3pt, inner sep=6pt, dashed, line width=0.5pt}
+]
+
+% ==================== COLUMN 1: TASK 1 ====================
+\node[class] (cnf) at (0, 0) {
+    \textbf{NQueensCNF}
+    \nodepart{two}
+    + n: int, groups: List[ConstraintGroup]\\
+    + iter\_clauses(): Iterator[Clause]\\
+    + expected\_clause\_count(n): int
+};
+
+\node[class, below=0.6cm of cnf] (minconf) {
+    \textbf{MinConflictsSolver}
+    \nodepart{two}
+    - initializer: Initializer\\
+    - var\_selector: VariableSelector\\
+    - value\_selector: ValueSelector\\
+    + solve(n, seed): MinConflictsResult
+};
+
+\node[interf, below=0.5cm of minconf] (ivar) {
+    $\ll\text{abstract}\gg$ \textbf{VariableSelector}\\
+    \textit{+ select(state, rng): int}\\
+    \tiny [RandomConflictedSelector / MostConflictedTabuSelector]
+};
+
+\draw[comp] (minconf) -- (ivar);
+\node[pack, fit=(cnf) (minconf) (ivar), label={[font=\bfseries\scriptsize,text=blue!70!black]above:\shortstack{Task 1: N-Queens\\(SAT \& Local Search)}}] (t1pack) {};
+
+% ==================== COLUMN 2: TASK 2 ====================
+\node[class, right=1.3cm of cnf] (gstate) {
+    \textbf{GameState}
+    \nodepart{two}
+    + tanks, bases, bullets, walls, turn\\
+    + next\_state(a1, a2): GameState\\
+    + legal\_actions(p): List[Action]
+};
+
+\node[abstract, below=0.6cm of gstate] (bagent) {
+    \textit{$\ll\text{abstract}\gg$ \textbf{BaseAgent}}
+    \nodepart{two}
+    + player: int\\
+    \textit{+ choose\_action(state): Action}
+};
+
+\node[class, below=0.6cm of bagent] (advagent) {
+    \textbf{AdversarialSearchAgent}
+    \nodepart{two}
+    - depth, use\_alpha\_beta, use\_tt\\
+    - evaluator: HeuristicEvaluator\\
+    - \_max\_value() / \_min\_value()
+};
+
+\draw[inherit] (advagent) -- (bagent);
+\draw[arrow] (advagent.east) -- ++(0.4, 0) |- node[pos=0.25,right,font=\tiny]{queries} (gstate.east);
+\node[pack, fit=(gstate) (bagent) (advagent), label={[font=\bfseries\scriptsize,text=blue!70!black]above:\shortstack{Task 2: Tank Battle\\(Adversarial Search)}}] (t2pack) {};
+
+% ==================== COLUMN 3: TASK 3 ====================
+\node[class, right=1.3cm of gstate] (kboard) {
+    \textbf{KakuroCSP}
+    \nodepart{two}
+    + variables: List[Cell]\\
+    + constraints: List[SumAllDiffConstraint]\\
+    + neighbors: Dict[Cell, Set[Cell]]
+};
+
+\node[class, below=0.6cm of kboard] (btsolver) {
+    \textbf{BacktrackingSolver}
+    \nodepart{two}
+    - csp: KakuroCSP\\
+    - inference: Inference\\
+    - variable\_order: VariableOrdering\\
+    + solve(): SolveResult
+};
+
+\node[interf, below=0.5cm of btsolver] (iinf) {
+    $\ll\text{abstract}\gg$ \textbf{Inference}\\
+    \textit{+ infer(solver, var): bool}\\
+    \tiny [NoInference / ForwardChecking / MAC]
+};
+
+\draw[comp] (btsolver) -- (kboard);
+\draw[comp] (btsolver) -- (iinf);
+\node[pack, fit=(kboard) (btsolver) (iinf), label={[font=\bfseries\scriptsize,text=blue!70!black]above:\shortstack{Task 3: Kakuro\\(Constraint Satisfaction)}}] (t3pack) {};
+
+\end{tikzpicture}

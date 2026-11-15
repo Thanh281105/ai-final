@@ -59,6 +59,13 @@ class CNFTests(unittest.TestCase):
         seen = [frozenset(c) for g in cnf.groups[1:] for c in g.clauses]
         self.assertEqual(len(seen), len(set(seen)))
 
+    def test_column_alo_adds_exactly_n_clauses(self):
+        for n in range(1, 10):
+            cnf = NQueensCNF(n, column_alo=True)
+            self.assertEqual(cnf.num_clauses, NQueensCNF(n).num_clauses + n)
+            self.assertEqual(cnf.num_clauses, NQueensCNF.expected_clause_count(n, column_alo=True))
+            self.assertEqual(cnf.groups[-1].key, "col_alo")
+
     def test_variable_mapping_roundtrip(self):
         cnf = NQueensCNF(5)
         for r in range(5):
@@ -165,6 +172,38 @@ class SATTests(unittest.TestCase):
 
         for n in (2, 3):
             self.assertFalse(GlucoseQueensSolver().solve(n).satisfiable)
+
+    def _models(self, n, column_alo):
+        from pysat.solvers import Glucose3
+
+        cnf = NQueensCNF(n, column_alo=column_alo)
+        solver = Glucose3(bootstrap_with=cnf.iter_clauses())
+        try:
+            return {frozenset(v for v in model if v > 0) for model in solver.enum_models()}
+        finally:
+            solver.delete()
+
+    def test_models_are_exactly_the_n_queens_solutions(self):
+        """Mỗi mô hình của KB là một lời giải N-Queens và ngược lại (số lời giải đã biết)."""
+        known = {1: 1, 2: 0, 3: 0, 4: 2, 5: 10, 6: 4, 7: 40, 8: 92}
+        for n, count in known.items():
+            models = self._models(n, column_alo=False)
+            self.assertEqual(len(models), count, n)
+            for model in models:
+                self.assertTrue(Board.from_model(n, model).is_solution(), n)
+
+    def test_column_alo_is_entailed_by_the_kb(self):
+        """Thêm "mỗi cột ít nhất một hậu" không đổi tập mô hình (KB ⊨ mệnh đề đó)."""
+        for n in range(1, 9):
+            self.assertEqual(self._models(n, column_alo=False), self._models(n, column_alo=True), n)
+
+    def test_column_alo_solutions_are_valid(self):
+        from nqueens_solver.core import GlucoseQueensSolver
+
+        for n in (4, 8, 16, 30):
+            res = GlucoseQueensSolver().solve(n, column_alo=True)
+            self.assertTrue(res.satisfiable and res.valid, n)
+            self.assertEqual(res.num_clauses, (5 * n ** 3 - 6 * n ** 2 + 7 * n) // 3)
 
 
 if __name__ == "__main__":

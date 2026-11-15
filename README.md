@@ -8,9 +8,9 @@ Ba task nằm ở ba thư mục độc lập, mỗi task có môi trường ảo
 | 2 | `task2/` | Tank Battle: Minimax, Alpha-Beta, Heuristic Minimax | PyGame |
 | 3 | `task3/` | Kakuro: CSP, Backtracking + lan truyền ràng buộc | PyGame |
 
-## Chạy nhanh trên máy này (đã cài sẵn)
+## Chạy nhanh
 
-Máy này đã có môi trường ảo cho cả ba task, không cần cài gì thêm. Mở Terminal tại thư mục chứa file README này, dán từng lệnh sau; mỗi lệnh mở một giao diện, nên dùng một tab Terminal riêng cho mỗi task (`Cmd + T`).
+Trên máy mới, làm **mục 1 (Cài đặt)** một lần trước: gói nộp không kèm thư mục `.venv`. Sau đó mở Terminal tại thư mục chứa file README này, dán từng lệnh sau; mỗi lệnh mở một giao diện, nên dùng một tab Terminal riêng cho mỗi task (`Cmd + T`).
 
 ```bash
 # Task 1: N-Queens (mở trong cửa sổ Chrome)
@@ -24,8 +24,6 @@ cd task3 && .venv/bin/python main.py
 ```
 
 Tắt giao diện: đóng cửa sổ, hoặc bấm `Ctrl + C` trong Terminal. Thao tác trong từng giao diện xem mục 3.
-
-Các mục 1 và 2 bên dưới chỉ cần khi chạy trên máy khác.
 
 Yêu cầu: Python 3.8 trở lên. Task 1 cần thêm Google Chrome hoặc Edge để mở giao diện ở dạng cửa sổ riêng (không có thì mở bằng trình duyệt mặc định).
 
@@ -45,8 +43,8 @@ Kiểm tra nhanh trước giờ demo (cả ba dòng phải in `OK`):
 
 ```bash
 (cd task1 && .venv/bin/python -m unittest discover -s tests 2>&1 | tail -1)
-(cd task2 && .venv/bin/python -m unittest discover tests 2>&1 | tail -1)
-(cd task3 && .venv/bin/python -m unittest discover tests 2>&1 | tail -1)
+(cd task2 && .venv/bin/python -m unittest discover -s tests 2>&1 | tail -1)
+(cd task3 && .venv/bin/python -m unittest discover -s tests 2>&1 | tail -1)
 ```
 
 ## 2. Mở giao diện
@@ -70,9 +68,9 @@ cd task3 && .venv/bin/python main.py      # Task 3
 | 3 | Tab **Min-Conflicts**: nhập N và seed, bấm chạy; hai bàn cờ xuất phát từ cùng một trạng thái, chỉ khác bước chọn biến | 3 |
 | 4 | Tab **Thực nghiệm**: bảng và biểu đồ so sánh bản chuẩn với heuristic chọn biến | 3 |
 
-Lưu ý khi demo bước 3: một seed đơn lẻ có thể cho heuristic nhiều bước hơn bản chuẩn. Kết luận lấy từ bảng 50 lần chạy ở bước 4.
+Lưu ý khi demo bước 3: một seed đơn lẻ có thể cho heuristic nhiều bước hơn bản chuẩn. Kết luận lấy từ bảng 200 lần chạy ở bước 4.
 
-Chạy lại thực nghiệm từ dòng lệnh (khoảng 2–5 phút, chậm nhất là Glucose3 với N = 80 và 100):
+Chạy lại thực nghiệm từ dòng lệnh (khoảng 5–10 phút, chậm nhất là Glucose3 với N = 80 và 100):
 
 ```bash
 cd task1 && .venv/bin/python main.py experiments --no-gui
@@ -84,9 +82,9 @@ Lý thuyết: `task1/docs/BAO_CAO.md`. Số liệu: `task1/results/report.md`.
 
 | Bước | Thao tác | Yêu cầu của đề |
 |---|---|---|
-| 1 | Menu mặc định: P1 = `Heuristic Alpha-Beta`, P2 = `Minimax` (cắt độ sâu, không heuristic), map `classic`, rồi `Enter`. Bên có heuristic thắng sau khoảng 25 chu kỳ | 1, 2, 3 |
+| 1 | Menu mặc định: P1 = `Heuristic Alpha-Beta`, P2 = `Minimax (cutoff, EVAL = 0)` (cắt độ sâu, không heuristic), map `classic`, rồi `Enter`. Bên có heuristic thắng sau khoảng 25 chu kỳ | 1, 2, 3 |
 | 2 | Trong trận, chỉ vào thẻ của từng bên: số nút đã thăm, số lần cắt tỉa, độ sâu (chu kỳ và ply), giá trị minimax | 2 |
-| 3 | `Esc` về menu, đổi P2 = `Heuristic Minimax`: hai bên chơi ngang nhau nhưng Alpha-Beta thăm ít nút hơn nhiều. Vì bản đồ đối xứng và hai bên cùng hàm EVAL, ván này thường kết thúc hòa do hai xe bắn hạ nhau cùng lúc | 2 |
+| 3 | `Esc` về menu, đổi P2 = `Heuristic Minimax`: cùng hàm EVAL nhưng Alpha-Beta thăm ít nút hơn nhiều nên trong 50 ms tìm sâu hơn (3–4 chu kỳ so với 2) | 2 |
 | 4 | Đổi P2 = `Example: Sniper` (agent nạp từ thư mục `plugins/`) để minh họa cơ chế nhập agent của nhóm khác | 3 |
 | 5 | Chọn P1 = `Human` nếu thầy muốn tự chơi: phím mũi tên, `Space` bắn, `Enter` đứng yên | 3 |
 
@@ -101,7 +99,7 @@ cd task2
 .venv/bin/python arena.py --list                                            # danh sách agent, kể cả plugin
 .venv/bin/python arena.py --p1 "Heuristic Alpha-Beta" --p2 Random --map duel --games 3 --swap
 .venv/bin/python experiments.py --quick                                     # thực nghiệm rút gọn, vài phút
-.venv/bin/python experiments.py                                             # đầy đủ, khoảng 15-25 phút
+.venv/bin/python experiments.py                                             # đầy đủ, khoảng 20-30 phút
 ```
 
 Lý thuyết: `task2/docs/formulation.md`. Số liệu: `task2/results/summary.md`.
@@ -142,7 +140,7 @@ Cả ba task đo chi phí bằng các đại lượng của lý thuyết; số g
 | Task | Thời gian | Không gian |
 |---|---|---|
 | 1 | Số mệnh đề CNF; decisions, propagations, conflicts của Glucose3; số bước lặp của Min-Conflicts | — |
-| 2 | Số nút của cây trò chơi đã thăm, hệ số phân nhánh hiệu dụng b* | Độ sâu lớn nhất đã tới (O(b·m)) |
+| 2 | Số nút của cây trò chơi đã thăm, hệ số phân nhánh hiệu dụng b* | Số nút giữ cùng lúc nhiều nhất (peak memory, O(b·m)) và số entry của bảng chuyển vị |
 | 3 | Số nút của cây tìm kiếm, số lần quay lui, số lần kiểm tra ràng buộc | Độ sâu lớn nhất (O(n)) và độ dài trail lớn nhất (O(n·d)) |
 
 ## 5. Khi gặp lỗi
@@ -155,4 +153,4 @@ Cả ba task đo chi phí bằng các đại lượng của lý thuyết; số g
 | Cửa sổ PyGame không nhận phím | Click vào cửa sổ một lần để nó nhận focus; tắt bộ gõ tiếng Việt |
 | Task 2 chạy quá nhanh hoặc quá chậm | Phím `+`/`-` trong trận, hoặc dòng "Pause between cycles" ở menu |
 
-Trước khi nộp: không nén kèm các thư mục `.venv`, `.venv-windows-old`, `__pycache__` và `.git`.
+Đóng gói để nộp: `./package_submission.sh <Mã nhóm> <MSSV>` (macOS/Linux) hoặc `.\package_submission.ps1 -GroupId <Mã nhóm> -StudentId <MSSV>` (Windows). Script tạo `AI_final_<Mã nhóm>_<MSSV>.zip` đúng cấu trúc đề yêu cầu và bỏ qua `.venv`, `.venv-windows-old`, `__pycache__`, `.git`. Nhớ điền link video vào `demo.txt` trước khi đóng gói.

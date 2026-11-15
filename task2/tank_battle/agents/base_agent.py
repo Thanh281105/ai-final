@@ -13,6 +13,10 @@ class SearchStats:
         self.cutoffs = 0        # alpha-beta prunings
         self.depth = 0          # deepest fully completed search depth (in game cycles)
         self.max_ply = 0        # deepest ply reached (1 cycle = 2 plies)
+        self.peak_memory = 0    # most nodes held at once: nodes on the current path + their untried
+                                # successors (depth-first search: O(b*m))
+        self.tt_entries = 0     # transposition-table entries stored at the end of the search
+        self.tt_hits = 0        # transposition-table lookups that could be used
         self.time = 0.0         # seconds
         self.value = None       # minimax value of the chosen move
         self.timed_out = False

@@ -29,7 +29,9 @@ Hai hậu tại a = (r₁,c₁) và b = (r₂,c₂) tấn công nhau khi và ch�
 | 4 | Mỗi đường chéo chính có nhiều nhất một hậu | `x(a) ⇒ ¬x(b)` với mọi cặp ô cùng r − c |
 | 5 | Mỗi đường chéo phụ có nhiều nhất một hậu | `x(a) ⇒ ¬x(b)` với mọi cặp ô cùng r + c |
 
-**Vì sao chừng đó là đủ.** Từ (1) và (2), mỗi hàng có đúng một hậu, nên trên bàn có đúng N hậu. Có N hậu trên N cột mà theo (3) mỗi cột nhiều nhất một hậu, nên mỗi cột cũng có đúng một hậu (nguyên lý chuồng bồ câu). Do đó không cần viết thêm "mỗi cột ít nhất một hậu". Đường chéo thì chỉ cần "nhiều nhất một", vì có đường chéo không chứa hậu nào.
+**Vì sao chừng đó là đủ.** Từ (1) và (2), mỗi hàng có đúng một hậu, nên trên bàn có đúng N hậu. Có N hậu trên N cột mà theo (3) mỗi cột nhiều nhất một hậu, nên mỗi cột cũng có đúng một hậu (nguyên lý chuồng bồ câu). Do đó không cần viết thêm "mỗi cột ít nhất một hậu": KB đã **suy ra** (entail) mệnh đề đó. Đường chéo thì chỉ cần "nhiều nhất một", vì có đường chéo không chứa hậu nào. Mục 2.4 cho thấy thêm nhóm mệnh đề dư thừa này tuy không đổi tập mô hình nhưng giúp solver suy diễn nhanh hơn nhiều khi N lớn.
+
+**Tương ứng một-một giữa mô hình và lời giải.** Test `test_models_are_exactly_the_n_queens_solutions` liệt kê **toàn bộ** mô hình của KB với N = 1..8 và được đúng 1, 0, 0, 2, 10, 4, 40, 92 mô hình, bằng số lời giải N-Queens đã biết; mọi mô hình đều giải mã thành một bàn cờ hợp lệ.
 
 ### 1.3 Thuật toán phát hiện ràng buộc
 
@@ -122,28 +124,51 @@ Glucose3 là solver kiểu DPLL có học mệnh đề (CDCL). Liên hệ với 
 
 | N | Số ký hiệu | Số mệnh đề CNF | Solve (ms) | Decisions | Propagations | Conflicts |
 |---:|---:|---:|---:|---:|---:|---:|
-| 4 | 16 | 80 | 0.02 | 10 | 32 | 3 |
+| 4 | 16 | 80 | 0.01 | 10 | 32 | 3 |
 | 6 | 36 | 296 | 0.06 | 73 | 349 | 38 |
-| 8 | 64 | 736 | 0.03 | 40 | 194 | 12 |
+| 8 | 64 | 736 | 0.04 | 40 | 194 | 12 |
 | 10 | 100 | 1 480 | 0.12 | 100 | 677 | 45 |
-| 12 | 144 | 2 608 | 0.08 | 71 | 409 | 19 |
-| 16 | 256 | 6 336 | 1.00 | 482 | 3 904 | 207 |
-| 20 | 400 | 12 560 | 4.05 | 953 | 11 198 | 531 |
-| 24 | 576 | 21 920 | 3.39 | 891 | 9 866 | 431 |
-| 30 | 900 | 43 240 | 7.23 | 1 588 | 18 144 | 649 |
-| 40 | 1 600 | 103 520 | 4.20 | 1 500 | 13 370 | 296 |
-| 50 | 2 500 | 203 400 | 251.70 | 11 452 | 277 349 | 7 519 |
-| 60 | 3 600 | 352 880 | 40.24 | 5 475 | 74 396 | 1 341 |
-| 80 | 6 400 | 840 640 | 10 055.50 | 138 947 | 4 168 619 | 104 415 |
-| 100 | 10 000 | 1 646 800 | 8 120.31 | 91 881 | 5 499 245 | 70 981 |
+| 12 | 144 | 2 608 | 0.06 | 71 | 409 | 19 |
+| 16 | 256 | 6 336 | 1.02 | 482 | 3 904 | 207 |
+| 20 | 400 | 12 560 | 4.15 | 953 | 11 198 | 531 |
+| 24 | 576 | 21 920 | 3.47 | 891 | 9 866 | 431 |
+| 30 | 900 | 43 240 | 7.40 | 1 588 | 18 144 | 649 |
+| 40 | 1 600 | 103 520 | 4.29 | 1 500 | 13 370 | 296 |
+| 50 | 2 500 | 203 400 | 260.85 | 11 452 | 277 349 | 7 519 |
+| 60 | 3 600 | 352 880 | 42.33 | 5 475 | 74 396 | 1 341 |
+| 80 | 6 400 | 840 640 | 10295.79 | 138 947 | 4 168 619 | 104 415 |
+| 100 | 10 000 | 1 646 800 | 8232.98 | 91 881 | 5 499 245 | 70 981 |
 
-Thời gian đo trên macOS 15.5, Apple Silicon, Python 3.9; trên máy khác số mili-giây sẽ khác, còn các cột đếm thì giữ nguyên. Mọi lời giải đều qua được bộ kiểm tra độc lập.
+Thời gian đo trên macOS 15.5, Apple Silicon (M1), Python 3.9; trên máy khác số mili-giây sẽ khác, còn các cột đếm thì giữ nguyên. Mọi lời giải đều qua được bộ kiểm tra độc lập.
 
 Nhận xét:
 
 - **Số mệnh đề tăng đúng theo Θ(N³)**: N tăng gấp đôi thì số mệnh đề tăng khoảng 8 lần (N = 40 → 80: 103 520 → 840 640, gấp 8.1 lần).
-- **Thời gian solve không tăng đơn điệu theo N.** N = 40 chỉ mất 4.2 ms trong khi N = 30 mất 7.2 ms; N = 80 chậm hơn N = 100. Lý do nằm ở cột Conflicts: thời gian đi theo số lần solver đoán sai chứ không đi theo kích thước công thức. N = 40 chỉ gặp 296 mâu thuẫn, N = 50 gặp 7 519. Số mâu thuẫn phụ thuộc vào thứ tự chọn ký hiệu của solver trên từng công thức cụ thể, nên có tính "may rủi".
-- **Xu hướng chung vẫn là tăng nhanh**: bài toán SAT thuộc lớp NP-đầy đủ, và từ N = 80 thời gian solve đã lên hàng giây. Min-Conflicts ở mục 3 giải N = 1000 trong khoảng 0.2 giây, vì nó khai thác được cấu trúc của N-Queens (lời giải phân bố dày đặc).
+- **Thời gian solve không tăng đơn điệu theo N.** N = 40 chỉ mất 4.3 ms trong khi N = 30 mất 7.4 ms; N = 80 chậm hơn N = 100. Lý do nằm ở cột Conflicts: thời gian đi theo số lần solver đoán sai chứ không đi theo kích thước công thức. N = 40 chỉ gặp 296 mâu thuẫn, N = 50 gặp 7 519. Số mâu thuẫn phụ thuộc vào thứ tự chọn ký hiệu của solver trên từng công thức cụ thể.
+- **Vì sao N = 80, 100 mất hàng giây.** SAT là NP-đầy đủ, nhưng đó là phát biểu về trường hợp xấu nhất; N-Queens không phải bài toán khó (Min-Conflicts ở mục 3 giải N = 1000 trong khoảng 0.2 giây). Nguyên nhân nằm ở cách mã hóa: KB chỉ nói "mỗi cột nhiều nhất một hậu", còn sự kiện "mỗi cột phải có một hậu" thì solver phải tự phát hiện qua các lần mâu thuẫn (đây là suy luận kiểu chuồng bồ câu, vốn khó với lan truyền đơn vị). Mục 2.4 kiểm chứng điều này.
+
+### 2.4 Ablation: thêm mệnh đề mà KB đã suy ra
+
+`NQueensCNF(n, column_alo=True)` thêm nhóm thứ sáu "mỗi cột có ít nhất một hậu": `x(0,c) ∨ x(1,c) ∨ … ∨ x(N−1,c)`, tức đúng N mệnh đề (tổng số mệnh đề thành (5N³ − 6N² + 7N)/3). Chạy bằng `python main.py satalo`; số liệu đầy đủ ở `results/report.md` mục 4.
+
+- **Không đổi bài toán.** KB gốc đã suy ra các mệnh đề này (KB ⊨ α, mục 1.2), nên hai KB có **cùng tập mô hình**. Test `test_column_alo_is_entailed_by_the_kb` liệt kê toàn bộ mô hình của hai KB với N = 1..8 và so sánh: hai tập bằng nhau.
+- **Vì sao solver nhanh hơn.** Lan truyền đơn vị (unit propagation) chỉ suy diễn trên từng mệnh đề. Với KB gốc, khi N − 1 ô của một cột đã False, không mệnh đề nào ép ô còn lại phải True; solver tiếp tục gán thử và chỉ gặp mâu thuẫn rất muộn. Có mệnh đề cột thì ô cuối cùng trở thành mệnh đề đơn vị và được suy ra ngay.
+
+| N | Mệnh đề (gốc) | Conflicts (gốc) | Solve gốc (ms) | Mệnh đề (+cột) | Conflicts (+cột) | Solve +cột (ms) |
+|---:|---:|---:|---:|---:|---:|---:|
+| 8 | 736 | 12 | 0.03 | 744 | 21 | 0.06 |
+| 16 | 6 336 | 207 | 0.99 | 6 352 | 952 | 7.52 |
+| 24 | 21 920 | 431 | 3.43 | 21 944 | 2 805 | 37.35 |
+| 30 | 43 240 | 649 | 7.32 | 43 270 | 137 | 1.27 |
+| 40 | 103 520 | 296 | 4.17 | 103 560 | 312 | 3.74 |
+| 50 | 203 400 | 7 519 | 250.36 | 203 450 | 250 | 3.49 |
+| 60 | 352 880 | 1 341 | 39.72 | 352 940 | 203 | 4.95 |
+| 80 | 840 640 | 104 415 | 9898.06 | 840 720 | 276 | 10.75 |
+| 100 | 1 646 800 | 70 981 | 8299.46 | 1 646 900 | 277 | 14.75 |
+
+- Với N ≥ 50, số mâu thuẫn giảm 7–380 lần: N = 80 từ 104 415 xuống 276 (khoảng 9.9 giây xuống 11 ms), N = 100 từ 70 981 xuống 277 (khoảng 8.3 giây xuống 15 ms).
+- Với N nhỏ thì không phải lúc nào cũng có lợi (N = 16: 207 → 952 mâu thuẫn; N = 24: 431 → 2 805), vì mệnh đề thêm vào làm đổi thứ tự chọn ký hiệu của solver; chênh lệch khi đó chỉ vài chục mili-giây.
+- Nhóm giữ KB tối thiểu ở mục 1 làm mô hình chính (đúng những ràng buộc cần và đủ), và đưa nhóm mệnh đề cột vào như một tùy chọn tối ưu cho N lớn.
 
 ## 3. Min-Conflicts và heuristic chọn biến (Requirement 3)
 
@@ -195,47 +220,52 @@ Chi phí mỗi bước vẫn là O(N), bằng bản chuẩn (cùng một lần q
 ### 3.4 Thiết kế thực nghiệm
 
 - **Chỉ thay đổi một yếu tố.** Hai cấu hình dùng chung cách khởi tạo (ngẫu nhiên), chung cách chọn giá trị (min-conflicts), không khởi động lại; chỉ khác bước chọn biến. Test `test_heuristic_differs_from_standard_only_in_variable_selection` kiểm tra điều này.
-- **Cùng điểm xuất phát.** Với mỗi N, hai cấu hình chạy 50 lần trên cùng bộ seed, nên ở mỗi seed chúng bắt đầu từ cùng một phép gán ban đầu.
+- **Cùng điểm xuất phát.** Với mỗi N, hai cấu hình chạy 200 lần trên cùng bộ seed, nên ở mỗi seed chúng bắt đầu từ cùng một phép gán ban đầu.
 - **Thước đo.** Thước đo chính là **số bước lặp** của MIN-CONFLICTS cho đến khi tìm ra lời giải (mỗi bước = một lần gán lại một biến; đây chính là đại lượng `max_steps` giới hạn trong thuật toán). Báo cáo cả trung bình, trung vị và giá trị lớn nhất, cùng **tỉ lệ thành công** trong giới hạn 100 000 bước. Thời gian chạy là số liệu phụ.
 
-### 3.5 Kết quả (50 lần chạy mỗi N)
+### 3.5 Kết quả (200 lần chạy mỗi N)
 
 | N | Thành công: chuẩn | Thành công: heuristic | Bước trung vị: chuẩn | Bước trung vị: heuristic | Tỉ lệ | Bước TB: chuẩn | Bước TB: heuristic |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 8 | 94% | 94% | 32.0 | 18.0 | 56% | 6 073.6 | 6 028.4 |
-| 16 | 100% | 98% | 73.5 | 44.5 | 61% | 89.7 | 2 049.0 |
-| 32 | 100% | 100% | 76.0 | 46.5 | 61% | 86.8 | 47.3 |
-| 64 | 100% | 100% | 98.5 | 70.5 | 72% | 107.9 | 71.7 |
-| 128 | 100% | 100% | 145.5 | 107.0 | 74% | 150.7 | 108.9 |
-| 256 | 100% | 100% | 233.0 | 169.0 | 73% | 240.0 | 172.8 |
-| 512 | 100% | 100% | 404.5 | 294.0 | 73% | 407.7 | 296.1 |
-| 1000 | 100% | 100% | 710.5 | 539.0 | 76% | 716.2 | 540.7 |
+| 8 | 92.5% | 95% | 35.5 | 19.0 | 54% | 7 566.8 | 5 029.9 |
+| 16 | 99% | 97.5% | 66.0 | 34.5 | 52% | 1 087.3 | 2 544.8 |
+| 32 | 100% | 100% | 76.5 | 46.0 | 60% | 90.3 | 51.9 |
+| 64 | 100% | 100% | 98.0 | 67.0 | 68% | 108.7 | 70.0 |
+| 128 | 100% | 100% | 154.0 | 106.0 | 69% | 159.4 | 109.6 |
+| 256 | 100% | 100% | 240.0 | 169.0 | 70% | 244.0 | 173.7 |
+| 512 | 100% | 100% | 397.0 | 297.0 | 75% | 405.8 | 299.0 |
+| 1000 | 100% | 100% | 708.5 | 538.0 | 76% | 714.1 | 540.6 |
 
 Nhận xét:
 
-- **Heuristic giảm số bước ở mọi N.** Số bước trung vị còn 56–76% so với bản chuẩn. Với N ≥ 32, cả trung bình lẫn giá trị lớn nhất đều giảm (N = 1000: nhiều nhất 582 bước so với 835).
-- **Thời gian cũng giảm** (N = 1000: 177 ms so với 221 ms), vì chi phí mỗi bước của hai bản bằng nhau.
-- **Giới hạn ở N nhỏ.** Với N = 8 và N = 16, cả hai bản đều có một số lần chạy hết 100 000 bước mà không ra lời giải (N = 8: 3/50 ở cả hai bản; N = 16: 1/50 ở bản heuristic). Các lần này kéo số bước trung bình lên rất cao, nên ở N nhỏ phải đọc trung vị. Nguyên nhân là **cực tiểu địa phương**: Min-Conflicts không bao giờ nhận một nước làm tăng xung đột, nên khi mọi biến xung đột đều đã ở giá trị tốt nhất của mình thì thuật toán đứng yên. Đây là hạn chế của tìm kiếm cục bộ nói chung (không đầy đủ), không sửa được chỉ bằng cách chọn biến.
+- **Heuristic giảm số bước ở mọi N.** Số bước trung vị còn 52–76% so với bản chuẩn. Với N ≥ 32, cả trung bình lẫn giá trị lớn nhất đều giảm (N = 1000: nhiều nhất 635 bước so với 876).
+- **Thời gian cũng giảm** (N = 1000: 170 ms so với 219 ms), vì chi phí mỗi bước của hai bản bằng nhau.
+- **Tỉ lệ thành công của hai bản tương đương.** Với N = 8 và N = 16, cả hai bản đều có một số lần chạy hết 100 000 bước mà không ra lời giải (N = 8: 15/200 ở bản chuẩn, 10/200 ở bản heuristic; N = 16: 2/200 và 5/200). Chênh lệch vài lần chạy như vậy nằm trong nhiễu thống kê: khi tăng lên 500 lần chạy (`MinConflictsExperiment(500)`), hai bản đạt 93.6% và 94.4% ở N = 8, 98.4% và 98.6% ở N = 16. Các lần thất bại kéo số bước trung bình lên rất cao, nên ở N nhỏ phải đọc trung vị.
+- **Nguyên nhân thất bại là cực tiểu địa phương**, không phải heuristic: Min-Conflicts không bao giờ nhận một nước làm tăng xung đột, nên khi mọi biến xung đột đều đã ở giá trị tốt nhất của mình thì thuật toán đứng yên, dù chọn biến nào. Đây là hạn chế của tìm kiếm cục bộ nói chung (không đầy đủ), không sửa được chỉ bằng cách chọn biến.
 
 ### 3.6 Ablation: từng thành phần đóng góp gì
 
 | N | Cấu hình | Thành công | Bước trung vị | Bước lớn nhất |
 |---:|:---|---:|---:|---:|
-| 16 | Chuẩn | 100% | 73.5 | 287 |
-| 16 | Biến xung đột nhiều nhất, **không** tabu | 96% | 64.0 | 100 000 |
-| 16 | Heuristic đề xuất (có tabu) | 98% | 44.5 | 100 000 |
-| 16 | Heuristic + khởi tạo tham lam + tabu giá trị + restart | 100% | 19.0 | 149 |
-| 256 | Chuẩn | 100% | 233.0 | 317 |
-| 256 | Biến xung đột nhiều nhất, **không** tabu | 100% | 197.5 | 277 |
-| 256 | Heuristic đề xuất (có tabu) | 100% | 169.0 | 245 |
-| 256 | Heuristic + khởi tạo tham lam + tabu giá trị + restart | 100% | 41.0 | 85 |
+| 8 | Chuẩn | 92.5% | 35.5 | 100 000 |
+| 8 | Biến xung đột nhiều nhất, **không** tabu | 93.5% | 36.5 | 100 000 |
+| 8 | Heuristic đề xuất (có tabu) | 95% | 19.0 | 100 000 |
+| 8 | Heuristic + khởi tạo tham lam + tabu giá trị + restart | 100% | 10.0 | 98 |
+| 16 | Chuẩn | 99% | 66.0 | 100 000 |
+| 16 | Biến xung đột nhiều nhất, **không** tabu | 96.5% | 65.5 | 100 000 |
+| 16 | Heuristic đề xuất (có tabu) | 97.5% | 34.5 | 100 000 |
+| 16 | Heuristic + khởi tạo tham lam + tabu giá trị + restart | 100% | 20.0 | 149 |
+| 256 | Chuẩn | 100% | 240.0 | 341 |
+| 256 | Biến xung đột nhiều nhất, **không** tabu | 100% | 199.0 | 289 |
+| 256 | Heuristic đề xuất (có tabu) | 100% | 169.0 | 306 |
+| 256 | Heuristic + khởi tạo tham lam + tabu giá trị + restart | 100% | 37.0 | 89 |
 
-- **Tabu trên biến là phần không thể thiếu của heuristic.** Bỏ tabu thì ở N = 8 số bước trung vị còn tệ hơn bản chuẩn (49.5 so với 32.0), và ở N = 256 chỉ giảm được 15% thay vì 27%.
+- **Tabu trên biến là phần không thể thiếu của heuristic.** Bỏ tabu thì ở N = 8 và N = 16 số bước trung vị gần như bằng bản chuẩn (36.5 so với 35.5; 65.5 so với 66.0), và ở N = 256 chỉ giảm được 17% thay vì 30%.
 - **Dòng cuối không thuộc phép so sánh chính.** Nó thêm ba kỹ thuật nằm ngoài phạm vi "chọn biến": khởi tạo tham lam (đặt từng hậu vào cột ít xung đột nhất), tabu trên giá trị, và khởi động lại khi 20·N bước liên tiếp không cải thiện. Khởi động lại là cách chuẩn để thoát cực tiểu địa phương, nên cấu hình này đạt 100% ở mọi N. Nhóm đưa vào để cho thấy hạn chế ở mục 3.5 xử lý được, nhưng không tính nó vào hiệu quả của heuristic chọn biến.
 
 ## 4. Câu hỏi vấn đáp thường gặp
 
-- **Vì sao không cần ràng buộc "mỗi cột ít nhất một hậu"?** Vì nó suy ra được từ các ràng buộc còn lại (mục 1.2, nguyên lý chuồng bồ câu). Thêm vào cũng đúng, nhưng thừa.
+- **Vì sao không cần ràng buộc "mỗi cột ít nhất một hậu"?** Vì nó suy ra được từ các ràng buộc còn lại (mục 1.2, nguyên lý chuồng bồ câu), nên thêm vào không đổi tập mô hình. Nó thừa về logic nhưng có ích cho solver: với N ≥ 50 số mâu thuẫn giảm hàng chục đến hàng trăm lần (mục 2.4), vì lan truyền đơn vị suy ra được ngay ô cuối cùng của một cột.
 - **Bước nào của quy trình chuyển CNF được dùng?** Chỉ bước khử `⇒` (hoặc tương đương là De Morgan). Không có `⇔` và không cần phân phối.
 - **Số mệnh đề là bao nhiêu?** (5N³ − 6N² + 4N)/3, tức Θ(N³).
 - **Vì sao thời gian Glucose3 không tăng đều theo N?** Vì thời gian đi theo số mâu thuẫn mà solver gặp, không đi theo kích thước công thức (mục 2.3).

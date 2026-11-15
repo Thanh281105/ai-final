@@ -51,6 +51,30 @@ class SATExperiment:
                 progress(i + 1, len(ns), f"SAT N={n}")
         return rows
 
+    def run_column_alo_ablation(self, ns: Sequence[int], progress: Progress = None) -> List[Dict]:
+        """KB gốc so với KB + nhóm "mỗi cột ít nhất một hậu" (mệnh đề được KB suy ra).
+
+        Hai KB có cùng tập mô hình; khác nhau ở công việc của solver (conflicts, decisions,
+        propagations) vì unit propagation mạnh hơn khi có thêm mệnh đề cột."""
+        rows: List[Dict] = []
+        for i, n in enumerate(ns):
+            row: Dict = {"n": n}
+            for key, column_alo in (("base", False), ("alo", True)):
+                results = [self.solver.solve(n, column_alo=column_alo) for _ in range(self.repeats)]
+                first = results[0]
+                row.update({
+                    f"{key}_clauses": first.num_clauses,
+                    f"{key}_solve_ms": 1000 * statistics.mean(r.solve_time for r in results),
+                    f"{key}_decisions": first.decisions,
+                    f"{key}_propagations": first.propagations,
+                    f"{key}_conflicts": first.conflicts,
+                    f"{key}_valid": all(r.valid for r in results),
+                })
+            rows.append(row)
+            if progress:
+                progress(i + 1, len(ns), f"SAT ablation N={n}")
+        return rows
+
 
 class MinConflictsExperiment:
     """So sánh Min-Conflicts chuẩn với bản dùng heuristic chọn biến đề xuất.

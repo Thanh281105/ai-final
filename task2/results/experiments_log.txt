@@ -5,7 +5,7 @@
 [A] endgame-56   m=2 plies  minimax=      31 nodes  alpha-beta=     22 nodes  same value=True
 [A] endgame-56   m=4 plies  minimax=     768 nodes  alpha-beta=    157 nodes  same value=True
 [A] endgame-56   m=6 plies  minimax=   22076 nodes  alpha-beta=    949 nodes  same value=True
-[A] endgame-56   m=8 plies  minimax=  658176 nodes  alpha-beta=   5590 nodes  same value=True
+[A] endgame-56   m=8 plies  minimax=  658182 nodes  alpha-beta=   5590 nodes  same value=True
 [A] endgame-76   m=2 plies  minimax=      43 nodes  alpha-beta=     18 nodes  same value=True
 [A] endgame-76   m=4 plies  minimax=    1273 nodes  alpha-beta=    250 nodes  same value=True
 [A] endgame-76   m=6 plies  minimax=   35036 nodes  alpha-beta=   1713 nodes  same value=True
@@ -38,252 +38,313 @@
 [A] endgame-395  m=4 plies  minimax=     821 nodes  alpha-beta=    140 nodes  same value=True
 [A] endgame-395  m=6 plies  minimax=   24685 nodes  alpha-beta=    844 nodes  same value=True
 [A] endgame-395  m=8 plies  minimax=  754398 nodes  alpha-beta=   4892 nodes  same value=True
-[A] classic-opening Minimax    m=400 plies: 4665728 nodes in 30.0s, timed out=True
-[A] classic-opening Alpha-Beta m=400 plies: 5438976 nodes in 30.0s, timed out=True
-[B] classic-opening  Heuristic Minimax          d=1 ( 2 plies)    0.000s  nodes=       43  cutoffs=      0  value=0.0
-[B] classic-opening  Heuristic Minimax          d=2 ( 4 plies)    0.014s  nodes=     1330  cutoffs=      0  value=0.0
-[B] classic-opening  Heuristic Minimax          d=3 ( 6 plies)    0.382s  nodes=    40460  cutoffs=      0  value=0.0
-[B] classic-opening  Heuristic Minimax          d=4 ( 8 plies)   11.360s  nodes=  1229015  cutoffs=      0  value=0.0
-[B] classic-opening  Heuristic Minimax          d=5 (10 plies)   30.001s  nodes=  3288960  cutoffs=      0  value=None  TIMEOUT
-[B] classic-opening  Heuristic Alpha-Beta       d=1 ( 2 plies)    0.000s  nodes=       18  cutoffs=      5  value=0.0
-[B] classic-opening  Heuristic Alpha-Beta       d=2 ( 4 plies)    0.001s  nodes=      121  cutoffs=     42  value=0.0
-[B] classic-opening  Heuristic Alpha-Beta       d=3 ( 6 plies)    0.009s  nodes=      698  cutoffs=    255  value=0.0
-[B] classic-opening  Heuristic Alpha-Beta       d=4 ( 8 plies)    0.049s  nodes=     3887  cutoffs=   1438  value=0.0
-[B] classic-opening  Heuristic Alpha-Beta       d=5 (10 plies)    0.320s  nodes=    21481  cutoffs=   7970  value=0.0
-[B] classic-opening  H-Alpha-Beta (no ordering) d=1 ( 2 plies)    0.000s  nodes=       24  cutoffs=      4  value=0.0
-[B] classic-opening  H-Alpha-Beta (no ordering) d=2 ( 4 plies)    0.003s  nodes=      270  cutoffs=     57  value=0.0
-[B] classic-opening  H-Alpha-Beta (no ordering) d=3 ( 6 plies)    0.015s  nodes=     1804  cutoffs=    432  value=0.0
-[B] classic-opening  H-Alpha-Beta (no ordering) d=4 ( 8 plies)    0.100s  nodes=    12746  cutoffs=   3180  value=0.0
-[B] classic-opening  H-Alpha-Beta (no ordering) d=5 (10 plies)    0.906s  nodes=   114120  cutoffs=  27252  value=0.0
-[B] duel-midgame     Heuristic Minimax          d=1 ( 2 plies)    0.000s  nodes=       31  cutoffs=      0  value=-9.8
-[B] duel-midgame     Heuristic Minimax          d=2 ( 4 plies)    0.008s  nodes=      863  cutoffs=      0  value=-4.4
-[B] duel-midgame     Heuristic Minimax          d=3 ( 6 plies)    0.235s  nodes=    24005  cutoffs=      0  value=-2.73
-[B] duel-midgame     Heuristic Minimax          d=4 ( 8 plies)    6.626s  nodes=   672515  cutoffs=      0  value=-6.07
-[B] duel-midgame     Heuristic Minimax          d=5 (10 plies)   30.000s  nodes=  3052288  cutoffs=      0  value=None  TIMEOUT
-[B] duel-midgame     Heuristic Alpha-Beta       d=1 ( 2 plies)    0.000s  nodes=       22  cutoffs=      3  value=-9.8
-[B] duel-midgame     Heuristic Alpha-Beta       d=2 ( 4 plies)    0.003s  nodes=      221  cutoffs=     53  value=-4.4
-[B] duel-midgame     Heuristic Alpha-Beta       d=3 ( 6 plies)    0.028s  nodes=     2175  cutoffs=    550  value=-2.73
-[B] duel-midgame     Heuristic Alpha-Beta       d=4 ( 8 plies)    0.202s  nodes=    15333  cutoffs=   4265  value=-6.07
-[B] duel-midgame     Heuristic Alpha-Beta       d=5 (10 plies)    1.399s  nodes=   104001  cutoffs=  28871  value=-9.4
-[B] duel-midgame     H-Alpha-Beta (no ordering) d=1 ( 2 plies)    0.000s  nodes=       25  cutoffs=      3  value=-9.8
-[B] duel-midgame     H-Alpha-Beta (no ordering) d=2 ( 4 plies)    0.002s  nodes=      261  cutoffs=     64  value=-4.4
-[B] duel-midgame     H-Alpha-Beta (no ordering) d=3 ( 6 plies)    0.021s  nodes=     2462  cutoffs=    579  value=-2.73
-[B] duel-midgame     H-Alpha-Beta (no ordering) d=4 ( 8 plies)    0.197s  nodes=    23582  cutoffs=   6140  value=-6.07
-[B] duel-midgame     H-Alpha-Beta (no ordering) d=5 (10 plies)    3.084s  nodes=   350503  cutoffs=  79577  value=-9.4
-[B] open-combat      Heuristic Minimax          d=1 ( 2 plies)    0.000s  nodes=       36  cutoffs=      0  value=0.0
-[B] open-combat      Heuristic Minimax          d=2 ( 4 plies)    0.011s  nodes=     1036  cutoffs=      0  value=0.0
-[B] open-combat      Heuristic Minimax          d=3 ( 6 plies)    0.330s  nodes=    30605  cutoffs=      0  value=0.0
-[B] open-combat      Heuristic Minimax          d=4 ( 8 plies)    9.880s  nodes=   926477  cutoffs=      0  value=0.0
-[B] open-combat      Heuristic Minimax          d=5 (10 plies)   30.002s  nodes=  2897408  cutoffs=      0  value=None  TIMEOUT
-[B] open-combat      Heuristic Alpha-Beta       d=1 ( 2 plies)    0.000s  nodes=       17  cutoffs=      4  value=0.0
-[B] open-combat      Heuristic Alpha-Beta       d=2 ( 4 plies)    0.002s  nodes=      122  cutoffs=     30  value=0.0
-[B] open-combat      Heuristic Alpha-Beta       d=3 ( 6 plies)    0.014s  nodes=      887  cutoffs=    226  value=0.0
-[B] open-combat      Heuristic Alpha-Beta       d=4 ( 8 plies)    0.096s  nodes=     5872  cutoffs=   1574  value=0.0
-[B] open-combat      Heuristic Alpha-Beta       d=5 (10 plies)    0.584s  nodes=    37621  cutoffs=   9661  value=0.0
-[B] open-combat      H-Alpha-Beta (no ordering) d=1 ( 2 plies)    0.000s  nodes=       31  cutoffs=      2  value=0.0
-[B] open-combat      H-Alpha-Beta (no ordering) d=2 ( 4 plies)    0.003s  nodes=      273  cutoffs=     48  value=0.0
-[B] open-combat      H-Alpha-Beta (no ordering) d=3 ( 6 plies)    0.016s  nodes=     1697  cutoffs=    359  value=0.0
-[B] open-combat      H-Alpha-Beta (no ordering) d=4 ( 8 plies)    0.119s  nodes=    12602  cutoffs=   2760  value=0.0
-[B] open-combat      H-Alpha-Beta (no ordering) d=5 (10 plies)    0.926s  nodes=    97688  cutoffs=  21035  value=0.0
-[C] endgame-35  Minimax                            depth=terminal MOVE_DOWN  optimal=True     6.144s nodes=1100892
-[C] endgame-35  Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.066s nodes=12180
+[A] classic-opening Minimax    m=400 plies: 4198401 nodes in 30.0s, timed out=True
+[A] classic-opening Alpha-Beta m=400 plies: 4981753 nodes in 30.0s, timed out=True
+[B] classic-opening  Heuristic Minimax          d=1 ( 2 plies)    0.001s  nodes=       43  peak= 13  tt=     0  value=0.0
+[B] classic-opening  Heuristic Minimax          d=2 ( 4 plies)    0.032s  nodes=     1330  peak= 23  tt=     0  value=0.0
+[B] classic-opening  Heuristic Minimax          d=3 ( 6 plies)    0.788s  nodes=    40460  peak= 35  tt=     0  value=0.0
+[B] classic-opening  Heuristic Minimax          d=4 ( 8 plies)   23.184s  nodes=  1229015  peak= 46  tt=     0  value=0.0
+[B] classic-opening  Heuristic Minimax          d=5 (10 plies)   29.997s  nodes=  1575988  peak= 58  tt=     0  value=None  TIMEOUT
+[B] classic-opening  H-AB: no ordering, no TT   d=1 ( 2 plies)    0.001s  nodes=       29  peak= 13  tt=     0  value=0.0
+[B] classic-opening  H-AB: no ordering, no TT   d=2 ( 4 plies)    0.006s  nodes=      324  peak= 23  tt=     0  value=0.0
+[B] classic-opening  H-AB: no ordering, no TT   d=3 ( 6 plies)    0.034s  nodes=     2208  peak= 35  tt=     0  value=0.0
+[B] classic-opening  H-AB: no ordering, no TT   d=4 ( 8 plies)    0.341s  nodes=    22194  peak= 46  tt=     0  value=0.0
+[B] classic-opening  H-AB: no ordering, no TT   d=5 (10 plies)    3.881s  nodes=   247056  peak= 58  tt=     0  value=0.0
+[B] classic-opening  H-AB: + tactical ordering  d=1 ( 2 plies)    0.000s  nodes=       18  peak= 13  tt=     0  value=0.0
+[B] classic-opening  H-AB: + tactical ordering  d=2 ( 4 plies)    0.003s  nodes=      163  peak= 23  tt=     0  value=0.0
+[B] classic-opening  H-AB: + tactical ordering  d=3 ( 6 plies)    0.021s  nodes=     1177  peak= 35  tt=     0  value=0.0
+[B] classic-opening  H-AB: + tactical ordering  d=4 ( 8 plies)    0.102s  nodes=     5610  peak= 47  tt=     0  value=0.0
+[B] classic-opening  H-AB: + tactical ordering  d=5 (10 plies)    1.896s  nodes=    91743  peak= 59  tt=     0  value=0.0
+[B] classic-opening  H-AB: + killers & history  d=1 ( 2 plies)    0.000s  nodes=       18  peak= 13  tt=     0  value=0.0
+[B] classic-opening  H-AB: + killers & history  d=2 ( 4 plies)    0.003s  nodes=      166  peak= 23  tt=     0  value=0.0
+[B] classic-opening  H-AB: + killers & history  d=3 ( 6 plies)    0.021s  nodes=     1087  peak= 35  tt=     0  value=0.0
+[B] classic-opening  H-AB: + killers & history  d=4 ( 8 plies)    0.084s  nodes=     4222  peak= 47  tt=     0  value=0.0
+[B] classic-opening  H-AB: + killers & history  d=5 (10 plies)    0.589s  nodes=    29574  peak= 59  tt=     0  value=0.0
+[B] classic-opening  Heuristic Alpha-Beta       d=1 ( 2 plies)    0.000s  nodes=       18  peak= 13  tt=    11  value=0.0
+[B] classic-opening  Heuristic Alpha-Beta       d=2 ( 4 plies)    0.003s  nodes=      166  peak= 23  tt=    85  value=0.0
+[B] classic-opening  Heuristic Alpha-Beta       d=3 ( 6 plies)    0.013s  nodes=      847  peak= 35  tt=   297  value=0.0
+[B] classic-opening  Heuristic Alpha-Beta       d=4 ( 8 plies)    0.029s  nodes=     1807  peak= 47  tt=   572  value=0.0
+[B] classic-opening  Heuristic Alpha-Beta       d=5 (10 plies)    0.124s  nodes=     7720  peak= 59  tt=  2672  value=0.0
+[B] duel-midgame     Heuristic Minimax          d=1 ( 2 plies)    0.001s  nodes=       31  peak= 11  tt=     0  value=20.13
+[B] duel-midgame     Heuristic Minimax          d=2 ( 4 plies)    0.019s  nodes=      863  peak= 22  tt=     0  value=20.13
+[B] duel-midgame     Heuristic Minimax          d=3 ( 6 plies)    0.480s  nodes=    24005  peak= 32  tt=     0  value=20.13
+[B] duel-midgame     Heuristic Minimax          d=4 ( 8 plies)   13.678s  nodes=   672515  peak= 42  tt=     0  value=20.13
+[B] duel-midgame     Heuristic Minimax          d=5 (10 plies)   29.997s  nodes=  1470994  peak= 52  tt=     0  value=None  TIMEOUT
+[B] duel-midgame     H-AB: no ordering, no TT   d=1 ( 2 plies)    0.001s  nodes=       29  peak= 11  tt=     0  value=20.13
+[B] duel-midgame     H-AB: no ordering, no TT   d=2 ( 4 plies)    0.006s  nodes=      353  peak= 22  tt=     0  value=20.13
+[B] duel-midgame     H-AB: no ordering, no TT   d=3 ( 6 plies)    0.059s  nodes=     3528  peak= 32  tt=     0  value=20.13
+[B] duel-midgame     H-AB: no ordering, no TT   d=4 ( 8 plies)    0.502s  nodes=    30774  peak= 42  tt=     0  value=20.13
+[B] duel-midgame     H-AB: no ordering, no TT   d=5 (10 plies)    4.398s  nodes=   254317  peak= 52  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + tactical ordering  d=1 ( 2 plies)    0.001s  nodes=       23  peak= 11  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + tactical ordering  d=2 ( 4 plies)    0.006s  nodes=      313  peak= 21  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + tactical ordering  d=3 ( 6 plies)    0.050s  nodes=     2397  peak= 33  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + tactical ordering  d=4 ( 8 plies)    0.318s  nodes=    15378  peak= 45  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + tactical ordering  d=5 (10 plies)    2.492s  nodes=   115836  peak= 57  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + killers & history  d=1 ( 2 plies)    0.001s  nodes=       23  peak= 11  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + killers & history  d=2 ( 4 plies)    0.006s  nodes=      268  peak= 21  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + killers & history  d=3 ( 6 plies)    0.039s  nodes=     1712  peak= 32  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + killers & history  d=4 ( 8 plies)    0.217s  nodes=     9213  peak= 43  tt=     0  value=20.13
+[B] duel-midgame     H-AB: + killers & history  d=5 (10 plies)    1.493s  nodes=    63630  peak= 56  tt=     0  value=20.13
+[B] duel-midgame     Heuristic Alpha-Beta       d=1 ( 2 plies)    0.001s  nodes=       23  peak= 11  tt=    17  value=20.13
+[B] duel-midgame     Heuristic Alpha-Beta       d=2 ( 4 plies)    0.005s  nodes=      268  peak= 21  tt=   146  value=20.13
+[B] duel-midgame     Heuristic Alpha-Beta       d=3 ( 6 plies)    0.024s  nodes=     1240  peak= 32  tt=   601  value=20.13
+[B] duel-midgame     Heuristic Alpha-Beta       d=4 ( 8 plies)    0.100s  nodes=     5345  peak= 42  tt=  2450  value=20.13
+[B] duel-midgame     Heuristic Alpha-Beta       d=5 (10 plies)    0.367s  nodes=    20333  peak= 55  tt=  8398  value=20.13
+[B] open-combat      Heuristic Minimax          d=1 ( 2 plies)    0.001s  nodes=       36  peak= 12  tt=     0  value=0.0
+[B] open-combat      Heuristic Minimax          d=2 ( 4 plies)    0.026s  nodes=     1036  peak= 22  tt=     0  value=0.0
+[B] open-combat      Heuristic Minimax          d=3 ( 6 plies)    0.764s  nodes=    30605  peak= 33  tt=     0  value=0.0
+[B] open-combat      Heuristic Minimax          d=4 ( 8 plies)   20.099s  nodes=   926477  peak= 44  tt=     0  value=0.0
+[B] open-combat      Heuristic Minimax          d=5 (10 plies)   29.997s  nodes=  1417516  peak= 56  tt=     0  value=None  TIMEOUT
+[B] open-combat      H-AB: no ordering, no TT   d=1 ( 2 plies)    0.001s  nodes=       36  peak= 12  tt=     0  value=0.0
+[B] open-combat      H-AB: no ordering, no TT   d=2 ( 4 plies)    0.008s  nodes=      424  peak= 22  tt=     0  value=0.0
+[B] open-combat      H-AB: no ordering, no TT   d=3 ( 6 plies)    0.058s  nodes=     3199  peak= 33  tt=     0  value=0.0
+[B] open-combat      H-AB: no ordering, no TT   d=4 ( 8 plies)    0.577s  nodes=    25526  peak= 44  tt=     0  value=0.0
+[B] open-combat      H-AB: no ordering, no TT   d=5 (10 plies)    3.532s  nodes=   197389  peak= 56  tt=     0  value=0.0
+[B] open-combat      H-AB: + tactical ordering  d=1 ( 2 plies)    0.001s  nodes=       36  peak= 12  tt=     0  value=0.0
+[B] open-combat      H-AB: + tactical ordering  d=2 ( 4 plies)    0.012s  nodes=      420  peak= 22  tt=     0  value=0.0
+[B] open-combat      H-AB: + tactical ordering  d=3 ( 6 plies)    0.101s  nodes=     3672  peak= 34  tt=     0  value=0.0
+[B] open-combat      H-AB: + tactical ordering  d=4 ( 8 plies)    0.882s  nodes=    31623  peak= 44  tt=     0  value=0.0
+[B] open-combat      H-AB: + tactical ordering  d=5 (10 plies)    5.603s  nodes=   245009  peak= 56  tt=     0  value=0.0
+[B] open-combat      H-AB: + killers & history  d=1 ( 2 plies)    0.001s  nodes=       36  peak= 12  tt=     0  value=0.0
+[B] open-combat      H-AB: + killers & history  d=2 ( 4 plies)    0.008s  nodes=      337  peak= 22  tt=     0  value=0.0
+[B] open-combat      H-AB: + killers & history  d=3 ( 6 plies)    0.050s  nodes=     2191  peak= 33  tt=     0  value=0.0
+[B] open-combat      H-AB: + killers & history  d=4 ( 8 plies)    0.308s  nodes=    12733  peak= 46  tt=     0  value=0.0
+[B] open-combat      H-AB: + killers & history  d=5 (10 plies)    1.503s  nodes=    63318  peak= 58  tt=     0  value=0.0
+[B] open-combat      Heuristic Alpha-Beta       d=1 ( 2 plies)    0.001s  nodes=       36  peak= 12  tt=    29  value=0.0
+[B] open-combat      Heuristic Alpha-Beta       d=2 ( 4 plies)    0.007s  nodes=      330  peak= 22  tt=   174  value=0.0
+[B] open-combat      Heuristic Alpha-Beta       d=3 ( 6 plies)    0.027s  nodes=     1578  peak= 33  tt=   619  value=0.0
+[B] open-combat      Heuristic Alpha-Beta       d=4 ( 8 plies)    0.111s  nodes=     6373  peak= 46  tt=  2400  value=0.0
+[B] open-combat      Heuristic Alpha-Beta       d=5 (10 plies)    0.275s  nodes=    15056  peak= 58  tt=  5710  value=0.0
+[C] endgame-35  Minimax                            depth=terminal MOVE_DOWN  optimal=True     6.798s nodes=1100892
+[C] endgame-35  Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.070s nodes=12180
 [C] endgame-35  Minimax (cutoff, EVAL = 0)         depth=1        FIRE       optimal=False    0.000s nodes=43
-[C] endgame-35  Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.007s nodes=1349
-[C] endgame-35  Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.209s nodes=38919
+[C] endgame-35  Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.008s nodes=1349
+[C] endgame-35  Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.220s nodes=38919
 [C] endgame-35  Alpha-Beta (cutoff, EVAL = 0)      depth=1        FIRE       optimal=False    0.000s nodes=18
 [C] endgame-35  Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_DOWN  optimal=True     0.001s nodes=234
-[C] endgame-35  Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.008s nodes=1613
-[C] endgame-35  Heuristic Minimax                  depth=1        MOVE_UP    optimal=False    0.000s nodes=43
-[C] endgame-35  Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.013s nodes=1349
-[C] endgame-35  Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.369s nodes=38919
-[C] endgame-35  Heuristic Alpha-Beta               depth=1        MOVE_UP    optimal=False    0.000s nodes=23
-[C] endgame-35  Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.002s nodes=192
-[C] endgame-35  Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.014s nodes=1146
-[C] endgame-56  Minimax                            depth=terminal MOVE_UP    optimal=True     4.055s nodes=658176
-[C] endgame-56  Alpha-Beta                         depth=terminal MOVE_UP    optimal=True     0.031s nodes=5590
+[C] endgame-35  Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.009s nodes=1613
+[C] endgame-35  Heuristic Minimax                  depth=1        MOVE_UP    optimal=False    0.001s nodes=43
+[C] endgame-35  Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.025s nodes=1349
+[C] endgame-35  Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.767s nodes=38919
+[C] endgame-35  Heuristic Alpha-Beta               depth=1        MOVE_UP    optimal=False    0.001s nodes=23
+[C] endgame-35  Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.005s nodes=284
+[C] endgame-35  Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.020s nodes=1037
+[C] endgame-56  Minimax                            depth=terminal MOVE_UP    optimal=True     4.478s nodes=658182
+[C] endgame-56  Alpha-Beta                         depth=terminal MOVE_UP    optimal=True     0.033s nodes=5590
 [C] endgame-56  Minimax (cutoff, EVAL = 0)         depth=1        MOVE_UP    optimal=True     0.000s nodes=31
 [C] endgame-56  Minimax (cutoff, EVAL = 0)         depth=2        MOVE_UP    optimal=True     0.005s nodes=768
-[C] endgame-56  Minimax (cutoff, EVAL = 0)         depth=3        MOVE_UP    optimal=True     0.132s nodes=22076
+[C] endgame-56  Minimax (cutoff, EVAL = 0)         depth=3        MOVE_UP    optimal=True     0.139s nodes=22076
 [C] endgame-56  Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_UP    optimal=True     0.000s nodes=22
 [C] endgame-56  Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_UP    optimal=True     0.001s nodes=157
 [C] endgame-56  Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_UP    optimal=True     0.005s nodes=949
-[C] endgame-56  Heuristic Minimax                  depth=1        MOVE_UP    optimal=True     0.000s nodes=31
-[C] endgame-56  Heuristic Minimax                  depth=2        MOVE_UP    optimal=True     0.008s nodes=768
-[C] endgame-56  Heuristic Minimax                  depth=3        MOVE_UP    optimal=True     0.232s nodes=22076
-[C] endgame-56  Heuristic Alpha-Beta               depth=1        MOVE_UP    optimal=True     0.000s nodes=19
-[C] endgame-56  Heuristic Alpha-Beta               depth=2        MOVE_UP    optimal=True     0.001s nodes=99
-[C] endgame-56  Heuristic Alpha-Beta               depth=3        MOVE_UP    optimal=True     0.011s nodes=820
-[C] endgame-76  Minimax                            depth=terminal MOVE_DOWN  optimal=True     5.387s nodes=958218
-[C] endgame-76  Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.055s nodes=10041
+[C] endgame-56  Heuristic Minimax                  depth=1        MOVE_UP    optimal=True     0.001s nodes=31
+[C] endgame-56  Heuristic Minimax                  depth=2        MOVE_UP    optimal=True     0.016s nodes=768
+[C] endgame-56  Heuristic Minimax                  depth=3        MOVE_UP    optimal=True     0.447s nodes=22076
+[C] endgame-56  Heuristic Alpha-Beta               depth=1        MOVE_UP    optimal=True     0.000s nodes=23
+[C] endgame-56  Heuristic Alpha-Beta               depth=2        MOVE_UP    optimal=True     0.003s nodes=158
+[C] endgame-56  Heuristic Alpha-Beta               depth=3        MOVE_UP    optimal=True     0.016s nodes=864
+[C] endgame-76  Minimax                            depth=terminal MOVE_DOWN  optimal=True     6.152s nodes=958218
+[C] endgame-76  Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.060s nodes=10041
 [C] endgame-76  Minimax (cutoff, EVAL = 0)         depth=1        FIRE       optimal=False    0.000s nodes=43
-[C] endgame-76  Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.007s nodes=1273
-[C] endgame-76  Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.190s nodes=35036
+[C] endgame-76  Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.008s nodes=1273
+[C] endgame-76  Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.219s nodes=35036
 [C] endgame-76  Alpha-Beta (cutoff, EVAL = 0)      depth=1        FIRE       optimal=False    0.000s nodes=18
-[C] endgame-76  Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_DOWN  optimal=True     0.001s nodes=250
-[C] endgame-76  Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.009s nodes=1713
+[C] endgame-76  Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_DOWN  optimal=True     0.002s nodes=250
+[C] endgame-76  Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.010s nodes=1713
 [C] endgame-76  Heuristic Minimax                  depth=1        MOVE_DOWN  optimal=True     0.001s nodes=43
-[C] endgame-76  Heuristic Minimax                  depth=2        MOVE_UP    optimal=True     0.014s nodes=1273
-[C] endgame-76  Heuristic Minimax                  depth=3        MOVE_UP    optimal=True     0.352s nodes=35036
+[C] endgame-76  Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.026s nodes=1273
+[C] endgame-76  Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.714s nodes=35036
 [C] endgame-76  Heuristic Alpha-Beta               depth=1        MOVE_DOWN  optimal=True     0.000s nodes=18
-[C] endgame-76  Heuristic Alpha-Beta               depth=2        MOVE_UP    optimal=True     0.002s nodes=167
-[C] endgame-76  Heuristic Alpha-Beta               depth=3        MOVE_UP    optimal=True     0.010s nodes=797
-[C] endgame-103 Minimax                            depth=terminal MOVE_RIGHT optimal=True     5.063s nodes=841463
-[C] endgame-103 Alpha-Beta                         depth=terminal MOVE_RIGHT optimal=True     0.020s nodes=3794
+[C] endgame-76  Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.002s nodes=125
+[C] endgame-76  Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.006s nodes=346
+[C] endgame-103 Minimax                            depth=terminal MOVE_RIGHT optimal=True     5.533s nodes=841463
+[C] endgame-103 Alpha-Beta                         depth=terminal MOVE_RIGHT optimal=True     0.021s nodes=3794
 [C] endgame-103 Minimax (cutoff, EVAL = 0)         depth=1        MOVE_RIGHT optimal=True     0.000s nodes=36
-[C] endgame-103 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_RIGHT optimal=True     0.005s nodes=963
-[C] endgame-103 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_RIGHT optimal=True     0.159s nodes=28068
+[C] endgame-103 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_RIGHT optimal=True     0.006s nodes=963
+[C] endgame-103 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_RIGHT optimal=True     0.170s nodes=28068
 [C] endgame-103 Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_RIGHT optimal=True     0.000s nodes=16
 [C] endgame-103 Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_RIGHT optimal=True     0.001s nodes=107
 [C] endgame-103 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_RIGHT optimal=True     0.003s nodes=648
-[C] endgame-103 Heuristic Minimax                  depth=1        MOVE_RIGHT optimal=True     0.000s nodes=36
-[C] endgame-103 Heuristic Minimax                  depth=2        MOVE_RIGHT optimal=True     0.009s nodes=963
-[C] endgame-103 Heuristic Minimax                  depth=3        MOVE_RIGHT optimal=True     0.262s nodes=28068
-[C] endgame-103 Heuristic Alpha-Beta               depth=1        MOVE_RIGHT optimal=True     0.000s nodes=21
-[C] endgame-103 Heuristic Alpha-Beta               depth=2        MOVE_RIGHT optimal=True     0.002s nodes=140
-[C] endgame-103 Heuristic Alpha-Beta               depth=3        MOVE_RIGHT optimal=True     0.013s nodes=1012
-[C] endgame-266 Minimax                            depth=terminal MOVE_LEFT  optimal=True     5.424s nodes=873354
-[C] endgame-266 Alpha-Beta                         depth=terminal MOVE_LEFT  optimal=True     0.019s nodes=3709
+[C] endgame-103 Heuristic Minimax                  depth=1        MOVE_RIGHT optimal=True     0.001s nodes=36
+[C] endgame-103 Heuristic Minimax                  depth=2        MOVE_RIGHT optimal=True     0.019s nodes=963
+[C] endgame-103 Heuristic Minimax                  depth=3        MOVE_RIGHT optimal=True     0.522s nodes=28068
+[C] endgame-103 Heuristic Alpha-Beta               depth=1        MOVE_RIGHT optimal=True     0.001s nodes=26
+[C] endgame-103 Heuristic Alpha-Beta               depth=2        MOVE_RIGHT optimal=True     0.004s nodes=202
+[C] endgame-103 Heuristic Alpha-Beta               depth=3        MOVE_RIGHT optimal=True     0.023s nodes=1285
+[C] endgame-266 Minimax                            depth=terminal MOVE_LEFT  optimal=True     6.006s nodes=873354
+[C] endgame-266 Alpha-Beta                         depth=terminal MOVE_LEFT  optimal=True     0.021s nodes=3709
 [C] endgame-266 Minimax (cutoff, EVAL = 0)         depth=1        MOVE_LEFT  optimal=True     0.000s nodes=36
 [C] endgame-266 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_LEFT  optimal=True     0.006s nodes=1008
-[C] endgame-266 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_LEFT  optimal=True     0.171s nodes=29014
+[C] endgame-266 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_LEFT  optimal=True     0.179s nodes=29014
 [C] endgame-266 Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_LEFT  optimal=True     0.000s nodes=16
 [C] endgame-266 Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_LEFT  optimal=True     0.001s nodes=108
 [C] endgame-266 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_LEFT  optimal=True     0.003s nodes=632
-[C] endgame-266 Heuristic Minimax                  depth=1        MOVE_LEFT  optimal=True     0.000s nodes=36
-[C] endgame-266 Heuristic Minimax                  depth=2        MOVE_LEFT  optimal=True     0.010s nodes=1008
-[C] endgame-266 Heuristic Minimax                  depth=3        MOVE_LEFT  optimal=True     0.301s nodes=29014
-[C] endgame-266 Heuristic Alpha-Beta               depth=1        MOVE_LEFT  optimal=True     0.000s nodes=26
-[C] endgame-266 Heuristic Alpha-Beta               depth=2        MOVE_LEFT  optimal=True     0.004s nodes=274
-[C] endgame-266 Heuristic Alpha-Beta               depth=3        MOVE_LEFT  optimal=True     0.032s nodes=2461
-[C] endgame-290 Minimax                            depth=terminal MOVE_RIGHT optimal=True     6.580s nodes=1051446
-[C] endgame-290 Alpha-Beta                         depth=terminal MOVE_RIGHT optimal=True     0.082s nodes=13652
+[C] endgame-266 Heuristic Minimax                  depth=1        MOVE_LEFT  optimal=True     0.001s nodes=36
+[C] endgame-266 Heuristic Minimax                  depth=2        MOVE_LEFT  optimal=True     0.020s nodes=1008
+[C] endgame-266 Heuristic Minimax                  depth=3        MOVE_LEFT  optimal=True     0.584s nodes=29014
+[C] endgame-266 Heuristic Alpha-Beta               depth=1        MOVE_LEFT  optimal=True     0.001s nodes=26
+[C] endgame-266 Heuristic Alpha-Beta               depth=2        MOVE_LEFT  optimal=True     0.006s nodes=295
+[C] endgame-266 Heuristic Alpha-Beta               depth=3        MOVE_LEFT  optimal=True     0.020s nodes=1157
+[C] endgame-290 Minimax                            depth=terminal MOVE_RIGHT optimal=True     7.250s nodes=1051446
+[C] endgame-290 Alpha-Beta                         depth=terminal MOVE_RIGHT optimal=True     0.085s nodes=13652
 [C] endgame-290 Minimax (cutoff, EVAL = 0)         depth=1        MOVE_RIGHT optimal=True     0.000s nodes=43
 [C] endgame-290 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_RIGHT optimal=True     0.008s nodes=1201
-[C] endgame-290 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_RIGHT optimal=True     0.230s nodes=35239
+[C] endgame-290 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_RIGHT optimal=True     0.223s nodes=35239
 [C] endgame-290 Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_RIGHT optimal=True     0.000s nodes=39
 [C] endgame-290 Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_RIGHT optimal=True     0.002s nodes=330
 [C] endgame-290 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_RIGHT optimal=True     0.013s nodes=2207
-[C] endgame-290 Heuristic Minimax                  depth=1        MOVE_RIGHT optimal=True     0.000s nodes=43
-[C] endgame-290 Heuristic Minimax                  depth=2        MOVE_RIGHT optimal=True     0.012s nodes=1201
-[C] endgame-290 Heuristic Minimax                  depth=3        MOVE_RIGHT optimal=True     0.361s nodes=35239
-[C] endgame-290 Heuristic Alpha-Beta               depth=1        MOVE_RIGHT optimal=True     0.000s nodes=23
-[C] endgame-290 Heuristic Alpha-Beta               depth=2        MOVE_RIGHT optimal=True     0.002s nodes=183
-[C] endgame-290 Heuristic Alpha-Beta               depth=3        MOVE_RIGHT optimal=True     0.022s nodes=1756
-[C] endgame-315 Minimax                            depth=terminal MOVE_DOWN  optimal=True     3.741s nodes=660598
-[C] endgame-315 Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.036s nodes=6717
+[C] endgame-290 Heuristic Minimax                  depth=1        MOVE_RIGHT optimal=True     0.001s nodes=43
+[C] endgame-290 Heuristic Minimax                  depth=2        MOVE_RIGHT optimal=True     0.024s nodes=1201
+[C] endgame-290 Heuristic Minimax                  depth=3        MOVE_RIGHT optimal=True     0.699s nodes=35239
+[C] endgame-290 Heuristic Alpha-Beta               depth=1        MOVE_RIGHT optimal=True     0.001s nodes=33
+[C] endgame-290 Heuristic Alpha-Beta               depth=2        MOVE_RIGHT optimal=True     0.005s nodes=259
+[C] endgame-290 Heuristic Alpha-Beta               depth=3        MOVE_RIGHT optimal=True     0.019s nodes=1048
+[C] endgame-315 Minimax                            depth=terminal MOVE_DOWN  optimal=True     4.086s nodes=660598
+[C] endgame-315 Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.040s nodes=6717
 [C] endgame-315 Minimax (cutoff, EVAL = 0)         depth=1        MOVE_RIGHT optimal=False    0.000s nodes=31
 [C] endgame-315 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.005s nodes=862
-[C] endgame-315 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.128s nodes=23638
+[C] endgame-315 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.153s nodes=23638
 [C] endgame-315 Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_RIGHT optimal=False    0.000s nodes=15
 [C] endgame-315 Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_DOWN  optimal=True     0.001s nodes=165
-[C] endgame-315 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.005s nodes=1030
-[C] endgame-315 Heuristic Minimax                  depth=1        MOVE_UP    optimal=False    0.000s nodes=31
-[C] endgame-315 Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.008s nodes=862
-[C] endgame-315 Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.220s nodes=23638
+[C] endgame-315 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.006s nodes=1030
+[C] endgame-315 Heuristic Minimax                  depth=1        MOVE_UP    optimal=False    0.001s nodes=31
+[C] endgame-315 Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.016s nodes=862
+[C] endgame-315 Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.440s nodes=23638
 [C] endgame-315 Heuristic Alpha-Beta               depth=1        MOVE_UP    optimal=False    0.000s nodes=19
-[C] endgame-315 Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.002s nodes=131
-[C] endgame-315 Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.007s nodes=575
-[C] endgame-362 Minimax                            depth=terminal MOVE_DOWN  optimal=True     3.405s nodes=596601
-[C] endgame-362 Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.041s nodes=7556
+[C] endgame-315 Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.003s nodes=187
+[C] endgame-315 Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.009s nodes=532
+[C] endgame-362 Minimax                            depth=terminal MOVE_DOWN  optimal=True     4.150s nodes=596601
+[C] endgame-362 Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.044s nodes=7556
 [C] endgame-362 Minimax (cutoff, EVAL = 0)         depth=1        MOVE_LEFT  optimal=False    0.000s nodes=31
-[C] endgame-362 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.004s nodes=835
-[C] endgame-362 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.125s nodes=22156
+[C] endgame-362 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.005s nodes=835
+[C] endgame-362 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.130s nodes=22156
 [C] endgame-362 Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_LEFT  optimal=False    0.000s nodes=15
 [C] endgame-362 Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_DOWN  optimal=True     0.001s nodes=154
 [C] endgame-362 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.006s nodes=1141
-[C] endgame-362 Heuristic Minimax                  depth=1        MOVE_UP    optimal=False    0.000s nodes=31
-[C] endgame-362 Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.008s nodes=835
-[C] endgame-362 Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.222s nodes=22156
+[C] endgame-362 Heuristic Minimax                  depth=1        MOVE_UP    optimal=False    0.001s nodes=31
+[C] endgame-362 Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.017s nodes=835
+[C] endgame-362 Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.437s nodes=22156
 [C] endgame-362 Heuristic Alpha-Beta               depth=1        MOVE_UP    optimal=False    0.000s nodes=15
-[C] endgame-362 Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.002s nodes=137
-[C] endgame-362 Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.008s nodes=665
-[C] endgame-377 Minimax                            depth=terminal MOVE_LEFT  optimal=True     5.431s nodes=885522
-[C] endgame-377 Alpha-Beta                         depth=terminal MOVE_LEFT  optimal=True     0.027s nodes=5336
+[C] endgame-362 Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.004s nodes=208
+[C] endgame-362 Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.011s nodes=726
+[C] endgame-377 Minimax                            depth=terminal MOVE_LEFT  optimal=True     6.328s nodes=885522
+[C] endgame-377 Alpha-Beta                         depth=terminal MOVE_LEFT  optimal=True     0.030s nodes=5336
 [C] endgame-377 Minimax (cutoff, EVAL = 0)         depth=1        MOVE_LEFT  optimal=True     0.000s nodes=37
 [C] endgame-377 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_LEFT  optimal=True     0.006s nodes=957
-[C] endgame-377 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_LEFT  optimal=True     0.167s nodes=28969
+[C] endgame-377 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_LEFT  optimal=True     0.185s nodes=28969
 [C] endgame-377 Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_LEFT  optimal=True     0.000s nodes=21
 [C] endgame-377 Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_LEFT  optimal=True     0.001s nodes=144
-[C] endgame-377 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_LEFT  optimal=True     0.004s nodes=881
-[C] endgame-377 Heuristic Minimax                  depth=1        MOVE_LEFT  optimal=True     0.000s nodes=37
-[C] endgame-377 Heuristic Minimax                  depth=2        MOVE_LEFT  optimal=True     0.010s nodes=957
-[C] endgame-377 Heuristic Minimax                  depth=3        MOVE_LEFT  optimal=True     0.285s nodes=28969
-[C] endgame-377 Heuristic Alpha-Beta               depth=1        MOVE_LEFT  optimal=True     0.000s nodes=21
-[C] endgame-377 Heuristic Alpha-Beta               depth=2        MOVE_LEFT  optimal=True     0.002s nodes=124
-[C] endgame-377 Heuristic Alpha-Beta               depth=3        MOVE_LEFT  optimal=True     0.011s nodes=879
-[C] endgame-395 Minimax                            depth=terminal MOVE_DOWN  optimal=True     4.682s nodes=754398
-[C] endgame-395 Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.026s nodes=4892
+[C] endgame-377 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_LEFT  optimal=True     0.005s nodes=881
+[C] endgame-377 Heuristic Minimax                  depth=1        MOVE_LEFT  optimal=True     0.001s nodes=37
+[C] endgame-377 Heuristic Minimax                  depth=2        MOVE_LEFT  optimal=True     0.020s nodes=957
+[C] endgame-377 Heuristic Minimax                  depth=3        MOVE_LEFT  optimal=True     0.582s nodes=28969
+[C] endgame-377 Heuristic Alpha-Beta               depth=1        MOVE_LEFT  optimal=True     0.001s nodes=29
+[C] endgame-377 Heuristic Alpha-Beta               depth=2        MOVE_LEFT  optimal=True     0.004s nodes=197
+[C] endgame-377 Heuristic Alpha-Beta               depth=3        MOVE_LEFT  optimal=True     0.020s nodes=1104
+[C] endgame-395 Minimax                            depth=terminal MOVE_DOWN  optimal=True     5.032s nodes=754398
+[C] endgame-395 Alpha-Beta                         depth=terminal MOVE_DOWN  optimal=True     0.029s nodes=4892
 [C] endgame-395 Minimax (cutoff, EVAL = 0)         depth=1        MOVE_DOWN  optimal=True     0.000s nodes=31
 [C] endgame-395 Minimax (cutoff, EVAL = 0)         depth=2        MOVE_DOWN  optimal=True     0.005s nodes=821
-[C] endgame-395 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.149s nodes=24685
+[C] endgame-395 Minimax (cutoff, EVAL = 0)         depth=3        MOVE_DOWN  optimal=True     0.157s nodes=24685
 [C] endgame-395 Alpha-Beta (cutoff, EVAL = 0)      depth=1        MOVE_DOWN  optimal=True     0.000s nodes=19
 [C] endgame-395 Alpha-Beta (cutoff, EVAL = 0)      depth=2        MOVE_DOWN  optimal=True     0.001s nodes=140
-[C] endgame-395 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.004s nodes=844
-[C] endgame-395 Heuristic Minimax                  depth=1        MOVE_DOWN  optimal=True     0.000s nodes=31
-[C] endgame-395 Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.008s nodes=821
-[C] endgame-395 Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.247s nodes=24685
-[C] endgame-395 Heuristic Alpha-Beta               depth=1        MOVE_DOWN  optimal=True     0.000s nodes=19
-[C] endgame-395 Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.002s nodes=151
-[C] endgame-395 Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.013s nodes=1066
+[C] endgame-395 Alpha-Beta (cutoff, EVAL = 0)      depth=3        MOVE_DOWN  optimal=True     0.005s nodes=844
+[C] endgame-395 Heuristic Minimax                  depth=1        MOVE_DOWN  optimal=True     0.001s nodes=31
+[C] endgame-395 Heuristic Minimax                  depth=2        MOVE_DOWN  optimal=True     0.016s nodes=821
+[C] endgame-395 Heuristic Minimax                  depth=3        MOVE_DOWN  optimal=True     0.482s nodes=24685
+[C] endgame-395 Heuristic Alpha-Beta               depth=1        MOVE_DOWN  optimal=True     0.001s nodes=27
+[C] endgame-395 Heuristic Alpha-Beta               depth=2        MOVE_DOWN  optimal=True     0.005s nodes=226
+[C] endgame-395 Heuristic Alpha-Beta               depth=3        MOVE_DOWN  optimal=True     0.025s nodes=1404
 [D] duel   Minimax (cutoff, EVAL = 0)       vs Alpha-Beta (cutoff, EVAL = 0)    -> draw                             turns=100 (0.7s)
 [D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs Minimax (cutoff, EVAL = 0)       -> draw                             turns=100 (0.7s)
 [D] open   Minimax (cutoff, EVAL = 0)       vs Alpha-Beta (cutoff, EVAL = 0)    -> draw                             turns=100 (0.8s)
 [D] open   Alpha-Beta (cutoff, EVAL = 0)    vs Minimax (cutoff, EVAL = 0)       -> draw                             turns=100 (0.8s)
-[D] duel   Minimax (cutoff, EVAL = 0)       vs Heuristic Minimax                -> Heuristic Minimax                turns= 18 (0.3s)
-[D] duel   Heuristic Minimax                vs Minimax (cutoff, EVAL = 0)       -> Heuristic Minimax                turns= 18 (0.3s)
-[D] open   Minimax (cutoff, EVAL = 0)       vs Heuristic Minimax                -> Heuristic Minimax                turns= 24 (0.4s)
-[D] open   Heuristic Minimax                vs Minimax (cutoff, EVAL = 0)       -> Heuristic Minimax                turns= 30 (0.6s)
-[D] duel   Minimax (cutoff, EVAL = 0)       vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 18 (0.1s)
-[D] duel   Heuristic Alpha-Beta             vs Minimax (cutoff, EVAL = 0)       -> Heuristic Alpha-Beta             turns= 18 (0.1s)
-[D] open   Minimax (cutoff, EVAL = 0)       vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 24 (0.2s)
-[D] open   Heuristic Alpha-Beta             vs Minimax (cutoff, EVAL = 0)       -> Heuristic Alpha-Beta             turns= 27 (0.2s)
+[D] duel   Minimax (cutoff, EVAL = 0)       vs Heuristic Minimax                -> Heuristic Minimax                turns= 18 (0.5s)
+[D] duel   Heuristic Minimax                vs Minimax (cutoff, EVAL = 0)       -> Heuristic Minimax                turns= 18 (0.5s)
+[D] open   Minimax (cutoff, EVAL = 0)       vs Heuristic Minimax                -> Heuristic Minimax                turns= 76 (2.1s)
+[D] open   Heuristic Minimax                vs Minimax (cutoff, EVAL = 0)       -> Heuristic Minimax                turns= 27 (0.9s)
+[D] duel   Minimax (cutoff, EVAL = 0)       vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 18 (0.2s)
+[D] duel   Heuristic Alpha-Beta             vs Minimax (cutoff, EVAL = 0)       -> Heuristic Alpha-Beta             turns= 18 (0.2s)
+[D] open   Minimax (cutoff, EVAL = 0)       vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 76 (0.8s)
+[D] open   Heuristic Alpha-Beta             vs Minimax (cutoff, EVAL = 0)       -> Heuristic Alpha-Beta             turns= 27 (0.3s)
 [D] duel   Minimax (cutoff, EVAL = 0)       vs Random                           -> draw                             turns=100 (0.6s)
 [D] duel   Random                           vs Minimax (cutoff, EVAL = 0)       -> draw                             turns=100 (0.6s)
 [D] open   Minimax (cutoff, EVAL = 0)       vs Random                           -> draw                             turns=100 (0.7s)
 [D] open   Random                           vs Minimax (cutoff, EVAL = 0)       -> draw                             turns=100 (0.7s)
-[D] duel   Minimax (cutoff, EVAL = 0)       vs H-Alpha-Beta ID 0.2s             -> H-Alpha-Beta ID 0.2s             turns= 18 (3.3s)
-[D] duel   H-Alpha-Beta ID 0.2s             vs Minimax (cutoff, EVAL = 0)       -> H-Alpha-Beta ID 0.2s             turns= 18 (3.3s)
-[D] open   Minimax (cutoff, EVAL = 0)       vs H-Alpha-Beta ID 0.2s             -> H-Alpha-Beta ID 0.2s             turns= 24 (4.9s)
-[D] open   H-Alpha-Beta ID 0.2s             vs Minimax (cutoff, EVAL = 0)       -> H-Alpha-Beta ID 0.2s             turns= 27 (5.2s)
-[D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Minimax                -> Heuristic Minimax                turns= 18 (0.2s)
-[D] duel   Heuristic Minimax                vs Alpha-Beta (cutoff, EVAL = 0)    -> Heuristic Minimax                turns= 18 (0.2s)
-[D] open   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Minimax                -> Heuristic Minimax                turns= 24 (0.3s)
-[D] open   Heuristic Minimax                vs Alpha-Beta (cutoff, EVAL = 0)    -> Heuristic Minimax                turns= 30 (0.4s)
-[D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 18 (0.0s)
-[D] duel   Heuristic Alpha-Beta             vs Alpha-Beta (cutoff, EVAL = 0)    -> Heuristic Alpha-Beta             turns= 18 (0.0s)
-[D] open   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 24 (0.1s)
+[D] duel   Minimax (cutoff, EVAL = 0)       vs H-Alpha-Beta ID 50ms             -> H-Alpha-Beta ID 50ms             turns= 18 (0.7s)
+[D] duel   H-Alpha-Beta ID 50ms             vs Minimax (cutoff, EVAL = 0)       -> H-Alpha-Beta ID 50ms             turns= 18 (0.6s)
+[D] open   Minimax (cutoff, EVAL = 0)       vs H-Alpha-Beta ID 50ms             -> H-Alpha-Beta ID 50ms             turns= 32 (1.5s)
+[D] open   H-Alpha-Beta ID 50ms             vs Minimax (cutoff, EVAL = 0)       -> H-Alpha-Beta ID 50ms             turns= 35 (1.4s)
+[D] duel   Minimax (cutoff, EVAL = 0)       vs H-Alpha-Beta ID 50ms, randomized -> H-Alpha-Beta ID 50ms, randomized turns= 18 (0.7s)
+[D] duel   H-Alpha-Beta ID 50ms, randomized vs Minimax (cutoff, EVAL = 0)       -> H-Alpha-Beta ID 50ms, randomized turns= 18 (0.7s)
+[D] open   Minimax (cutoff, EVAL = 0)       vs H-Alpha-Beta ID 50ms, randomized -> H-Alpha-Beta ID 50ms, randomized turns= 32 (1.5s)
+[D] open   H-Alpha-Beta ID 50ms, randomized vs Minimax (cutoff, EVAL = 0)       -> H-Alpha-Beta ID 50ms, randomized turns= 34 (1.4s)
+[D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Minimax                -> Heuristic Minimax                turns= 18 (0.4s)
+[D] duel   Heuristic Minimax                vs Alpha-Beta (cutoff, EVAL = 0)    -> Heuristic Minimax                turns= 18 (0.4s)
+[D] open   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Minimax                -> Heuristic Minimax                turns= 76 (1.6s)
+[D] open   Heuristic Minimax                vs Alpha-Beta (cutoff, EVAL = 0)    -> Heuristic Minimax                turns= 27 (0.7s)
+[D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 18 (0.1s)
+[D] duel   Heuristic Alpha-Beta             vs Alpha-Beta (cutoff, EVAL = 0)    -> Heuristic Alpha-Beta             turns= 18 (0.1s)
+[D] open   Alpha-Beta (cutoff, EVAL = 0)    vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 76 (0.3s)
 [D] open   Heuristic Alpha-Beta             vs Alpha-Beta (cutoff, EVAL = 0)    -> Heuristic Alpha-Beta             turns= 27 (0.1s)
 [D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs Random                           -> draw                             turns=100 (0.1s)
 [D] duel   Random                           vs Alpha-Beta (cutoff, EVAL = 0)    -> draw                             turns=100 (0.1s)
 [D] open   Alpha-Beta (cutoff, EVAL = 0)    vs Random                           -> draw                             turns=100 (0.1s)
 [D] open   Random                           vs Alpha-Beta (cutoff, EVAL = 0)    -> draw                             turns=100 (0.1s)
-[D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs H-Alpha-Beta ID 0.2s             -> H-Alpha-Beta ID 0.2s             turns= 18 (3.2s)
-[D] duel   H-Alpha-Beta ID 0.2s             vs Alpha-Beta (cutoff, EVAL = 0)    -> H-Alpha-Beta ID 0.2s             turns= 18 (3.3s)
-[D] open   Alpha-Beta (cutoff, EVAL = 0)    vs H-Alpha-Beta ID 0.2s             -> H-Alpha-Beta ID 0.2s             turns= 24 (4.7s)
-[D] open   H-Alpha-Beta ID 0.2s             vs Alpha-Beta (cutoff, EVAL = 0)    -> H-Alpha-Beta ID 0.2s             turns= 27 (5.0s)
-[D] duel   Heuristic Minimax                vs Heuristic Alpha-Beta             -> draw                             turns= 12 (0.2s)
-[D] duel   Heuristic Alpha-Beta             vs Heuristic Minimax                -> draw                             turns= 12 (0.1s)
-[D] open   Heuristic Minimax                vs Heuristic Alpha-Beta             -> draw                             turns= 15 (0.2s)
-[D] open   Heuristic Alpha-Beta             vs Heuristic Minimax                -> draw                             turns= 19 (0.3s)
-[D] duel   Heuristic Minimax                vs Random                           -> Heuristic Minimax                turns= 18 (0.2s)
-[D] duel   Random                           vs Heuristic Minimax                -> Heuristic Minimax                turns= 17 (0.2s)
-[D] open   Heuristic Minimax                vs Random                           -> Heuristic Minimax                turns= 24 (0.3s)
-[D] open   Random                           vs Heuristic Minimax                -> Heuristic Minimax                turns= 24 (0.3s)
-[D] duel   Heuristic Minimax                vs H-Alpha-Beta ID 0.2s             -> draw                             turns= 12 (2.9s)
-[D] duel   H-Alpha-Beta ID 0.2s             vs Heuristic Minimax                -> draw                             turns= 12 (2.9s)
-[D] open   Heuristic Minimax                vs H-Alpha-Beta ID 0.2s             -> draw                             turns= 15 (3.5s)
-[D] open   H-Alpha-Beta ID 0.2s             vs Heuristic Minimax                -> draw                             turns= 19 (4.3s)
+[D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs H-Alpha-Beta ID 50ms             -> H-Alpha-Beta ID 50ms             turns= 18 (0.6s)
+[D] duel   H-Alpha-Beta ID 50ms             vs Alpha-Beta (cutoff, EVAL = 0)    -> H-Alpha-Beta ID 50ms             turns= 18 (0.5s)
+[D] open   Alpha-Beta (cutoff, EVAL = 0)    vs H-Alpha-Beta ID 50ms             -> H-Alpha-Beta ID 50ms             turns= 35 (1.4s)
+[D] open   H-Alpha-Beta ID 50ms             vs Alpha-Beta (cutoff, EVAL = 0)    -> H-Alpha-Beta ID 50ms             turns= 35 (1.2s)
+[D] duel   Alpha-Beta (cutoff, EVAL = 0)    vs H-Alpha-Beta ID 50ms, randomized -> H-Alpha-Beta ID 50ms, randomized turns= 18 (0.6s)
+[D] duel   H-Alpha-Beta ID 50ms, randomized vs Alpha-Beta (cutoff, EVAL = 0)    -> H-Alpha-Beta ID 50ms, randomized turns= 18 (0.6s)
+[D] open   Alpha-Beta (cutoff, EVAL = 0)    vs H-Alpha-Beta ID 50ms, randomized -> H-Alpha-Beta ID 50ms, randomized turns= 32 (1.3s)
+[D] open   H-Alpha-Beta ID 50ms, randomized vs Alpha-Beta (cutoff, EVAL = 0)    -> H-Alpha-Beta ID 50ms, randomized turns= 34 (1.1s)
+[D] duel   Heuristic Minimax                vs Heuristic Alpha-Beta             -> draw                             turns= 12 (0.3s)
+[D] duel   Heuristic Alpha-Beta             vs Heuristic Minimax                -> draw                             turns= 12 (0.3s)
+[D] open   Heuristic Minimax                vs Heuristic Alpha-Beta             -> draw                             turns= 15 (0.4s)
+[D] open   Heuristic Alpha-Beta             vs Heuristic Minimax                -> draw                             turns= 15 (0.4s)
+[D] duel   Heuristic Minimax                vs Random                           -> Heuristic Minimax                turns= 18 (0.4s)
+[D] duel   Random                           vs Heuristic Minimax                -> Heuristic Minimax                turns= 17 (0.3s)
+[D] open   Heuristic Minimax                vs Random                           -> Heuristic Minimax                turns= 91 (2.0s)
+[D] open   Random                           vs Heuristic Minimax                -> Heuristic Minimax                turns= 24 (0.6s)
+[D] duel   Heuristic Minimax                vs H-Alpha-Beta ID 50ms             -> draw                             turns= 12 (0.7s)
+[D] duel   H-Alpha-Beta ID 50ms             vs Heuristic Minimax                -> draw                             turns= 12 (0.7s)
+[D] open   Heuristic Minimax                vs H-Alpha-Beta ID 50ms             -> draw                             turns= 16 (1.0s)
+[D] open   H-Alpha-Beta ID 50ms             vs Heuristic Minimax                -> draw                             turns= 16 (1.0s)
+[D] duel   Heuristic Minimax                vs H-Alpha-Beta ID 50ms, randomized -> draw                             turns= 12 (0.8s)
+[D] duel   H-Alpha-Beta ID 50ms, randomized vs Heuristic Minimax                -> draw                             turns= 12 (0.8s)
+[D] open   Heuristic Minimax                vs H-Alpha-Beta ID 50ms, randomized -> Heuristic Minimax                turns= 44 (2.7s)
+[D] open   H-Alpha-Beta ID 50ms, randomized vs Heuristic Minimax                -> draw                             turns= 16 (1.0s)
 [D] duel   Heuristic Alpha-Beta             vs Random                           -> Heuristic Alpha-Beta             turns= 18 (0.0s)
 [D] duel   Random                           vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 17 (0.0s)
-[D] open   Heuristic Alpha-Beta             vs Random                           -> Heuristic Alpha-Beta             turns= 24 (0.0s)
-[D] open   Random                           vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 24 (0.0s)
-[D] duel   Heuristic Alpha-Beta             vs H-Alpha-Beta ID 0.2s             -> draw                             turns= 12 (2.6s)
-[D] duel   H-Alpha-Beta ID 0.2s             vs Heuristic Alpha-Beta             -> draw                             turns= 12 (2.8s)
-[D] open   Heuristic Alpha-Beta             vs H-Alpha-Beta ID 0.2s             -> draw                             turns= 15 (3.2s)
-[D] open   H-Alpha-Beta ID 0.2s             vs Heuristic Alpha-Beta             -> draw                             turns= 15 (3.2s)
-[D] duel   Random                           vs H-Alpha-Beta ID 0.2s             -> H-Alpha-Beta ID 0.2s             turns= 17 (3.4s)
-[D] duel   H-Alpha-Beta ID 0.2s             vs Random                           -> H-Alpha-Beta ID 0.2s             turns= 18 (4.0s)
-[D] open   Random                           vs H-Alpha-Beta ID 0.2s             -> H-Alpha-Beta ID 0.2s             turns= 24 (4.1s)
-[D] open   H-Alpha-Beta ID 0.2s             vs Random                           -> H-Alpha-Beta ID 0.2s             turns= 24 (4.5s)
+[D] open   Heuristic Alpha-Beta             vs Random                           -> Heuristic Alpha-Beta             turns= 91 (0.3s)
+[D] open   Random                           vs Heuristic Alpha-Beta             -> Heuristic Alpha-Beta             turns= 24 (0.1s)
+[D] duel   Heuristic Alpha-Beta             vs H-Alpha-Beta ID 50ms             -> draw                             turns= 12 (0.5s)
+[D] duel   H-Alpha-Beta ID 50ms             vs Heuristic Alpha-Beta             -> draw                             turns= 12 (0.5s)
+[D] open   Heuristic Alpha-Beta             vs H-Alpha-Beta ID 50ms             -> draw                             turns= 16 (0.7s)
+[D] open   H-Alpha-Beta ID 50ms             vs Heuristic Alpha-Beta             -> draw                             turns= 16 (0.7s)
+[D] duel   Heuristic Alpha-Beta             vs H-Alpha-Beta ID 50ms, randomized -> draw                             turns= 12 (0.5s)
+[D] duel   H-Alpha-Beta ID 50ms, randomized vs Heuristic Alpha-Beta             -> draw                             turns= 12 (0.5s)
+[D] open   Heuristic Alpha-Beta             vs H-Alpha-Beta ID 50ms, randomized -> Heuristic Alpha-Beta             turns= 48 (1.9s)
+[D] open   H-Alpha-Beta ID 50ms, randomized vs Heuristic Alpha-Beta             -> draw                             turns= 16 (0.7s)
+[D] duel   Random                           vs H-Alpha-Beta ID 50ms             -> H-Alpha-Beta ID 50ms             turns= 18 (0.5s)
+[D] duel   H-Alpha-Beta ID 50ms             vs Random                           -> H-Alpha-Beta ID 50ms             turns= 25 (0.9s)
+[D] open   Random                           vs H-Alpha-Beta ID 50ms             -> H-Alpha-Beta ID 50ms             turns= 28 (1.0s)
+[D] open   H-Alpha-Beta ID 50ms             vs Random                           -> H-Alpha-Beta ID 50ms             turns= 28 (1.0s)
+[D] duel   Random                           vs H-Alpha-Beta ID 50ms, randomized -> H-Alpha-Beta ID 50ms, randomized turns= 18 (0.6s)
+[D] duel   H-Alpha-Beta ID 50ms, randomized vs Random                           -> H-Alpha-Beta ID 50ms, randomized turns= 25 (0.9s)
+[D] open   Random                           vs H-Alpha-Beta ID 50ms, randomized -> H-Alpha-Beta ID 50ms, randomized turns= 28 (1.0s)
+[D] open   H-Alpha-Beta ID 50ms, randomized vs Random                           -> H-Alpha-Beta ID 50ms, randomized turns= 25 (0.8s)
+[D] duel   H-Alpha-Beta ID 50ms             vs H-Alpha-Beta ID 50ms, randomized -> draw                             turns= 12 (1.0s)
+[D] duel   H-Alpha-Beta ID 50ms, randomized vs H-Alpha-Beta ID 50ms             -> draw                             turns= 12 (1.0s)
+[D] open   H-Alpha-Beta ID 50ms             vs H-Alpha-Beta ID 50ms, randomized -> draw                             turns= 26 (1.7s)
+[D] open   H-Alpha-Beta ID 50ms, randomized vs H-Alpha-Beta ID 50ms             -> draw                             turns= 26 (1.7s)
+[E] classic  ['win', 'win', 'win', 'win', 'win', 'win']  ms p50=26.6 p95=47.1 max=47.3  depth avg=2.94  nodes max=2932  peak=49  tt=1037
+[E] duel     ['draw', 'draw', 'draw', 'draw', 'draw', 'draw']  ms p50=44.5 p95=47.2 max=47.2  depth avg=3.74  nodes max=3186  peak=55  tt=908
+[E] open     ['draw', 'draw', 'draw', 'draw', 'draw', 'draw']  ms p50=47.1 p95=47.2 max=47.3  depth avg=3.06  nodes max=2905  peak=47  tt=1124
+[F] 7x7    cells=   49  lane distance=  7  BFS field=0.05 ms  d=3: 577 nodes, peak 35  d=4: 1420 nodes, peak 46
+[F] 13x13  cells=  169  lane distance= 11  BFS field=0.17 ms  d=3: 621 nodes, peak 37  d=4: 1280 nodes, peak 49
+[F] 25x25  cells=  625  lane distance= 19  BFS field=0.63 ms  d=3: 621 nodes, peak 37  d=4: 1281 nodes, peak 49
+[F] 49x49  cells= 2401  lane distance= 35  BFS field=2.45 ms  d=3: 621 nodes, peak 37  d=4: 1281 nodes, peak 49
 
-Results written to task2/results
+Results written to /Users/dohuyentran/Documents/HoangXuanThanh/AI/task2/results

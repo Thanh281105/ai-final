@@ -59,7 +59,8 @@ class ReportWriter:
         lines.append("")
         return lines
 
-    def write_markdown(self, sat_rows: List[Dict], mc_rows: List[Dict], ablation_rows: List[Dict] = ()) -> Path:
+    def write_markdown(self, sat_rows: List[Dict], mc_rows: List[Dict], ablation_rows: List[Dict] = (),
+                       alo_rows: List[Dict] = ()) -> Path:
         lines = ["# Kết quả thực nghiệm N-Queens", "", f"Môi trường: {self.environment()}", ""]
         if sat_rows:
             lines += [
@@ -100,6 +101,26 @@ class ReportWriter:
                 "",
             ]
             lines += self._mc_table(ablation_rows)
+        if alo_rows:
+            lines += [
+                "## 4. Ablation SAT: thêm nhóm mệnh đề \"mỗi cột có ít nhất một hậu\"",
+                "",
+                "Nhóm này được KB gốc suy ra (nguyên lý chuồng bồ câu) nên hai KB có cùng tập mô hình; "
+                "chỉ thêm N mệnh đề. Khác biệt nằm ở công việc của Glucose3: có mệnh đề cột thì unit "
+                "propagation suy ra ngay ô cuối cùng của một cột.",
+                "",
+                "| N | Mệnh đề (gốc) | Conflicts (gốc) | Decisions (gốc) | Solve gốc (ms) | Mệnh đề (+cột) | "
+                "Conflicts (+cột) | Decisions (+cột) | Solve +cột (ms) | Nghiệm hợp lệ |",
+                "|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|",
+            ]
+            for r in alo_rows:
+                lines.append(
+                    f"| {r['n']} | {r['base_clauses']} | {r['base_conflicts']} | {r['base_decisions']} | "
+                    f"{r['base_solve_ms']:.2f} | {r['alo_clauses']} | {r['alo_conflicts']} | "
+                    f"{r['alo_decisions']} | {r['alo_solve_ms']:.2f} | "
+                    f"{'✓' if r['base_valid'] and r['alo_valid'] else '✗'} |"
+                )
+            lines.append("")
         path = self.out_dir / "report.md"
         path.write_text("\n".join(lines), encoding="utf-8")
         return path

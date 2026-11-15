@@ -97,12 +97,17 @@ class NQueensCNF:
       5. Mỗi đường chéo phụ nhiều nhất một    : tương tự
     Từ (1) và (3): có đúng N hậu, mỗi hàng đúng một hậu và mỗi cột đúng một hậu.
     "Nhiều nhất một" được mã hoá theo cặp (pairwise): ¬(a ∧ b) ≡ ¬a ∨ ¬b (De Morgan).
+
+    Tuỳ chọn `column_alo=True` thêm nhóm thứ 6 "mỗi cột có ít nhất một hậu". Nhóm này được KB
+    suy ra (KB ⊨ α, nguyên lý chuồng bồ câu) nên KHÔNG làm đổi tập mô hình; nó chỉ giúp
+    lan truyền đơn vị (unit propagation) của solver suy diễn mạnh hơn (xem thực nghiệm ablation).
     """
 
-    def __init__(self, n: int):
+    def __init__(self, n: int, column_alo: bool = False):
         if n < 1:
             raise ValueError("N phải >= 1")
         self.n = n
+        self.column_alo = column_alo
         self.vars = VariableMap(n)
         self.groups: List[ConstraintGroup] = []
         self._build()
@@ -127,6 +132,15 @@ class NQueensCNF:
                 "anti_amo", "Mỗi đường chéo phụ có nhiều nhất 1 hậu", lines["anti"], "đường chéo phụ (r + c không đổi)"
             ),
         ]
+        if self.column_alo:
+            group = self._at_least_one("col_alo", "Mỗi cột có ít nhất 1 hậu (suy ra được từ KB)", lines["col"])
+            group.logic = "x(0,c) ∨ x(1,c) ∨ … ∨ x(N-1,c)"
+            group.description = (
+                "Mệnh đề dư thừa về mặt logic: KB gốc đã suy ra nó (N hậu trên N cột, mỗi cột nhiều nhất "
+                "một hậu). Thêm vào không đổi tập mô hình, nhưng cho phép unit propagation suy ra ngay ô "
+                "cuối cùng của một cột khi N-1 ô kia đã False."
+            )
+            self.groups.append(group)
 
     def _at_least_one(self, key: str, title: str, lines: List[List[Square]]) -> ConstraintGroup:
         clauses = [[self.vars.var(r, c) for r, c in line] for line in lines]
@@ -186,12 +200,12 @@ class NQueensCNF:
 
     # ----- công thức đóng ------------------------------------------------
     @staticmethod
-    def expected_clause_count(n: int) -> int:
+    def expected_clause_count(n: int, column_alo: bool = False) -> int:
         """Số mệnh đề theo công thức: dùng để đối chiếu với quá trình sinh."""
         c2 = lambda k: k * (k - 1) // 2  # noqa: E731
         rows_cols = 2 * n * c2(n)
         one_diag_family = c2(n) + 2 * sum(c2(length) for length in range(1, n))
-        return n + rows_cols + 2 * one_diag_family
+        return n + rows_cols + 2 * one_diag_family + (n if column_alo else 0)
 
 
 if __name__ == "__main__":

@@ -52,11 +52,11 @@ class GlucoseQueensSolver:
                 "Chưa cài PySAT. Hãy chạy:  pip install python-sat"
             ) from exc
 
-    def solve(self, n: int, keep_cnf: bool = False) -> SATResult:
+    def solve(self, n: int, keep_cnf: bool = False, column_alo: bool = False) -> SATResult:
         from pysat.solvers import Glucose3
 
         t0 = time.perf_counter()
-        cnf = NQueensCNF(n)
+        cnf = NQueensCNF(n, column_alo=column_alo)
         build_time = time.perf_counter() - t0
 
         t1 = time.perf_counter()

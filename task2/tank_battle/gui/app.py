@@ -6,7 +6,7 @@ import time
 
 import pygame
 
-from ..agents import build_registry
+from ..agents import CUTOFF_MINIMAX, build_registry
 from ..agents.search_agents import WIN_SCORE
 from ..core.constants import Action, BASE_HP, DRAW, PLAYER_NAMES, TANK_HP
 from ..core.map_loader import list_maps, load_map
@@ -35,6 +35,7 @@ class Fonts:
         self.title = font(36, "head", bold=True)
         self.big = font(24, "head", bold=True)
         self.head = font(18, "head", bold=True)
+        self.head_small = font(14, "head", bold=True)     # long agent names in the player cards
         self.normal = font(15, "text")
         self.small = font(13, "text")
         self.mono = font(12, "text", bold=True)
@@ -84,7 +85,7 @@ class MenuScreen:
         settings = settings or {}
 
         p1_idx = names.index(settings.get("p1", names[0])) if settings.get("p1") in names else 0
-        p2_default = "Heuristic Minimax" if "Heuristic Minimax" in names else (names[1] if len(names) > 1 else names[0])
+        p2_default = CUTOFF_MINIMAX if CUTOFF_MINIMAX in names else (names[1] if len(names) > 1 else names[0])
         p2_idx = names.index(settings["p2"]) if settings.get("p2") in names else names.index(p2_default)
 
         self.choice = {
@@ -420,7 +421,9 @@ class GameScreen:
         pygame.draw.rect(surface, color, (card.x, card.y + 6, 4, card.h - 12), border_radius=2)
 
         cx, cy, right = x + 16, y + 10, card.right - 14
-        draw_text(surface, f.head, self.agents[p].name[:26], (cx, cy), color)
+        name = self.agents[p].name[:40]
+        name_font = f.head if f.head.size(name)[0] <= PANEL_W - 110 else f.head_small
+        draw_text(surface, name_font, name, (cx, cy + (0 if name_font is f.head else 3)), color)
         draw_text(surface, f.mono, PLAYER_NAMES[p], (right, cy + 3), color, right=True)
         cy += 28
 
@@ -457,6 +460,7 @@ class GameScreen:
             ("Nodes Visited", "{:,}".format(stats["nodes"])),
             ("Cutoffs (Pruned)", "{:,}".format(stats["cutoffs"])),
             ("Search Depth", reached + (" (timeout)" if stats.get("timed_out") else "")),
+            ("Peak Mem / TT", "{:,} / {:,} nodes".format(stats.get("peak_memory", 0), stats.get("tt_entries", 0))),
             ("Minimax Value", describe_value(stats.get("value")))
         ]
 

@@ -8,12 +8,14 @@
 \usepackage{cite}
 \usepackage{url}
 \usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{shapes.multipart,positioning,arrows.meta,fit,calc}
 
 \graphicspath{{figures/}}
 
 \begin{document}
 
-\title{Introduction to Artificial Intelligence}
+\title{Introduction to AI Final Project: N-Queens, Tank Battle and Kakuro with Logic, Adversarial Search and Constraint Satisfaction}
 
 \author{
     \IEEEauthorblockN{Ho\`ang Xu\^an Th\`anh}
@@ -29,216 +31,159 @@
 \maketitle
 
 \begin{abstract}
-This report presents our complete solution for the Final Project in Introduction to Artificial Intelligence (Course 503043). We address all four stated project requirements across three distinct AI search paradigms:
-(1) For the $N$-Queens problem, we formulate the domain under Propositional Logic via an $O(N^2)$ constraint discovery algorithm and Conjunctive Normal Form (CNF) conversion with closed-form clause bound $\Theta(N^3)$, solved with Glucose3 (PySAT); we additionally implement Min-Conflicts local search and propose a ``Most-Conflicted with Tabu Tenure'' heuristic that reduces median iterations to 56\%--76\% across board sizes up to $N=1000$.
-(2) For Tank Battle, we formulate a 2-player zero-sum game with alternating 2-ply cycle abstractions; on 10 terminal endgame positions, exact $\alpha$-$\beta$ pruning reduces explored nodes by up to $114\times$ (cutting effective branching factor $b^*$ from 5.36 to 2.89) while preserving identical minimax values; for real-time play, depth-limited Heuristic $\alpha$-$\beta$ with Transposition Table caching and vectorized move ordering slashes explored nodes by 64.4\%--85.9\%, executing depth 4 (8 plies) in 8.65~ms and depth 5 (10 plies) in 22.04~ms, remaining undefeated in tournament play.
-(3) For Kakuro puzzles, we formulate a high-arity Constraint Satisfaction Problem (CSP) and enforce Generalized Arc Consistency (GAC) using Kuhn's bipartite matching algorithm integrated into Backtracking Search; initial AC-3 preprocessing deterministically shrinks the search space from $10^{45.8}$ to $1$, solving the complex $9 \times 9$ (48-variable) benchmark with 0 backtracks in 9.1~ms and completely eliminating heavy-tailed search variance.
-All functional requirements, experimental benchmarks, unit test suites, and interactive graphical environments are 100\% completed and verified.
+This report presents our final project for Introduction to Artificial Intelligence; all requirements of the four tasks are completed.
+(1) $N$-Queens is formulated in propositional logic: an $O(N^2)$ constraint-discovery pass yields a CNF knowledge base of $(5N^3-6N^2+4N)/3$ clauses, solved with Glucose3 for $N=4..100$; Min-Conflicts with our ``most-conflicted + tabu'' variable-selection heuristic needs 52\%--76\% of the median steps of the standard algorithm.
+(2) Tank Battle is formulated as a zero-sum game with two plies per game cycle. To terminal states, Alpha-Beta returns the Minimax value with up to $114\times$ fewer nodes; with a depth cutoff, Heuristic Alpha-Beta with move ordering and a transposition table returns the Heuristic Minimax value with $32\times$ fewer nodes than unordered alpha-beta at 10 plies ($b^*=2.31$), holds at most 59 nodes at once and plays within 50~ms per move.
+(3) Kakuro is formulated as a CSP with one $n$-ary constraint per run; backtracking with generalized arc consistency, MRV, degree and LCV solves the complex $9\times 9$ test case in 48 nodes with 0 backtracks and proves its solution unique.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Propositional Logic, SAT Solver, Min-Conflicts, Adversarial Search, Minimax, Alpha-Beta Pruning, Constraint Satisfaction Problems, Kakuro, Arc Consistency.
+Propositional Logic, SAT, Min-Conflicts, Minimax, Alpha-Beta Pruning, Constraint Satisfaction, Arc Consistency.
 \end{IEEEkeywords}
 
 \section{Introduction}
-Search algorithms form the core foundation of classic Artificial Intelligence. Depending on the problem environment, agents must reason under deterministic constraints, navigate competitive multi-agent dynamics, or optimize combinatorial assignments. This project explores three critical paradigms:
-\begin{enumerate}
-    \item \textbf{Logic and Local Search:} Encoding $N$-Queens into Conjunctive Normal Form (CNF) for CDCL SAT solvers, alongside an adaptive local search heuristic.
-    \item \textbf{Adversarial Search:} Modeling simultaneous discrete combat into an alternating zero-sum game with game-tree search and domain-specific heuristics.
-    \item \textbf{Constraint Satisfaction:} Formulating Kakuro puzzles with high-arity constraints, enforcing Generalized Arc Consistency (GAC), and analyzing the elimination of heavy-tailed search costs.
-\end{enumerate}
+The project applies three families of techniques from the course~\cite{aima}: propositional logic and local search ($N$-Queens), adversarial search (Tank Battle) and constraint satisfaction (Kakuro). Costs are measured in the quantities of the theory; seconds are secondary.
 
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.96\textwidth]{uml_architecture.pdf}
-\caption{Unified Object-Oriented Architecture and Class Design across the three project tasks, illustrating domain models, solver hierarchies, and Strategy patterns.}
+% The diagram is typeset from its TikZ source so that it always matches the code.
+\resizebox{0.88\textwidth}{!}{\input{figures/uml_architecture_body}}
+\caption{Main classes of the three tasks. Selection, ordering and inference policies are separate classes (Strategy pattern).}
 \label{fig:uml_arch}
 \end{figure*}
 
-\subsection{Object-Oriented System Architecture}
-As illustrated in the unified UML class diagram (Figure~\ref{fig:uml_arch}), all modules are developed under strict Object-Oriented Programming (OOP) principles, employing modular Strategy patterns to decouple domain states from search and inference policies:
-\begin{itemize}
-    \item \textbf{Task 1 (N-Queens):} \texttt{NQueensCNF} encapsulates $O(N^2)$ key-based constraint discovery and DIMACS translation. The local search engine \texttt{MinConflictsSolver} decouples state evaluation from variable/value selection policies via the \texttt{IVariableSelector} interface.
-    \item \textbf{Task 2 (Tank Battle):} The immutable game engine \texttt{GameState} models entities (\texttt{Tank}, \texttt{Base}, \texttt{Bullet}). The abstract \texttt{BaseAgent} class provides a unified interface inherited by \texttt{AdversarialSearchAgent}, which configures Minimax, $\alpha$-$\beta$, and heuristic evaluations seamlessly.
-    \item \textbf{Task 3 (Kakuro CSP):} \texttt{KakuroCSP} manages variables and runs. \texttt{BacktrackingSolver} interacts with pluggable inference engines (\texttt{IInference}: FC, MAC) and variable ordering strategies (\texttt{IVariableOrder}: MRV, Degree).
-\end{itemize}
+\subsection{Object-Oriented Design}
+All tasks are object-oriented (Fig.~\ref{fig:uml_arch}). In Task 1, \texttt{NQueensCNF} builds the knowledge base and \texttt{MinConflictsSolver} combines interchangeable \texttt{Initializer}, \texttt{VariableSelector} and \texttt{ValueSelector} strategies. In Task 2, \texttt{GameState} is the transition model, every agent subclasses \texttt{BaseAgent}, and the four configurations are one \texttt{AdversarialSearchAgent} with two switches. In Task 3, \texttt{BacktrackingSolver} delegates to \texttt{VariableOrdering}, \texttt{ValueOrdering} and \texttt{Inference} classes.
 
 % =========================================================================
-% SECTION II: TASK 1 - N-QUEENS
-% =========================================================================
-\section{Task 1: Local Search and Propositional Logic for $N$-Queens}
+\section{Task 1: Propositional Logic and Local Search for $N$-Queens}
 
-\subsection{Propositional Logic Formulation and CNF Conversion}
-In an $N \times N$ chessboard, placing $N$ mutually non-attacking queens is formalized with $N^2$ boolean variables $x(r, c)$ for $0 \le r, c < N$, where $x(r, c) = \text{True}$ iff a queen is placed at row $r$, column $c$. Under the DIMACS convention, each pair $(r, c)$ maps to variable index $v = r \cdot N + c + 1$.
+\subsection{Propositional-Logic Formulation}
+\textbf{Symbols:} $x(r,c)$, $0\le r,c<N$, is true iff square $(r,c)$ holds a queen ($N^2$ symbols, DIMACS index $v=rN+c+1$). \textbf{Knowledge base:} the conjunction of the constraints below, in CNF. \textbf{Model:} a truth assignment, i.e. a placement. \textbf{Problem:} satisfiability, find a model of the KB. Models and solutions correspond one-to-one: enumerating all models for $N=1..8$ gives the known counts $1,0,0,2,10,4,40,92$ ($N=2,3$ are unsatisfiable).
 
-\subsubsection{Constraint Discovery Algorithm}
-A naive check over all square pairs requires $\Theta(N^4)$ comparisons. To optimize KB generation, we group squares by their invariant geometric keys in a single $O(N^2)$ pass:
-\begin{itemize}
-    \item Row key: $r \in [0, N-1]$ ($N$ lines)
-    \item Column key: $c \in [0, N-1]$ ($N$ lines)
-    \item Main diagonal key: $r - c \in [-(N-1), N-1]$ ($2N-1$ lines)
-    \item Anti-diagonal key: $r + c \in [0, 2N-2]$ ($2N-1$ lines)
-\end{itemize}
-Two distinct squares attack each other if and only if they share at least one key.
+\subsubsection{Constraint Discovery}
+Testing all pairs of squares costs $\Theta(N^4)$. Instead, one $O(N^2)$ pass groups the squares by four keys: row $r$, column $c$, main diagonal $r-c$ and anti-diagonal $r+c$ ($6N-2$ lines). Two squares attack each other iff they share a key, so each line is a set of mutually attacking squares.
 
-\subsubsection{Conversion to Conjunctive Normal Form (CNF)}
-The problem constraints are stated and converted as follows:
+\subsubsection{Conversion to CNF}
 \begin{enumerate}
-    \item \textit{Row at-least-one:} $\bigvee_{c=0}^{N-1} x(r, c)$, yielding 1 clause of $N$ positive literals per row ($N$ clauses total).
-    \item \textit{Row at-most-one:} For each row $r$ and $c_1 < c_2$, $x(r, c_1) \implies \neg x(r, c_2) \equiv \neg x(r, c_1) \vee \neg x(r, c_2)$, generating $N \binom{N}{2}$ binary negative clauses.
-    \item \textit{Column at-most-one:} Identically, $N \binom{N}{2}$ binary clauses. Notice that ``column at-least-one'' is mathematically redundant by the Pigeonhole Principle ($N$ queens distributed into $N$ columns with $\le 1$ queen per column guarantees exactly 1 queen per column).
-    \item \textit{Diagonal at-most-one:} For each diagonal with $L \ge 2$ squares, $\binom{L}{2}$ binary negative clauses are generated. Summing over all main and anti-diagonals:
-    \begin{equation}
-        2 \times \left[ \binom{N}{2} + 2 \sum_{L=2}^{N-1} \binom{L}{2} \right] = \frac{N(N-1)(2N-1)}{3}
-    \end{equation}
+    \item \textit{At least one queen per row:} $\bigvee_{c} x(r,c)$ is already a clause ($N$ clauses).
+    \item \textit{At most one queen per line} (rows, columns, both diagonal families): for every pair $a,b$ on a line, $x(a)\Rightarrow\neg x(b)$ becomes $\neg x(a)\vee\neg x(b)$ by implication elimination (equivalently De Morgan on $\neg(x(a)\wedge x(b))$). A line of $L$ squares gives $\binom{L}{2}$ clauses.
 \end{enumerate}
-Summing all groups yields the exact closed-form clause count:
-\begin{align}
-    C(N) &= N + 2N\binom{N}{2} + \frac{N(N-1)(2N-1)}{3} \nonumber \\
-         &= \frac{5N^3 - 6N^2 + 4N}{3}
-\end{align}
-Pairwise encoding avoids the exponential clause explosion ($\Theta(N^N)$) of direct DNF translation, bounding clause growth strictly to $\Theta(N^3)$.
+``At least one queen per column'' is entailed ($N$ queens, at most one per column), so it is not needed. The total is
+\begin{equation}
+    C(N)=N+2N\binom{N}{2}+\frac{N(N-1)(2N-1)}{3}=\frac{5N^3-6N^2+4N}{3},
+\end{equation}
+i.e. $\Theta(N^3)$ clauses; the program checks the generated count against this formula.
 
-\subsection{PySAT Glucose3 Experiments}
-We evaluate the CDCL-based Glucose3 solver across $N \in [4, 100]$. Every returned assignment is validated by an independent checker verifying $N$ non-attacking queens.
+\subsection{Glucose3 Experiments}
+Table~\ref{tab:glucose3} reports the clauses and the time of \texttt{Glucose3.solve()}~\cite{glucose,pysat} alone (mean of 3 runs, Apple M1), with the solver's machine-independent counters. Every model is verified by an independent checker.
 
 \begin{table}[htbp]
-\caption{Glucose3 Performance Across Increasing Board Sizes $N$}
+\caption{Glucose3 on $N$-Queens for Increasing $N$}
 \label{tab:glucose3}
 \centering
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{rrrrrrr}
 \toprule
-$N$ & Vars & Clauses & Solve (ms) & Decisions & Propagations & Conflicts \\
+$N$ & Symbols & Clauses & Solve (ms) & Decisions & Propagations & Conflicts \\
 \midrule
-4   & 16     & 80        & 0.02    & 10      & 32        & 3       \\
-8   & 64     & 736       & 0.03    & 40      & 194       & 12      \\
-16  & 256    & 6,336     & 1.00    & 482     & 3,904     & 207     \\
-32  & 1,024  & 52,288    & 6.51    & 1,420   & 16,840    & 580     \\
-50  & 2,500  & 203,400   & 251.70  & 11,452  & 277,349   & 7,519   \\
-60  & 3,600  & 352,880   & 40.24   & 5,475   & 74,396    & 1,341   \\
-80  & 6,400  & 840,640   & 10,055.5& 138,947 & 4,168,619 & 104,415 \\
-100 & 10,000 & 1,646,800 & 8,120.3 & 91,881  & 5,499,245 & 70,981  \\
+4   & 16     & 80        & 0.01     & 10      & 32        & 3       \\
+8   & 64     & 736       & 0.04     & 40      & 194       & 12      \\
+16  & 256    & 6,336     & 1.02     & 482     & 3,904     & 207     \\
+30  & 900    & 43,240    & 7.40     & 1,588   & 18,144    & 649     \\
+40  & 1,600  & 103,520   & 4.29     & 1,500   & 13,370    & 296     \\
+50  & 2,500  & 203,400   & 260.9    & 11,452  & 277,349   & 7,519   \\
+60  & 3,600  & 352,880   & 42.33    & 5,475   & 74,396    & 1,341   \\
+80  & 6,400  & 840,640   & 10,296   & 138,947 & 4,168,619 & 104,415 \\
+100 & 10,000 & 1,646,800 & 8,233    & 91,881  & 5,499,245 & 70,981  \\
 \bottomrule
 \end{tabular}%
 }
 \end{table}
 
-As shown in Table~\ref{tab:glucose3}, clauses grow as $\Theta(N^3)$ (e.g., $N=40 \to 80$ yields an $8.1\times$ increase). Runtime correlates directly with variable decision heuristics and the frequency of learned conflicts rather than raw formula size.
+Clauses grow as $\Theta(N^3)$ ($N=40\to 80$: $8.1\times$). Solve time follows the conflicts, not the formula size. The seconds at $N\ge 80$ come from the encoding: the solver must rediscover that every column needs a queen. Adding these $N$ entailed clauses keeps the models (checked by enumeration) but lets unit propagation fix the last free square of a column: conflicts drop from 104,415 to 276 at $N=80$ (9.9~s to 11~ms) and from 70,981 to 277 at $N=100$. For small $N$ they do not always help (207 to 952 conflicts at $N=16$), so they are optional.
 
-\subsection{Min-Conflicts and Proposed Variable Selection Heuristic}
-The $N$-Queens problem is formulated as a CSP with $N$ variables $X_r \in \{0, \dots, N-1\}$ denoting the column of the queen on row $r$. Conflicts are tracked incrementally in $O(1)$ time using three lookup arrays (columns, main diagonals, and anti-diagonals).
-
-\subsubsection{Proposed Heuristic: Most-Conflicted with Tabu Tenure}
-Standard Min-Conflicts selects a conflicted variable uniformly at random. We propose a \textit{fail-first} variable selection strategy:
+\subsection{Min-Conflicts and the Proposed Variable-Selection Heuristic}
+For local search the problem is a CSP with one variable per row, $X_r\in\{0..N-1\}$ (the queen's column); a state is a complete assignment and $\textsc{Conflicts}(X_r,v)$, the number of queens attacking $(r,v)$, is maintained in $O(1)$. Standard Min-Conflicts~\cite{minconflicts} picks a conflicted variable \emph{at random} and gives it its min-conflicts value. Our heuristic changes only that choice:
 \begin{enumerate}
-    \item Select the variable $X_r$ with the \textbf{maximum conflict count} $\text{Conflicts}(r, X_r)$ to maximize immediate conflict reduction.
-    \item To avoid infinite 2-cycles where a queen is repeatedly reassigned without improving state quality, we enforce a \textbf{Tabu Tenure} $\tau = \max(2, \min(10, \lfloor N/4 \rfloor))$. A recently altered variable cannot be chosen again for $\tau$ iterations unless all conflicted variables are tabu.
+    \item pick the conflicted variable with the \textbf{most conflicts} (ties at random): moving a queen attacked by $k$ others can remove up to $k$ conflicts in one step;
+    \item a variable just chosen is \textbf{tabu} for $\tau=\max(2,\min(10,\lfloor N/4\rfloor))$ steps, otherwise the most conflicted variable, already on its best value, would be selected forever.
 \end{enumerate}
 
 \begin{table}[htbp]
-\caption{Min-Conflicts: Standard vs. Proposed Heuristic (50 Runs)}
+\caption{Min-Conflicts: Standard vs. Proposed Heuristic (200 Runs per $N$, Same Initial States)}
 \label{tab:min_conflicts}
 \centering
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{rcccccc}
 \toprule
-\multirow{2}{*}{$N$} & \multicolumn{2}{c}{Success Rate} & \multicolumn{2}{c}{Median Steps} & \multirow{2}{*}{\shortstack{Step\\Ratio}} & \multirow{2}{*}{\shortstack{Time (ms)\\Heur.}} \\
+\multirow{2}{*}{$N$} & \multicolumn{2}{c}{Success Rate} & \multicolumn{2}{c}{Median Steps} & \multirow{2}{*}{\shortstack{Step\\Ratio}} & \multirow{2}{*}{\shortstack{Time (ms)\\Proposed}} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-5}
  & Standard & Proposed & Standard & Proposed & & \\
 \midrule
-8    & 94\%  & 94\%  & 32.0  & 18.0  & 56\% & 41.6  \\
-16   & 100\% & 98\%  & 73.5  & 44.5  & 61\% & 19.0  \\
-32   & 100\% & 100\% & 76.0  & 46.5  & 61\% & 0.69  \\
-64   & 100\% & 100\% & 98.5  & 70.5  & 72\% & 1.68  \\
-128  & 100\% & 100\% & 145.5 & 107.0 & 74\% & 4.42  \\
-256  & 100\% & 100\% & 233.0 & 169.0 & 73\% & 13.69 \\
-512  & 100\% & 100\% & 404.5 & 294.0 & 73\% & 47.88 \\
-1000 & 100\% & 100\% & 710.5 & 539.0 & 76\% & 176.77\\
+8    & 92.5\% & 95.0\% & 35.5  & 19.0  & 54\% & 35.4  \\
+16   & 99.0\% & 97.5\% & 66.0  & 34.5  & 52\% & 24.3  \\
+32   & 100\%  & 100\%  & 76.5  & 46.0  & 60\% & 0.76  \\
+64   & 100\%  & 100\%  & 98.0  & 67.0  & 68\% & 1.66  \\
+128  & 100\%  & 100\%  & 154.0 & 106.0 & 69\% & 4.57  \\
+256  & 100\%  & 100\%  & 240.0 & 169.0 & 70\% & 14.2  \\
+512  & 100\%  & 100\%  & 397.0 & 297.0 & 75\% & 48.6  \\
+1000 & 100\%  & 100\%  & 708.5 & 538.0 & 76\% & 169.8 \\
 \bottomrule
 \end{tabular}%
 }
 \end{table}
 
-\subsubsection{Ablation Study and Analysis}
-Table~\ref{tab:min_conflicts} demonstrates that our proposed heuristic consistently cuts median search steps to 56\%--76\% across all board scales. In our ablation study at $N=256$, selecting the most conflicted variable \textit{without Tabu} achieved a median of 197.5 steps (15\% reduction), whereas adding Tabu reached 169.0 steps (27\% reduction). At small $N \le 16$, both methods occasionally encounter local minima due to the incompleteness of greedy local search; this is fully mitigated by random restarts.
+Both variants start from the same random assignment per seed and differ only in the variable choice. The heuristic needs 52\%--76\% of the median steps (Table~\ref{tab:min_conflicts}). For $N\le 16$ a few runs of \emph{both} variants hit the 100,000-step limit in a local minimum where every conflicted queen already stands on its min-conflicts column, which no variable choice can leave. At $N=256$, most-conflicted selection alone reduces the median by 17\%, with tabu by 30\%; random restarts (outside variable selection) give 100\% success.
 
-% =========================================================================
-% SECTION III: TASK 2 - TANK BATTLE
 % =========================================================================
 \section{Task 2: Adversarial Search for Tank Battle}
 
 \subsection{Zero-Sum Game Formulation}
-Tank Battle is modeled as a 2-player, deterministic, fully observable zero-sum game played on an $H \times W$ grid.
 \begin{itemize}
-    \item \textbf{Game State $s$:} $s = (\text{walls}, \text{tanks}, \text{bases}, \text{bullets}, \text{turn})$, tracking positions, directions, and health points (Tank: 6 HP, Base: 9 HP, Wall: 3 HP).
-    \item \textbf{Actions $A(s, p)$:} \texttt{MOVE\_\{UP, DOWN, LEFT, RIGHT\}}, \texttt{FIRE}, and \texttt{STAY}. Redundant moves that replicate \texttt{STAY} (e.g., driving into an obstacle while already oriented toward it, or firing while a bullet is in-flight) are pruned, reducing effective branching factor $b$ from 6 to $\approx 4\text{--}5$.
-    \item \textbf{Cycle-to-Ply Abstraction:} Although actions occur simultaneously in real time, minimax assumes alternating turns. We decouple 1 game cycle into 2 plies:
-    \begin{align}
-        \text{MAX: } & (s, \emptyset) \xrightarrow{a_{\text{MAX}}} (s, a_{\text{MAX}}) \\
-        \text{MIN: } & (s, a_{\text{MAX}}) \xrightarrow{a_{\text{MIN}}} (s', \emptyset)
-    \end{align}
-    State transitions occur strictly at the MIN node after both moves are fixed, modeling a conservative maximin guarantee.
-    \item \textbf{Transition Function:} Per cycle: (1) tanks move/turn; (2) newly fired bullets spawn; (3) bullets advance 3 cells sequentially, checking collision at each cell.
-    \item \textbf{Terminal Utility:} $U(s) = \pm (10^6 - \Delta \text{turn})$ for win/loss, and 0 for draw or $turn \ge 200$. Discounting by $\Delta \text{turn}$ incentivizes earliest possible victory and latest defense.
+    \item \textbf{State} $s$: walls, tanks (cell, direction, HP), bases, bullets in flight and the turn counter (Tank 6, Base 9, Wall 3 HP; 1 damage per hit). $S_0$ is read from a map file.
+    \item \textbf{Players}: the real game is simultaneous, so one game cycle is two plies: a MAX node $(s,\emptyset)$ where we choose $a_{\text{MAX}}$ and a MIN node $(s,a_{\text{MAX}})$ where the opponent replies.
+    \item \textbf{Actions}: four moves, \texttt{FIRE}, \texttt{STAY}. Actions equal to \texttt{STAY} (a blocked move in the current direction, \texttt{FIRE} with a bullet in flight) are dropped; this is decided on the state at the start of the cycle, so the minimax value is unchanged (tested against all six actions). $b\le 6$, 5.5 on average.
+    \item \textbf{Transition} $\textsc{Result}(s,a_1,a_2)$, at MIN nodes: tanks turn and move one cell; new bullets appear; bullets fly 3 cells, one at a time, with a collision check after each cell.
+    \item \textbf{Terminal test}: a tank or a base is destroyed, or the turn limit (100--200 per map) is reached.
+    \item \textbf{Utility}: $+1$ win, $-1$ loss, $0$ draw (zero-sum), scaled to $\pm(10^6-\Delta\text{turn})$ in search to prefer faster wins.
 \end{itemize}
+Letting MIN reply to MAX's move is pessimistic: the minimax value is the pure-strategy maximin of the simultaneous game, a safe lower bound for MAX.
 
-\subsection{Adversarial Search Algorithms and Complexity Analysis}
-We implement four distinct configurations under a unified search engine:
-\begin{enumerate}
-    \item \textbf{Minimax Search:} Exhaustive DFS over game-tree to terminal nodes ($O(b^m)$ time, $O(bm)$ space).
-    \item \textbf{$\alpha$-$\beta$ Pruning:} Branch-and-bound optimization maintaining $[\alpha, \beta]$ windows to eliminate provably suboptimal subtrees without altering root minimax value.
-    \item \textbf{Heuristic Minimax (H-Minimax):} Depth-limited search truncated at depth $d$, evaluated by heuristic function $\text{EVAL}(s)$.
-    \item \textbf{Heuristic $\alpha$-$\beta$ Search (H-Alpha-Beta):} Combines depth-cutoff, $\alpha$-$\beta$ pruning, move ordering, and transposition caching.
-\end{enumerate}
+\subsection{Search Algorithms and Complexity}
+One engine provides the four configurations: \textbf{Minimax} and \textbf{Alpha-Beta} search to terminal states and score leaves with \textsc{Utility}; \textbf{Heuristic Minimax} and \textbf{Heuristic Alpha-Beta} use $\textsc{Cutoff-Test}(s,d)$ and $\textsc{Eval}$. A cutoff without a heuristic can only score 0; it is H-Minimax with $\textsc{Eval}=0$ and is labelled as such.
 
-\subsubsection{Theoretical Complexity Foundation}
-\begin{itemize}
-    \item \textbf{Time Complexity (Total Visited Nodes):} 
-    Exhaustive Minimax visits $\sum_{i=0}^m b^i = \frac{b^{m+1}-1}{b-1} = O(b^m)$ nodes. With $\alpha$-$\beta$ pruning under optimal move ordering, time complexity drops to $O(b^{m/2})$, cutting effective branching factor to $b^* = \sqrt{b}$ and doubling searchable depth. Under random ordering, expected complexity is $O(b^{3m/4})$.
-    \item \textbf{Space Complexity (Peak Nodes in Memory):} 
-    Because game-tree search executes via Depth-First Search (DFS), memory at any single moment holds \textit{only} the path from the root to the current node (depth $m$) plus unexpanded sibling choices at each ply. Hence, space complexity is strictly:
-    \begin{equation}
-        \text{Space Complexity} = O(b \cdot m)
-    \end{equation}
-    At depth $d=4$ cycles ($m=8$ plies) with $b \le 6$, maximum concurrent states in memory is at most $6 \times 8 = 48$ frames ($\approx$ a few kilobytes). Even across an entire $m=400$ opening tree, peak stack memory is bounded to $6 \times 400 = 2,400$ states ($< 300$~KB). Memory is \textbf{never} the computational bottleneck in DFS adversarial search; time latency is the sole constraint.
-\end{itemize}
+\textbf{Time} is the number of nodes: $O(b^m)$ for Minimax, $O(b^{m/2})$ for Alpha-Beta with perfect ordering ($b^*=\sqrt{b}$), about $O(b^{3m/4})$ with random ordering~\cite{alphabeta}. \textbf{Space} is $O(bm)$: depth-first search holds the current path and the untried successors of its nodes; we measure this \emph{peak memory} (bound $1+6m$).
 
-\subsubsection{Heuristic Evaluation Function $\text{EVAL}(s)$}
-To combat the \textit{horizon effect} (e.g., missing imminent bullet impact beyond cutoff depth), $\text{EVAL}(s)$ evaluates:
+\subsubsection{Evaluation Function}
+$\textsc{Eval}(s,p)=\text{Side}(s,p)-\text{Side}(s,q)$, hence zero-sum, where Side is a weighted sum of features:
 \begin{align}
-    \text{EVAL}(s) &= w_1 \Delta \text{HP}_{\text{tank}} + w_2 \Delta \text{HP}_{\text{base}} + w_3 \sum \text{Dmg}_{\text{fly}} \nonumber \\
-    &\quad + \Delta \text{FirePot} + w_5 \Delta \text{Dist}
+\text{Side}(s,p) &= 100\,\text{HP}_{\text{tank}}+70\,\text{HP}_{\text{base}}-\text{BulletDanger} \nonumber\\
+ &\quad +\text{FirePotential}-6.5\,\text{LaneDist}+\text{Cover}.
 \end{align}
-where $\text{Dmg}_{\text{fly}}$ projects all bullet trajectories up to 9 cells, and $\text{FirePot}$ rewards unobstructed firing alignment toward opponent bases and tanks.
+BulletDanger projects enemy bullets 9 cells ahead (against the horizon effect); FirePotential rewards a firing line on the enemy tank or base, divided by the square of the shots needed through walls, plus a \emph{siege} term for a base under a clear line; LaneDist is the BFS distance, around walls, to the nearest firing line; Cover rewards adjacent walls and escape cells.
 
-\subsection{Algorithmic Enhancements: Transposition Table \& Ordering}
-Profiling revealed that in standard depth-limited search, **91.8\% of visited states** at MAX nodes are transpositions (identical configurations reached via permuted move orderings, e.g., $P_1$ moving UP then RIGHT vs. RIGHT then UP). Furthermore, dynamic generator expressions in naive move ordering consumed $>50\%$ of CPU cycles. We introduced two high-impact optimizations:
+\subsubsection{Optimizations}
+None changes the minimax value: the root value of the full agent equals that of H-Minimax (or of alpha-beta without a table) on 190 random positions at depths 1--5.
 \begin{enumerate}
-    \item \textbf{Transposition Table (TT) with State Key Caching:} We cache visited states with Exact, Lowerbound ($\beta$-cutoff), Upperbound ($\alpha$-cutoff) flags, and best-move hints. Transpositions at sufficient depth trigger instant $O(1)$ pruning; shallower hits guide move ordering.
-    \item \textbf{Vectorized Move Ordering:} Precomputing alignment baselines and inlining metric distances eliminated generator allocation overhead.
+    \item \textbf{Move ordering}: transposition-table move, killer moves, history heuristic, then a tactical order (clean shots, dodging, approaching a firing line).
+    \item \textbf{Transposition table} with exact/lower/upper flags, keyed by the complete state (tanks, bases, bullets, a Zobrist hash of the walls, turn): equal keys have the same remaining depth, so only true transpositions are merged.
+    \item \textbf{Iterative deepening} under a 50~ms budget.
+    \item \textbf{Root tie-break}: among moves of best minimax value the agent deterministically plays the one that improves its own side of \textsc{Eval} most.
 \end{enumerate}
 
-\subsection{Experimental Evaluation}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.82\columnwidth]{exact_search.png}
-\caption{Exact Game-Tree Search: Minimax vs. $\alpha$-$\beta$ Pruning on endgame positions across increasing search plies $m$.}
-\label{fig:exact_search}
-\end{figure}
-
-\subsubsection{Experiment A: Exact Search to Terminal States}
-Evaluated across 10 distinct endgame positions (Figure~\ref{fig:exact_search} and Table~\ref{tab:tank_exact}), both algorithms return identical minimax values in all 40/40 test runs.
+\subsection{Experiments}
+\subsubsection{Exact Search (Minimax vs.\ Alpha-Beta)}
+Both algorithms search 10 endgames to the terminal states (Table~\ref{tab:tank_exact}) and return the same value in 40/40 runs. Minimax grows as $b^m$, $b\approx 5.36$; Alpha-Beta without move ordering reaches $b^*=2.89$, between the best case $\sqrt{b}\approx 2.32$ and random ordering $b^{3/4}\approx 3.52$. Peak memory is 13, 25, 37, 48 nodes for both: pruning reduces the nodes visited, not the depth. From the opening ($m=400$ plies) neither finishes ($>4\times 10^6$ nodes in 30~s).
 
 \begin{table}[htbp]
-\caption{Exact Terminal Search Comparison (10 Endgame Positions)}
+\caption{Exact Search to Terminal States (Mean of 10 Endgames)}
 \label{tab:tank_exact}
 \centering
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{crrrrrr}
 \toprule
-$m$ (ply) & Minimax Nodes & $\alpha$-$\beta$ Nodes & Reduction & $b^*_{\text{MM}}$ & $b^*_{\alpha\beta}$ & Value Match \\
+$m$ (plies) & Minimax Nodes & $\alpha$-$\beta$ Nodes & Reduction & $b^*_{\text{MM}}$ & $b^*_{\alpha\beta}$ & Same Value \\
 \midrule
 2 & 36      & 20    & $1.8\times$   & 5.45 & 3.88 & 10/10 \\
 4 & 1,004   & 179   & $5.6\times$   & 5.34 & 3.35 & 10/10 \\
@@ -249,70 +194,66 @@ $m$ (ply) & Minimax Nodes & $\alpha$-$\beta$ Nodes & Reduction & $b^*_{\text{MM}
 }
 \end{table}
 
-At $m=8$ plies, $\alpha$-$\beta$ cuts explored nodes by $114.1\times$, reducing effective branching factor $b^*$ from 5.36 down to 2.89 (approaching optimal $\sqrt{b} \approx 2.32$). Memory depth scales strictly as $O(bm)$.
-
-\subsubsection{Experiment B: Depth-Limited Real-Time Search}
-On the opening map ($m=400$ plies total), exact search is intractable ($>4.6\times 10^6$ nodes visited in 30s without finishing). Depth-limited search with our enhanced H-$\alpha$-$\beta$ achieves near real-time performance:
-\begin{itemize}
-    \item \textbf{At Depth $d=4$ (8 plies):} Visited nodes drop from 3,887 down to \textbf{1,383} (64.4\% reduction), cutting latency from 33.06~ms to \textbf{8.65~ms} (a $3.8\times$ speedup, and $>1,300\times$ faster than H-Minimax's 11.36~s).
-    \item \textbf{At Depth $d=5$ (10 plies):} Visited nodes plummet from 21,481 to \textbf{3,022} (85.9\% reduction), slashing latency from 208.77~ms down to \textbf{22.04~ms} ($9.4\times$ speedup), pulling a 10-ply lookahead well beneath the 50~ms real-time threshold.
-    \item \textbf{At Depth $d=6$ (12 plies):} Explores 12 plies in just \textbf{59.28~ms} (5,658 nodes), whereas unoptimized search exceeds 2~seconds.
-\end{itemize}
-In tournament play (20 games), H-$\alpha$-$\beta$ remained undefeated (12 wins, 8 draws, 0 losses).
-
-\subsubsection{Scalability Analysis under Map Scaling}
-When the grid dimension scales from $7 \times 7 \to 13 \times 13 \to 25 \times 25 \to 50 \times 50$, we empirically observe:
-\begin{enumerate}
-    \item \textbf{Game Tree Invariance:} Because tank action cardinality is strictly local ($b \le 6$), the tree size at fixed depth $d=4$ remains invariant ($3,376$ nodes on $7\times 7$, $3,887$ on $13\times 13$, $3,666$ on $25\times 25$, $3,822$ on $50\times 50$), with latency consistently $\approx 26\text{--}35$~ms.
-    \item \textbf{Horizon Limitation on Large Maps:} Standalone depth-limited search is myopic: at $d=4$, an agent only senses 4 cells ahead. On a $50 \times 50$ board where targets are 50 cells away, naive Manhattan heuristics trap agents in local minima behind wall barriers.
-    \item \textbf{Hierarchical AI Resolution:} To scale to arbitrarily large maps, our architecture decouples into a two-tier paradigm: a \textit{Global Strategic Layer} computing all-pairs obstacle-aware distance fields via BFS/Dijkstra ($O(HW)$ computed once), fed directly into the \textit{Local Tactical Layer} running H-$\alpha$-$\beta$ ($d=2\text{--}4$) for sub-10~ms bullet evasion and combat reflexes.
-\end{enumerate}
-
-\subsection{Modernized GUI and Extensibility via Dynamic Plug-in}
-The PyGame interface is redesigned following modern UI/UX and shadcn Slate standards: high contrast ($\ge 7:1$), 60~FPS fluid rendering, segmented capsule health bars, real-time log-scale effort sparklines, and turn latency telemetry. External agents are seamlessly integrated via reflection from \texttt{task2/plugins/}.
-
-% =========================================================================
-% SECTION IV: TASK 3 - KAKURO
-% =========================================================================
-\section{Task 3: Constraint Satisfaction Problems for Kakuro}
-
-\subsection{CSP Formalization}
-Kakuro is formulated as a triple $\langle X, D, C \rangle$:
-\begin{itemize}
-    \item \textbf{Variables $X$:} Each white cell $x(r, c)$ forms a discrete variable. For the benchmark $9 \times 9$ puzzle, $|X| = 48$.
-    \item \textbf{Domains $D$:} $D(x) = \{1, \dots, 9\}$ for all unassigned variables.
-    \item \textbf{Constraints $C$:} Each continuous horizontal or vertical run $R = (x_1, \dots, x_k)$ with clue sum $s$ imposes an $n$-ary constraint:
-    \begin{equation}
-        \text{SumAllDiff}(R) \equiv \text{AllDifferent}(x_1, \dots, x_k) \wedge \sum_{i=1}^k x_i = s
-    \end{equation}
-    Each white cell participates in exactly two constraints (horizontal run and vertical run).
-\end{itemize}
-
-\subsection{Generalized Arc Consistency (GAC) via Kuhn's Matching}
-Binary decomposition of $\text{SumAllDiff}$ loses high-order inference. We enforce Generalized Arc Consistency (GAC) directly. A value $v \in D(Y)$ has \textit{support} in run $R$ iff there exists a valid digit combination $T$ from precomputed combination tables such that $v \in T$ and the remaining digits $T \setminus \{v\}$ can be matched injectively to the remaining unassigned cells in $R$. We resolve this by finding maximum bipartite matchings using Kuhn's augmenting path algorithm, bounding $\text{REVISE}(Y, C)$ to $O(k^2 \cdot 9)$.
-
-\subsection{Backtracking Search and Heuristics}
-Backtracking search maintains domain alterations on an undo trail stack, allowing $O(1)$ state restoration on backtracks. We integrate:
-\begin{itemize}
-    \item \textbf{Inference:} None, Forward Checking (FC), and Maintaining Arc Consistency (MAC).
-    \item \textbf{Variable Ordering:} Static, MRV (Minimum Remaining Values / fail-first), and Degree heuristic (highest number of unassigned neighbors in shared runs).
-    \item \textbf{Value Ordering:} Least Constraining Value (LCV / succeed-first), prioritizing digits that rule out the fewest choices in neighboring domains.
-\end{itemize}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\columnwidth]{ablation_complex_9x9.png}
-\caption{Ablation of CSP configurations on the complex $9 \times 9$ Kakuro puzzle.}
-\label{fig:kakuro_ablation}
-\end{figure}
-
-\subsection{Experimental Results and Stability Analysis}
-
-\subsubsection{Ablation on Complex $9 \times 9$ Benchmark}
-Table~\ref{tab:kakuro_ablation} and Figure~\ref{fig:kakuro_ablation} show the progressive impact of inference and heuristics on the 48-variable testcase.
+\subsubsection{Depth-Limited Search}
+Table~\ref{tab:tank_ablation} compares the heuristic configurations on the same root state and depths, adding one optimization at a time; every row returns the H-Minimax value.
 
 \begin{table}[htbp]
-\caption{Ablation on Complex $9 \times 9$ Kakuro Puzzle}
+\caption{Depth-Limited Search on the Classic Opening: Nodes Visited}
+\label{tab:tank_ablation}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+Configuration (cutoff depth in cycles) & $d=2$ & $d=3$ & $d=4$ & $d=5$ \\
+\midrule
+Heuristic Minimax                 & 1,330 & 40,460 & 1,229,015 & $>$30~s \\
+Heuristic $\alpha\beta$, no ordering & 324   & 2,208  & 22,194    & 247,056 \\
+\;+ tactical ordering             & 163   & 1,177  & 5,610     & 91,743 \\
+\;+ killers \& history            & 166   & 1,087  & 4,222     & 29,574 \\
+\;+ transposition table (full)    & 166   & 847    & 1,807     & 7,720 \\
+\midrule
+Full agent: time (ms)             & 3.0   & 13.2   & 29.2      & 124.0 \\
+Peak memory / TT entries          & 23 / 85 & 35 / 297 & 47 / 572 & 59 / 2,672 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+At $d=5$ the full agent visits $32\times$ fewer nodes than unordered alpha-beta and $b^*$ falls from 3.34 to 2.31, close to $\sqrt{b}\approx 2.4$ ($12.5\times$ and $13.1\times$ on two other scenarios). Peak memory stays at 59 nodes; the table, cleared at every move, holds 2,672 entries. On the endgames both heuristic configurations choose an optimal move in 7/10 positions at $d=1$ (6/10 with $\textsc{Eval}=0$) and 10/10 from $d=2$.
+
+\subsubsection{Matches and Real-Time Play}
+In a round-robin tournament at $d=2$ (24 games per agent), Heuristic Minimax and Heuristic Alpha-Beta both score 13 wins, 11 draws, no loss, but Alpha-Beta needs 2.8~ms per move instead of 22.2~ms (143 vs.\ 1,115 nodes); the variants with $\textsc{Eval}=0$ win no game. The GUI agent (iterative deepening, 50~ms) never loses; over 405 moves against Heuristic Minimax its 95th-percentile move time is 47.2~ms and the maximum 47.3~ms, searching 3--4 cycles deep with at most 55 nodes of peak memory.
+
+On generated maps from $7\times 7$ to $49\times 49$ the tree at $d=4$ stays at about 1,300 nodes: $b$ depends on the actions, not on the grid. Only the distance to a firing line grows (7 to 35 moves), hence the BFS distance fields in \textsc{Eval}.
+
+\subsection{GUI and Imported Agents}
+The PyGame interface runs the game and shows per move the nodes visited, cutoffs, depth, peak memory and minimax value of each side. An agent of another group is a file dropped into \texttt{plugins/}: a subclass of \texttt{BaseAgent} or a function \texttt{get\_action(observation, player)}. Both agents get a copy of the same state; an exception, an invalid action or a timeout counts as \texttt{STAY}.
+
+% =========================================================================
+\section{Task 3: Constraint Satisfaction for Kakuro}
+
+\subsection{CSP Formulation}
+\begin{itemize}
+    \item \textbf{Variables}: one per white cell (48 for the complex $9\times 9$ test case, 12 for the $5\times 5$ example).
+    \item \textbf{Domains}: $D(x)=\{1,\dots,9\}$.
+    \item \textbf{Constraints}: for each run $R=(x_1,\dots,x_k)$ with clue $s$, one $n$-ary constraint
+    \begin{equation}
+        \text{AllDifferent}(x_1,\dots,x_k)\ \wedge\ \textstyle\sum_{i} x_i=s .
+    \end{equation}
+    Every cell belongs to one across run and one down run.
+\end{itemize}
+The sum and the all-different parts are kept together because they infer more jointly: a 2-cell run with clue 3 forces the digits $\{1,2\}$.
+
+\subsection{Constraint Propagation}
+For $n$-ary constraints, arc consistency~\cite{mackworth} becomes generalized arc consistency (GAC): an arc is a pair $(Y,C)$ and $\textsc{Revise}(Y,C)$ deletes the values of $Y$ without a \emph{support}. A value $v$ is supported iff some combination $T$ of $k$ distinct digits with sum $s$ contains $v$ and $T\setminus\{v\}$ can be assigned one-to-one to the other cells within their domains, a bipartite matching~\cite{regin}. With at most 12 combinations per run, a \textsc{Revise} costs at most $12\times 9$ matchings of $O(9k^2)$. AC-3 is used in three ways: once on all arcs before search; \textbf{forward checking} (FC) revises the arcs of the assigned variable once; \textbf{MAC} runs AC-3 after each assignment.
+
+\subsection{Backtracking Search and Heuristics}
+Backtracking search follows~\cite{aima}; pruned values are pushed on a trail and popped when a choice is undone. Variables are ordered by \textbf{MRV} with the \textbf{degree} heuristic as tie-breaker, values by \textbf{LCV}. Time is measured in nodes (assignments), backtracks and constraint checks; space in maximum depth ($O(n)$) and trail length ($O(nd)$).
+
+\subsection{Results on the Complex Test Case}
+
+\begin{table}[htbp]
+\caption{Ablation on the Complex $9 \times 9$ Kakuro (48 Variables)}
 \label{tab:kakuro_ablation}
 \centering
 \resizebox{\columnwidth}{!}{%
@@ -320,13 +261,13 @@ Table~\ref{tab:kakuro_ablation} and Figure~\ref{fig:kakuro_ablation} show the pr
 \toprule
 Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
 \midrule
-1. BT (Plain)       & 14,038 & 13,990 & 150,706    & 384 & 0.3245 \\
-2. BT + MRV         & 44,797 & 44,749 & 13,792,014 & 384 & 14.5407\\
-3. BT + FC          & 275    & 227    & 5,760      & 384 & 0.0201 \\
-4. BT + FC + MRV/Deg& 1,575  & 1,527  & 39,279     & 384 & 0.1730 \\
-5. BT + FC + MRV + LCV & 1,594 & 1,546& 77,166     & 384 & 0.2761 \\
-6. BT + MAC + MRV/Deg& 49    & 1      & 1,930      & 384 & 0.0097 \\
-\textbf{7. BT + MAC + All + Pre}& \textbf{48} & \textbf{0} & \textbf{1,809} & \textbf{384} & \textbf{0.0091} \\
+1. BT                          & 14,038 & 13,990 & 150,706    & 384 & 0.3245 \\
+2. BT + MRV                    & 44,797 & 44,749 & 13,792,014 & 384 & 14.5407\\
+3. BT + FC                     & 275    & 227    & 5,760      & 384 & 0.0201 \\
+4. BT + FC + MRV/Degree        & 1,575  & 1,527  & 39,279     & 384 & 0.1730 \\
+5. BT + FC + MRV/Degree + LCV  & 1,594  & 1,546  & 77,166     & 384 & 0.2761 \\
+6. BT + MAC + MRV/Degree       & 49     & 1      & 1,930      & 384 & 0.0097 \\
+\textbf{7. 6 + LCV + initial AC-3} & \textbf{48} & \textbf{0} & \textbf{1,809} & \textbf{384} & \textbf{0.0091} \\
 \bottomrule
 \end{tabular}%
 }
@@ -338,7 +279,7 @@ Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
     \centering
     \includegraphics[width=\linewidth]{kakuro-complex-test-case.png}
     \vspace{1mm}
-    \centerline{\scriptsize (a) Assignment Problem}
+    \centerline{\scriptsize (a) Test case}
 \end{minipage}
 \hfill
 \begin{minipage}{0.54\columnwidth}
@@ -359,66 +300,53 @@ Configuration & Nodes & Backtracks & Checks & Max Trail & Time (s) \\
     \bottomrule
     \end{tabular}
     \vspace{1mm}
-    \centerline{\scriptsize (b) Unique Solution Matrix}
+    \centerline{\scriptsize (b) Unique solution}
 \end{minipage}
-\caption{Complex $9 \times 9$ Kakuro puzzle and its certified unique solution.}
+\caption{The complex $9 \times 9$ test case and the solution found.}
 \label{fig:kakuro_sol}
 \end{figure}
 
-\textbf{Key Insights:}
-\begin{enumerate}
-    \item \textit{MRV without inference degrades performance:} Plain BT + MRV required $13.8\times 10^6$ checks because counting legal values without domain filtering requires checking all values of all unassigned variables at every node.
-    \item \textit{Power of MAC and Initial AC-3:} Initial AC-3 preprocessing shrinks the total Cartesian search space $\prod |D(x)|$ from $10^{45.8}$ down to $10^{0.0}$ in just 7 ms, fixing all 48 variables deterministically. Backtracking completes in exactly 48 nodes with \textbf{0 backtracks}.
-\end{enumerate}
+\textbf{Effectiveness} (Table~\ref{tab:kakuro_ablation}). Propagation is decisive: FC cuts the nodes of plain backtracking by $50\times$ and MAC reaches the minimum, one node per variable; the initial AC-3 alone reduces $\prod|D(x)|$ from $10^{45.8}$ to 1 in 7~ms. MRV pays off only with strong propagation: without it, or with one-step FC, domains have similar sizes, so MRV jumps between runs and each sum constraint is completed late, whereas the static row order fills runs one after the other. Maximum depth (48) and trail ($384=n(d-1)$) are the same for all configurations, as predicted.
 
-\subsubsection{Correctness and Uniqueness}
-Exhaustive post-solution search confirms that both the $5 \times 5$ and $9 \times 9$ benchmarks yield \textbf{exactly 1 solution} (Figure~\ref{fig:kakuro_sol}), independently verified against game rules.
+\textbf{Correctness.} Every solution is re-checked by an independent rule checker, and the search continues for a second solution: the $5\times 5$ example and the $9\times 9$ test case each have exactly one (Fig.~\ref{fig:kakuro_sol}).
 
-\subsubsection{Stability and Heavy-Tail Elimination}
-Over 30 randomized tie-breaking seeds on the $9 \times 9$ puzzle:
-\begin{itemize}
-    \item \textbf{FC + MRV/Degree + LCV} exhibits extreme variance ($41,204 \pm 33,369$ nodes, range 1,365--93,270, max time 17.5s)—the classic \textit{heavy-tailed phenomenon}.
-    \item \textbf{MAC + AC-3 Preprocessing} is 100\% deterministic ($48 \pm 0$ nodes, $9.7 \pm 0.3$ ms) across all seeds.
-\end{itemize}
-On 20 randomly generated boards ($7 \times 7$ to $12 \times 12$), MAC solved 20/20 puzzles (avg 36.2 ms, max 66 backtracks), whereas FC failed on 2 boards within the 10s timeout.
+\textbf{Stability.} Over 30 random tie-breaking seeds, configuration 7 always needs 48 nodes ($9.7\pm 0.3$~ms), whereas FC + MRV/Degree + LCV varies from 1,365 to 93,270 nodes. On 20 generated boards ($7\times 7$ to $12\times 12$) MAC solves 20/20 (at most 66 backtracks); FC exceeds the 10~s limit on two.
 
-\subsection{GUI Visualization}
-The PyGame interface visualizes: (1) live domains $D(x)$ inside cells; (2) pruned values struck in red and restored values in green; (3) active arcs $(Y, C)$ during GAC revisions; and (4) an interactive search-depth timeline showing backtrack sawtooth profiles.
+\subsection{User Interface}
+The solver records every step as an event and the PyGame interface replays it forward and backward: (1) the current domain of each variable, as small digits in its cell; (2) propagation: the arc $(Y,C)$ being revised, pruned values (red), wipe-outs, the initial AC-3; (3) backtracking: selected variable, assignments, dead ends, values restored on undo (green) and a depth timeline whose saw-teeth are the backtracks.
 
 % =========================================================================
-% SECTION V & VI: CONTRIBUTIONS & SELF-EVALUATION
-% =========================================================================
-\section{Contributions and Task Completion}
-Both team members contributed equally (50\%--50\%) across conceptual formulation, algorithmic implementation, empirical benchmarking, and reporting.
+\section{Contributions}
+Both members contributed equally (Table~\ref{tab:contributions}).
 
 \begin{table}[htbp]
-\caption{Individual Member Contributions and Task Completion}
+\caption{Individual Contributions and Completion}
 \label{tab:contributions}
 \centering
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{p{2.3cm}p{5.0cm}c}
 \toprule
-Member & Assigned Responsibilities & Completion \\
+Member & Tasks & Completion \\
 \midrule
-\textbf{Ho\`ang Xu\^an Th\`anh} \newline (523h0178) & 
-- Task 1: Propositional formulation, CNF converter, Glucose3 experiments, Min-Conflicts Tabu heuristic. \newline
-- Task 2: Core game state engine, Minimax/$\alpha$-$\beta$ search implementation, PyGame GUI telemetry. \newline
-- Final Report compilation and benchmarking data. & 100\% \\
+\textbf{Ho\`ang Xu\^an Th\`anh} \newline (523h0178) &
+- Task 1: logic formulation, CNF generator, Glucose3, Min-Conflicts heuristic. \newline
+- Task 2: game rules, Minimax / Alpha-Beta engine, PyGame interface. \newline
+- Report. & 100\% \\
 \midrule
-\textbf{Nguy\~{\^e}n L\^e Ph\'u Huy} \newline (524h0090) & 
-- Task 2: Heuristic evaluator design, move ordering, tournament arena, dynamic plugin integration. \newline
-- Task 3: CSP model, Kuhn bipartite matching GAC, Backtracking solver, PyGame replay visualizer. \newline
-- Unit testing suites and experiment validation. & 100\% \\
+\textbf{Nguy\~{\^e}n L\^e Ph\'u Huy} \newline (524h0090) &
+- Task 2: evaluation function, move ordering, tournament, plugins. \newline
+- Task 3: CSP model, GAC propagation, backtracking solver, replay interface. \newline
+- Unit tests, experiments. & 100\% \\
 \bottomrule
 \end{tabular}%
 }
 \end{table}
 
 \section{Self-Evaluation}
-We self-evaluate our project against the assignment criteria in Table~\ref{tab:self_eval}. Every functional requirement and theoretical justification is verified through unit tests and empirical data.
+Table~\ref{tab:self_eval} gives our assessment against the assignment criteria.
 
 \begin{table}[htbp]
-\caption{Self-Evaluation and Estimated Score Breakdown}
+\caption{Self-Evaluation and Estimated Scores}
 \label{tab:self_eval}
 \centering
 \resizebox{\columnwidth}{!}{%
@@ -427,39 +355,39 @@ We self-evaluate our project against the assignment criteria in Table~\ref{tab:s
 Task & Max & Est. & Justification \\
 \midrule
 \textbf{Task 1: N-Queens} & 3.0 & 3.0 & \\
-- 1. Formulation \& CNF   & 1.0 & 1.0 & Closed-form $\Theta(N^3)$, $O(N^2)$ discovery. \\
-- 2. PySAT Glucose3       & 1.0 & 1.0 & Scaled $N=4..100$, CDCL statistics. \\
-- 3. Min-Conflicts Heur   & 1.0 & 1.0 & Tabu heuristic, 50-seed ablation. \\
+- 1. Logic \& CNF         & 1.0 & 1.0 & Components, discovery algorithm, CNF conversion, closed form. \\
+- 2. Glucose3             & 1.0 & 1.0 & $N=4..100$, clauses, time, solver counters. \\
+- 3. Min-Conflicts        & 1.0 & 1.0 & Proposed heuristic, 200 runs, ablation. \\
 \midrule
 \textbf{Task 2: Tank Battle} & 3.0 & 3.0 & \\
-- 1. Zero-Sum Model       & 1.0 & 1.0 & 2-ply abstraction, 5-feature EVAL. \\
-- 2. 4 Configurations     & 1.5 & 1.5 & $b^*$ analysis, 114x pruning, anytime. \\
-- 3. GUI \& Plugins       & 0.5 & 0.5 & PyGame UI, dynamic plugin loading. \\
+- 1. Zero-sum game        & 1.0 & 1.0 & All components, three algorithms. \\
+- 2. Four configurations  & 1.5 & 1.5 & Same scenarios; nodes, $b^*$, memory, time. \\
+- 3. GUI \& plugins       & 0.5 & 0.5 & PyGame, imported agents. \\
 \midrule
 \textbf{Task 3: Kakuro}   & 3.0 & 3.0 & \\
-- 1. CSP Formulation      & 1.0 & 1.0 & $n$-ary GAC via Kuhn bipartite matching. \\
-- 2. Complex Puzzle       & 1.0 & 1.0 & Solved $9\times 9$ uniquely, heavy-tail study. \\
-- 3. Visualization UI     & 1.0 & 1.0 & Interactive domain and trail timeline. \\
+- 1. CSP formulation      & 1.0 & 1.0 & Variables, domains, $n$-ary constraints. \\
+- 2. Solver               & 1.0 & 1.0 & Complex case solved, unique, stable. \\
+- 3. Interface            & 1.0 & 1.0 & Domains, propagation, backtracking. \\
 \midrule
-\textbf{Task 4: Report}   & 1.0 & 1.0 & IEEE format, 5-page limit, all sections. \\
+\textbf{Task 4: Report}   & 1.0 & 1.0 & IEEE format, 5 pages. \\
 \midrule
-\textbf{Total}            & \textbf{10.0} & \textbf{10.0} & Full theoretical and empirical coverage. \\
+\textbf{Total}            & \textbf{10.0} & \textbf{10.0} & \\
 \bottomrule
 \end{tabular}%
 }
 \end{table}
 
 \section{Conclusion}
-This project successfully designed, implemented, and validated robust artificial intelligence algorithms across three demanding domains. In $N$-Queens, our Tabu-enhanced Min-Conflicts heuristic reduced median iterations by up to 44\% compared to standard approaches. In Tank Battle, $\alpha$-$\beta$ pruning combined with horizon-resistant evaluation and move ordering reduced the game-tree branching factor to 2.89, enabling real-time play. In Kakuro, enforcing GAC with Kuhn bipartite matching and AC-3 preprocessing completely eliminated search backtracks on the complex benchmark, resolving combinatorial explosion. All source code, unit tests, and interactive graphical environments are fully packaged for evaluation.
+All requirements are implemented, tested and measured in the quantities of the course theory. The models of the $N$-Queens knowledge base are exactly the solutions, and the proposed heuristic cuts the median steps of Min-Conflicts to 52\%--76\%. In Tank Battle, Alpha-Beta returns the Minimax value with up to $114\times$ fewer nodes, and Heuristic Alpha-Beta reaches $b^*=2.31$, plays within 50~ms per move and keeps $O(bm)$ memory. In Kakuro, backtracking with generalized arc consistency solves the complex test case without a backtrack and proves the solution unique.
 
 \begin{thebibliography}{00}
-\bibitem{aima} S. Russell and P. Norvig, \textit{Artificial Intelligence: A Modern Approach}, 4th ed., Pearson, 2020.
-\bibitem{glucose} G. Audemard and L. Simon, ``Predicting learnt clauses quality in modern SAT solvers,'' in \textit{Proc. 21st Int. Joint Conf. on Artificial Intelligence (IJCAI)}, 2009, pp. 399--404.
-\bibitem{minconflicts} S. Minton, M. D. Johnston, A. B. Philips, and P. Laird, ``Minimizing conflicts: a heuristic repair method for constraint satisfaction and scheduling problems,'' \textit{Artificial Intelligence}, vol. 58, no. 1-3, pp. 161--205, 1992.
+\bibitem{aima} S. Russell and P. Norvig, \textit{Artificial Intelligence: A Modern Approach}, 4th ed. Hoboken, NJ, USA: Pearson, 2020.
+\bibitem{glucose} G. Audemard and L. Simon, ``Predicting learnt clauses quality in modern SAT solvers,'' in \textit{Proc. 21st Int. Joint Conf. Artificial Intelligence (IJCAI)}, 2009, pp. 399--404.
+\bibitem{pysat} A. Ignatiev, A. Morgado, and J. Marques-Silva, ``PySAT: A Python toolkit for prototyping with SAT oracles,'' in \textit{Proc. 21st Int. Conf. Theory and Applications of Satisfiability Testing (SAT)}, 2018, pp. 428--437.
+\bibitem{minconflicts} S. Minton, M. D. Johnston, A. B. Philips, and P. Laird, ``Minimizing conflicts: A heuristic repair method for constraint satisfaction and scheduling problems,'' \textit{Artificial Intelligence}, vol. 58, no. 1--3, pp. 161--205, 1992.
 \bibitem{alphabeta} D. E. Knuth and R. W. Moore, ``An analysis of alpha-beta pruning,'' \textit{Artificial Intelligence}, vol. 6, no. 4, pp. 293--326, 1975.
-\bibitem{pysat} A. Ignatiev, A. Morgado, and J. Marques-Silva, ``PySAT: A Python toolkit for prototyping with SAT oracles,'' in \textit{Proc. 21st Int. Conf. on Theory and Applications of Satisﬁability Testing (SAT)}, 2018, pp. 428--437.
 \bibitem{mackworth} A. K. Mackworth, ``Consistency in networks of relations,'' \textit{Artificial Intelligence}, vol. 8, no. 1, pp. 99--118, 1977.
-\bibitem{kuhn} H. W. Kuhn, ``The Hungarian method for the assignment problem,'' \textit{Naval Research Logistics Quarterly}, vol. 2, no. 1-2, pp. 83--97, 1955.
+\bibitem{regin} J.-C. R\'egin, ``A filtering algorithm for constraints of difference in CSPs,'' in \textit{Proc. 12th Nat. Conf. Artificial Intelligence (AAAI)}, 1994, pp. 362--367.
 \end{thebibliography}
 
 \end{document}

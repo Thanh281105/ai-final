@@ -21,8 +21,8 @@ pip install -r requirements.txt
 | Vào thẳng trận | `python main.py --p1 "Heuristic Alpha-Beta" --p2 Human --map classic --start` |
 | Đấu không giao diện | `python arena.py --p1 "Heuristic Alpha-Beta" --p2 Random --map duel --games 3 --swap` |
 | Xem danh sách agent (kể cả plugin) | `python arena.py --list` |
-| Thực nghiệm Requirement 2 | `python experiments.py --quick` (vài phút) hoặc `python experiments.py` (đầy đủ, khoảng 15–25 phút) |
-| Unit test | `python -m unittest discover tests` |
+| Thực nghiệm Requirement 2 | `python experiments.py --quick` (vài phút) hoặc `python experiments.py` (đầy đủ, khoảng 20–30 phút) |
+| Unit test | `python -m unittest discover -s tests` |
 
 **Menu:** phím lên/xuống chọn dòng, trái/phải đổi giá trị, `Enter` bắt đầu, `F5` nạp lại plugin. Bên phải là bản xem trước của bản đồ đang chọn.
 
@@ -85,13 +85,17 @@ Cách đo bám theo lý thuyết của Lecture 07 (chi tiết ở `docs/formulat
 
 - **Ply** là một nước của một bên; 1 chu kỳ = 2 ply (MAX đi, rồi MIN đi).
 - **Độ phức tạp thời gian** được đo bằng **số nút của cây trò chơi đã thăm** và hệ số phân nhánh hiệu dụng `b*`. Số giây chỉ là số liệu đi kèm.
-- **Độ phức tạp không gian** được đo bằng **độ sâu lớn nhất đã tới** (tìm kiếm theo chiều sâu chỉ giữ một nhánh, bộ nhớ là `O(b·m)`).
+- **Độ phức tạp không gian** được đo bằng **số nút giữ đồng thời lớn nhất** (peak memory = các nút trên đường đi hiện tại + các nút con chưa duyệt của chúng, `O(b·m)`), kèm độ sâu lớn nhất đã tới và số entry của transposition table (TT).
 
 | Thí nghiệm | Nội dung |
 |---|---|
 | A. Tìm kiếm chính xác | Minimax và Alpha-Beta duyệt **đến trạng thái kết thúc** trên 10 thế tàn cuộc, cây sâu m = 2, 4, 6, 8 ply. Kiểm tra hai thuật toán cho cùng giá trị minimax và so số nút. Thêm một lần chạy từ thế khai cuộc (m = 400 ply) để cho thấy tìm kiếm chính xác không khả thi ở đó. |
-| B. Tìm kiếm cắt độ sâu | Heuristic Minimax và Heuristic Alpha-Beta trên cùng trạng thái gốc, cùng độ sâu cắt. Có ablation: tắt move ordering. |
+| B. Tìm kiếm cắt độ sâu | Heuristic Minimax và Heuristic Alpha-Beta trên cùng trạng thái gốc, cùng độ sâu cắt. Ablation từng tối ưu: không sắp thứ tự → + sắp thứ tự chiến thuật → + killer/history → + TT. |
 | C. Chất lượng quyết định | Cả bốn cấu hình trên cùng các thế tàn cuộc của A; nước đi được coi là tối ưu nếu giá trị minimax chính xác của nó bằng giá trị tốt nhất. |
-| D. Sức mạnh khi thi đấu | Đấu vòng tròn, đổi bên, trên các bản đồ đối xứng. |
+| D. Sức mạnh khi thi đấu | Đấu vòng tròn, đổi bên, trên các bản đồ đối xứng: bốn cấu hình ở cùng độ sâu cắt, Random, agent của GUI và biến thể ngẫu nhiên hóa của nó. |
+| E. Thời gian thực | Agent của GUI (Heuristic Alpha-Beta, iterative deepening, 50 ms/nước) đấu trọn ván với Heuristic Minimax: latency p50/p95/max, độ sâu đạt được, số nút mỗi nước, peak memory, số entry TT. |
+| F. Mở rộng bản đồ | Cùng agent trên các bản đồ sinh tự động 7×7 → 49×49: số nút ở độ sâu cắt cố định, peak memory, khoảng cách tới đường bắn và chi phí của trường khoảng cách BFS. |
 
-Minimax / Alpha-Beta khi bị cắt độ sâu mà không có heuristic thì chấm nút bị cắt bằng 0. Bản này là H-Minimax với `EVAL ≡ 0`, nên trong bảng kết quả luôn được ghi là `(cutoff, EVAL = 0)`, tách khỏi Minimax / Alpha-Beta đúng nghĩa.
+Minimax / Alpha-Beta khi bị cắt độ sâu mà không có heuristic thì chấm nút bị cắt bằng 0. Bản này là H-Minimax với `EVAL ≡ 0`, nên trong menu GUI và trong mọi bảng kết quả nó luôn được ghi là `(cutoff, EVAL = 0)`, tách khỏi Minimax / Alpha-Beta đúng nghĩa (duyệt đến trạng thái kết thúc, Experiment A).
+
+**Các agent có sẵn trong menu:** `Heuristic Alpha-Beta` (mạnh nhất: iterative deepening 50 ms/nước, luôn đi nước có giá trị minimax tốt nhất), `Heuristic Minimax` (cắt ở 2 chu kỳ), `Alpha-Beta (cutoff, EVAL = 0)`, `Minimax (cutoff, EVAL = 0)`, `Heuristic Alpha-Beta (randomized)` (tùy chọn: 20% số nước là một nước ngẫu nhiên gần tốt nhất, để các ván tự đấu khác nhau; yếu hơn bản chính, xem Experiment D), `Random`, `Human`, và các plugin.

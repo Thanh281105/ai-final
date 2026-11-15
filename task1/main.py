@@ -4,6 +4,7 @@
   python main.py gui --port 8000
   python main.py experiments     # chạy toàn bộ thực nghiệm, lưu vào results/ rồi tự hiện kết quả
   python main.py sat --n 4 8 12  # chỉ chạy thực nghiệm Glucose3
+  python main.py satalo --n 40 80 # ablation: KB gốc so với KB + "mỗi cột ít nhất một hậu"
   python main.py minconflicts --n 8 64 512 --runs 20
 
 Thêm --no-gui vào các lệnh thực nghiệm nếu chỉ muốn xem kết quả trong terminal.
@@ -29,6 +30,7 @@ for _stream in (sys.stdout, sys.stderr):
 DEFAULT_SAT_N = [4, 6, 8, 10, 12, 16, 20, 24, 30, 40, 50, 60, 80, 100]
 ABLATION_N = [8, 16, 64, 256]
 DEFAULT_MC_N = [8, 16, 32, 64, 128, 256, 512, 1000]
+DEFAULT_RUNS = 200   # số lần chạy Min-Conflicts cho mỗi N (cùng bộ seed cho mọi cấu hình)
 RESULTS = ROOT / "results"
 
 
@@ -49,6 +51,25 @@ def run_sat(ns):
     writer = ReportWriter(RESULTS)
     writer.write_csv("sat_results", rows)
     writer.write_json("sat_results", rows)
+    return rows
+
+
+def run_sat_alo(ns):
+    """Ablation: KB gốc so với KB + nhóm "mỗi cột ít nhất một hậu" (được KB suy ra)."""
+    from nqueens_solver.experiments import ReportWriter, SATExperiment
+
+    rows = SATExperiment(repeats=3).run_column_alo_ablation(
+        ns,
+        progress=lambda d, t, m: print(f"  … {m} ({d}/{t})", end="\r", flush=True),
+    )
+    print(" " * 40, end="\r")
+    print(f"{'N':>4} {'mệnh đề':>9} {'conflicts':>10} {'solve (ms)':>11} | {'+cột: mệnh đề':>14} {'conflicts':>10} {'solve (ms)':>11}")
+    for r in rows:
+        print(f"{r['n']:>4} {r['base_clauses']:>9} {r['base_conflicts']:>10} {r['base_solve_ms']:>11.2f} | "
+              f"{r['alo_clauses']:>14} {r['alo_conflicts']:>10} {r['alo_solve_ms']:>11.2f}")
+    writer = ReportWriter(RESULTS)
+    writer.write_csv("sat_column_alo", rows)
+    writer.write_json("sat_column_alo", rows)
     return rows
 
 
@@ -113,14 +134,18 @@ def main() -> None:
     sat.add_argument("--n", type=int, nargs="+", default=DEFAULT_SAT_N)
     sat.add_argument("--no-gui", action="store_true", help="không tự hiện kết quả trên giao diện")
 
+    alo = sub.add_parser("satalo", help="ablation Glucose3: thêm mệnh đề 'mỗi cột ít nhất một hậu'")
+    alo.add_argument("--n", type=int, nargs="+", default=DEFAULT_SAT_N)
+    alo.add_argument("--no-gui", action="store_true", help="không tự hiện kết quả trên giao diện")
+
     mc = sub.add_parser("minconflicts", help="thực nghiệm Min-Conflicts")
     mc.add_argument("--n", type=int, nargs="+", default=DEFAULT_MC_N)
-    mc.add_argument("--runs", type=int, default=50)
+    mc.add_argument("--runs", type=int, default=DEFAULT_RUNS)
     mc.add_argument("--max-steps", type=int, default=100_000)
     mc.add_argument("--no-gui", action="store_true", help="không tự hiện kết quả trên giao diện")
 
     exp = sub.add_parser("experiments", help="chạy tất cả thực nghiệm và xuất báo cáo")
-    exp.add_argument("--runs", type=int, default=50)
+    exp.add_argument("--runs", type=int, default=DEFAULT_RUNS)
     exp.add_argument("--no-gui", action="store_true", help="không tự hiện kết quả trên giao diện")
 
     args = parser.parse_args()
@@ -135,19 +160,25 @@ def main() -> None:
     if cmd == "sat":
         rows = run_sat(args.n)
         ReportWriter(RESULTS).write_markdown(rows, _load_saved("min_conflicts_results"),
-                                             _load_saved("min_conflicts_ablation"))
+                                             _load_saved("min_conflicts_ablation"), _load_saved("sat_column_alo"))
+    elif cmd == "satalo":
+        rows = run_sat_alo(args.n)
+        ReportWriter(RESULTS).write_markdown(_load_saved("sat_results"), _load_saved("min_conflicts_results"),
+                                             _load_saved("min_conflicts_ablation"), rows)
     elif cmd == "minconflicts":
         rows = run_mc(args.n, args.runs, args.max_steps)
         ReportWriter(RESULTS).write_markdown(_load_saved("sat_results"), rows,
-                                             _load_saved("min_conflicts_ablation"))
+                                             _load_saved("min_conflicts_ablation"), _load_saved("sat_column_alo"))
     elif cmd == "experiments":
         print("== Glucose3 ==")
         sat_rows = run_sat(DEFAULT_SAT_N)
+        print("\n== Glucose3: ablation mệnh đề cột ==")
+        alo_rows = run_sat_alo(DEFAULT_SAT_N)
         print("\n== Min-Conflicts ==")
         mc_rows = run_mc(DEFAULT_MC_N, args.runs, 100_000)
         print("\n== Ablation ==")
         ab_rows = run_ablation(ABLATION_N, args.runs, 100_000)
-        ReportWriter(RESULTS).write_markdown(sat_rows, mc_rows, ab_rows)
+        ReportWriter(RESULTS).write_markdown(sat_rows, mc_rows, ab_rows, alo_rows)
 
     print(f"\nĐã lưu kết quả vào {RESULTS} (xem report.md)")
     if not args.no_gui:

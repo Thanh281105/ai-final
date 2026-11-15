@@ -5,16 +5,30 @@ joint action of one cycle. Search algorithms turn one cycle into two plies (MAX 
 and only call `next_state` once both actions are known.
 """
 
+import random
+
 from .constants import (
     Action, BULLET_SPEED, BULLETS_CANCEL_EACH_OTHER, DAMAGE_PER_HIT, DC, DEFAULT_MAX_TURNS, DR, DRAW,
     MAX_BULLETS_PER_TANK, MOVE_DIRECTION,
 )
 from .entities import Bullet
 
+_ZOBRIST = {}
+_ZOBRIST_RNG = random.Random(20261112)
+
+
+def zobrist(r, c, hp):
+    """Fixed random 64-bit number for "a wall with `hp` HP stands on (r, c)" (Zobrist hashing)."""
+    key = (r, c, hp)
+    z = _ZOBRIST.get(key)
+    if z is None:
+        z = _ZOBRIST[key] = _ZOBRIST_RNG.getrandbits(64)
+    return z
+
 
 class GameState:
     __slots__ = ("width", "height", "walls", "tanks", "bases", "bullets", "turn", "max_turns",
-                 "_walls_owned", "record_trails", "trails")
+                 "_walls_owned", "record_trails", "trails", "wall_hash")
 
     def __init__(self, width, height, walls, tanks, bases, bullets=None, turn=0,
                  max_turns=DEFAULT_MAX_TURNS):
@@ -27,6 +41,9 @@ class GameState:
         self.turn = turn
         self.max_turns = max_turns
         self._walls_owned = True      # copy-on-write flag for the walls dict
+        # XOR of zobrist(r, c, hp) over all walls, updated incrementally when a wall is hit. Lets the
+        # transposition table and the evaluation caches identify the wall layout in O(1).
+        self.wall_hash = self.compute_wall_hash()
         # Display only (not part of the game state): when record_trails is set, apply_cycle stores
         # the cells every bullet crossed during the cycle, so the GUI can draw the shot even when
         # a bullet is fired and hits within the same cycle. Search never sets it.
@@ -39,6 +56,7 @@ class GameState:
         s = GameState.__new__(GameState)
         s.width, s.height = self.width, self.height
         s.walls = self.walls
+        s.wall_hash = self.wall_hash
         s.tanks = [t.clone() for t in self.tanks]
         s.bases = [b.clone() for b in self.bases]
         s.bullets = [b.clone() for b in self.bullets]
@@ -58,6 +76,12 @@ class GameState:
 
     def __deepcopy__(self, memo):
         return self.deep_copy()
+
+    def compute_wall_hash(self):
+        h = 0
+        for (r, c), hp in self.walls.items():
+            h ^= zobrist(r, c, hp)
+        return h
 
     def _own_walls(self):
         if not self._walls_owned:
@@ -82,8 +106,15 @@ class GameState:
 
     def is_free_for_tank(self, r, c):
         """A tank may enter a cell that is inside the map and holds no wall, base or tank."""
-        return (self.in_bounds(r, c) and (r, c) not in self.walls
-                and self.base_at(r, c) is None and self.tank_at(r, c) is None)
+        if not (0 <= r < self.height and 0 <= c < self.width) or (r, c) in self.walls:
+            return False
+        for b in self.bases:
+            if b.row == r and b.col == c:
+                return False
+        for t in self.tanks:
+            if t.row == r and t.col == c and t.hp > 0:
+                return False
+        return True
 
     def has_bullet(self, player):
         n = 0
@@ -95,7 +126,8 @@ class GameState:
     def legal_actions(self, player):
         """All 6 actions are always allowed by the rules; here we drop actions whose effect is
         identical to STAY (blocked move while already facing that way, FIRE while a bullet is in
-        flight). This removes duplicate subtrees without changing the minimax value."""
+        flight). Both conditions are decided on the state at the start of the cycle, exactly as
+        apply_cycle does, so this removes duplicate subtrees without changing the minimax value."""
         tank = self.tanks[player]
         actions = []
         for action, d in MOVE_DIRECTION.items():
@@ -143,6 +175,9 @@ class GameState:
     def apply_cycle(self, action_p1, action_p2):
         """Resolve one game cycle in place: 1) movement, 2) firing, 3) bullets fly 3 cells."""
         actions = (action_p1, action_p2)
+        # A tank may fire only if it had no bullet in flight when the cycle started. This is decided
+        # before anything moves, so FIRE with a bullet in flight is exactly STAY (see legal_actions).
+        can_fire = [actions[p] == Action.FIRE and not self.has_bullet(p) for p in (0, 1)]
 
         # 1) Movement. MOVE_x always turns the tank to x, then moves if the cell is free.
         #    Two tanks targeting the same cell both stay.
@@ -174,7 +209,7 @@ class GameState:
 
         # 2) Firing: the bullet starts in the tank's cell and flies in the facing direction.
         for p in (0, 1):
-            if actions[p] == Action.FIRE and not self.has_bullet(p):
+            if can_fire[p]:
                 t = self.tanks[p]
                 self.bullets.append(Bullet(p, t.row, t.col, t.direction))
 
@@ -218,6 +253,14 @@ class GameState:
         for i, b in enumerate(self.bullets):
             if alive[i] and self._collide(b):
                 alive[i] = False
+        # Bullets that enter the same cell in the same step hit at the same time: when one of them was
+        # stopped there, the others stop too (otherwise the second bullet would fly through a wall the
+        # first one has just destroyed, and the result would depend on the order of the bullet list).
+        if len(alive) > 1 and not all(alive) and any(alive):
+            stopped = {(b.row, b.col) for i, b in enumerate(self.bullets) if not alive[i]}
+            for i, b in enumerate(self.bullets):
+                if alive[i] and (b.row, b.col) in stopped:
+                    alive[i] = False
         self.bullets = [b for i, b in enumerate(self.bullets) if alive[i]]
 
     def _collide(self, bullet):
@@ -227,11 +270,14 @@ class GameState:
             return True
         if (r, c) in self.walls:
             self._own_walls()
-            hp = self.walls[(r, c)] - DAMAGE_PER_HIT
+            old = self.walls[(r, c)]
+            hp = old - DAMAGE_PER_HIT
+            self.wall_hash ^= zobrist(r, c, old)
             if hp <= 0:
                 del self.walls[(r, c)]
             else:
                 self.walls[(r, c)] = hp
+                self.wall_hash ^= zobrist(r, c, hp)
             return True
         tank = self.tank_at(r, c)
         if tank is not None:

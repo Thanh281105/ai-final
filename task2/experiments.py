@@ -21,7 +21,20 @@ Experiment B - depth-limited search. Heuristic Minimax and Heuristic Alpha-Beta 
 Experiment C - decision quality. All four configurations on the same endgame positions; the exact
                value of every root move is known from experiment A's full search, so we can check
                whether a depth-limited configuration still picks an optimal move.
-Experiment D - playing strength: round-robin matches on symmetric maps, both sides swapped.
+Experiment D - playing strength: round-robin matches on symmetric maps, both sides swapped. The four
+               configurations play at the same cutoff depth; the GUI agent (iterative deepening, 50 ms per
+               move) and its optional randomized variant are added to show what each of them costs or gains.
+Experiment E - real-time behaviour of the GUI agent (Heuristic Alpha-Beta, iterative deepening, 50 ms per
+               move) in whole games: latency percentiles, depth reached, nodes per move and peak memory.
+
+Experiment F - map scaling: the same agent on generated point-symmetric maps of growing size. The branching
+               factor depends on the six actions, not on the grid, so the tree at a fixed cutoff depth does not
+               grow with the map; what grows is the distance to the targets (beyond the search horizon), which
+               is why EVAL uses BFS distance fields.
+
+Space is reported in nodes as well: *peak memory* = the most nodes held at once by the depth-first search
+(the nodes on the current path plus the untried successors of each of them, O(b*m)), and the number of
+transposition-table entries for the configurations that use one.
 
 Results are written to results/ (CSV + summary.md + PNG charts if matplotlib is installed).
 """
@@ -34,10 +47,12 @@ import sys
 import time
 
 from tank_battle.agents import (
+    NEAR_TIE_MARGIN, RANDOM_TIE_PROBABILITY,
     AlphaBetaAgent, HeuristicAlphaBetaAgent, HeuristicMinimaxAgent, MinimaxAgent, RandomAgent,
 )
+from tank_battle.agents.heuristics import HeuristicEvaluator, _firing_line_bfs
 from tank_battle.core.constants import DRAW
-from tank_battle.core.map_loader import load_map
+from tank_battle.core.map_loader import load_map, parse_map
 from tank_battle.match import Match
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
@@ -141,7 +156,7 @@ def stats_row(st, plies):
     return {"value": None if st.value is None else round(st.value, 2), "time_s": round(st.time, 4),
             "nodes": st.nodes, "states": st.states, "leaves": st.evaluations, "cutoffs": st.cutoffs,
             "max_ply": st.max_ply, "b_star": round(effective_branching_factor(st.nodes, plies), 2),
-            "timed_out": st.timed_out}
+            "peak_memory": st.peak_memory, "tt_entries": st.tt_entries, "timed_out": st.timed_out}
 
 
 # ---------------------------------------------------------------------- experiment A
@@ -182,16 +197,22 @@ def experiment_exact(scenarios, max_cycles, budget):
 
 
 # ---------------------------------------------------------------------- experiment B
-class HeuristicAlphaBetaNoOrdering(HeuristicAlphaBetaAgent):
-    """Ablation: same as Heuristic Alpha-Beta but without move ordering."""
+def ablation(**switches):
+    """Heuristic Alpha-Beta with some optimizations switched off (ablation study of experiment B)."""
+    return lambda player, **kwargs: HeuristicAlphaBetaAgent(player, **dict(kwargs, **switches))
 
-    def __init__(self, player, **kwargs):
-        super().__init__(player, move_ordering=False, **kwargs)
+
+# Each line adds one optimization to the previous one; the last one is the full Heuristic Alpha-Beta.
+ABLATION_CONFIGS = [
+    ("H-AB: no ordering, no TT", ablation(move_ordering=False, use_tt=False)),
+    ("H-AB: + tactical ordering", ablation(use_tt=False, use_killers=False, use_history=False)),
+    ("H-AB: + killers & history", ablation(use_tt=False)),
+]
 
 
 def experiment_depth_limited(depths, budget):
     rows = []
-    configs = HEURISTIC_CONFIGS + [("H-Alpha-Beta (no ordering)", HeuristicAlphaBetaNoOrdering)]
+    configs = HEURISTIC_CONFIGS[:1] + ABLATION_CONFIGS + HEURISTIC_CONFIGS[1:]
     for scen_name, state in search_scenarios():
         for name, cls in configs:
             timed_out_before = False
@@ -209,8 +230,8 @@ def experiment_depth_limited(depths, budget):
                 row.update(stats_row(st, plies))
                 rows.append(row)
                 timed_out_before = st.timed_out
-                print("[B] %-16s %-26s d=%d (%2d plies) %8.3fs  nodes=%9d  cutoffs=%7d  value=%s%s" % (
-                    scen_name, name, depth, plies, st.time, st.nodes, st.cutoffs, row["value"],
+                print("[B] %-16s %-26s d=%d (%2d plies) %8.3fs  nodes=%9d  peak=%3d  tt=%6d  value=%s%s" % (
+                    scen_name, name, depth, plies, st.time, st.nodes, st.peak_memory, st.tt_entries, row["value"],
                     "  TIMEOUT" if st.timed_out else ""))
     return rows
 
@@ -248,8 +269,8 @@ def experiment_tournament(depth, maps, max_turns, include_id):
     players += [(name, (lambda cls: lambda p: cls(p, depth=depth, seed=p))(cls)) for name, cls in HEURISTIC_CONFIGS]
     players.append(("Random", lambda p: RandomAgent(p, seed=p)))
     if include_id:
-        players.append(("H-Alpha-Beta ID 0.2s",
-                        lambda p: HeuristicAlphaBetaAgent(p, depth=10, time_limit=0.2, iterative_deepening=True)))
+        players.append((GUI_AGENT_NAME, gui_agent))
+        players.append((RANDOMIZED_AGENT_NAME, randomized_agent))
     rows = []
     for i in range(len(players)):
         for j in range(i + 1, len(players)):
@@ -271,11 +292,119 @@ def experiment_tournament(depth, maps, max_turns, include_id):
                         "p1_avg_ms": round(r["avg_time"][0] * 1000, 2), "p2_avg_ms": round(r["avg_time"][1] * 1000, 2),
                         "p1_max_ms": round(r["max_time"][0] * 1000, 2), "p2_max_ms": round(r["max_time"][1] * 1000, 2),
                         "p1_avg_nodes": round(r["avg_nodes"][0], 1), "p2_avg_nodes": round(r["avg_nodes"][1], 1),
+                        "p1_max_nodes": r["max_nodes"][0], "p2_max_nodes": r["max_nodes"][1],
                         "p1_avg_depth": round(depth_reached[0], 2), "p2_avg_depth": round(depth_reached[1], 2),
                     })
                     print("[D] %-6s %-32s vs %-32s -> %-32s turns=%3d (%.1fs)" % (
                         map_name, na, nb, rows[-1]["winner"], r["turns"], time.perf_counter() - start))
     return rows, [p[0] for p in players]
+
+
+# ---------------------------------------------------------------------- experiment E
+GUI_AGENT_NAME = "H-Alpha-Beta ID 50ms"
+RANDOMIZED_AGENT_NAME = "H-Alpha-Beta ID 50ms, randomized"
+GUI_TIME_LIMIT = 0.05
+
+
+def gui_agent(p, seed=None):
+    """The agent of the GUI: Heuristic Alpha-Beta with iterative deepening and a 50 ms budget per move.
+    It always plays a root move of best minimax value."""
+    return HeuristicAlphaBetaAgent(p, depth=12, time_limit=GUI_TIME_LIMIT, iterative_deepening=True,
+                                   seed=p if seed is None else seed)
+
+
+def randomized_agent(p, seed=None):
+    """Optional variant ("Heuristic Alpha-Beta (randomized)" in the GUI): same search, but with probability
+    0.2 it plays a random root move within 15 points of the best minimax value."""
+    return HeuristicAlphaBetaAgent(p, depth=12, time_limit=GUI_TIME_LIMIT, iterative_deepening=True,
+                                   seed=p if seed is None else seed,
+                                   tie_random=RANDOM_TIE_PROBABILITY, tie_margin=NEAR_TIE_MARGIN)
+
+
+def percentile(values, q):
+    values = sorted(values)
+    return values[min(len(values) - 1, int(q * len(values)))] if values else 0.0
+
+
+def experiment_realtime(maps, games_per_side):
+    """Whole games of the GUI agent against Heuristic Minimax (depth 2), both sides, several seeds."""
+    rows = []
+    for map_name in maps:
+        moves = []
+        results = []
+        for side in (0, 1):
+            for g in range(games_per_side):
+                factories = [lambda p: gui_agent(p, seed=10 * g + p), lambda p: HeuristicMinimaxAgent(p, depth=2)]
+                if side == 1:
+                    factories.reverse()
+                match = Match(load_map(map_name), [factories[0](0), factories[1](1)])
+                match.play()
+                w = match.winner
+                results.append("win" if w == side else ("draw" if w == DRAW else "loss"))
+                for rec in match.history:
+                    st = rec.stats[side]
+                    moves.append({"ms": rec.times[side] * 1000, "depth": st.get("depth", 0),
+                                  "nodes": st.get("nodes", 0), "peak": st.get("peak_memory", 0),
+                                  "tt": st.get("tt_entries", 0), "timed_out": st.get("timed_out", False)})
+        ms = [m["ms"] for m in moves]
+        depths = [m["depth"] for m in moves]
+        row = {"map": map_name, "games": len(results), "wins": results.count("win"),
+               "draws": results.count("draw"), "losses": results.count("loss"), "moves": len(moves),
+               "ms_p50": round(percentile(ms, 0.5), 1), "ms_p95": round(percentile(ms, 0.95), 1),
+               "ms_max": round(max(ms), 1), "depth_avg": round(mean(depths), 2), "depth_min": min(depths),
+               "depth_max": max(depths), "nodes_avg": round(mean(m["nodes"] for m in moves)),
+               "nodes_max": max(m["nodes"] for m in moves), "peak_memory_max": max(m["peak"] for m in moves),
+               "tt_max": max(m["tt"] for m in moves),
+               "timed_out_pct": round(100.0 * sum(m["timed_out"] for m in moves) / len(moves), 1)}
+        rows.append(row)
+        print("[E] %-8s %s  ms p50=%.1f p95=%.1f max=%.1f  depth avg=%.2f  nodes max=%d  peak=%d  tt=%d" % (
+            map_name, results, row["ms_p50"], row["ms_p95"], row["ms_max"], row["depth_avg"], row["nodes_max"],
+            row["peak_memory_max"], row["tt_max"]))
+    return rows
+
+
+# ---------------------------------------------------------------------- experiment F
+def scaled_map(n):
+    """Point-symmetric n x n map (n odd): bases in the middle of the top and bottom rows behind brick
+    walls, tanks in opposite corners, and a regular pattern of wall blocks in between."""
+    mid = n // 2
+    grid = [["."] * n for _ in range(n)]
+    walls = {(0, mid - 1), (0, mid + 1), (1, mid)}
+    walls |= {(r, c) for r in range(2, mid + 1) for c in range(n) if r % 3 == 2 and c % 3 == 1}
+    for r, c in list(walls):
+        walls.add((n - 1 - r, n - 1 - c))
+    for r, c in walls:
+        grid[r][c] = "W"
+    grid[0][mid], grid[n - 1][mid] = "B", "A"
+    grid[0][0], grid[n - 1][n - 1] = "2", "1"
+    return parse_map("\n".join("".join(row) for row in grid))
+
+
+def experiment_map_scaling(sizes, depths):
+    rows = []
+    for n in sizes:
+        state = scaled_map(n)
+        tank, base = state.tanks[0], state.bases[1]
+        start = time.perf_counter()
+        _firing_line_bfs(state, base.row, base.col)
+        bfs_ms = (time.perf_counter() - start) * 1000
+        row = {"map": "%dx%d" % (n, n), "cells": n * n, "walls": len(state.walls),
+               "legal_actions": len(state.legal_actions(0)),
+               "lane_distance": int(HeuristicEvaluator._lane_distance(state, tank, base.row, base.col)),
+               "bfs_field_ms": round(bfs_ms, 3)}
+        for depth in depths:
+            agent = HeuristicAlphaBetaAgent(0, depth=depth, seed=0)
+            agent.choose_action(state)
+            st = agent.last_stats
+            row.update({"nodes_d%d" % depth: st.nodes, "b_star_d%d" % depth: round(
+                effective_branching_factor(st.nodes, 2 * depth), 2), "peak_memory_d%d" % depth: st.peak_memory,
+                "time_ms_d%d" % depth: round(st.time * 1000, 1)})
+        rows.append(row)
+        print("[F] %-6s cells=%5d  lane distance=%3d  BFS field=%.2f ms  %s" % (
+            row["map"], row["cells"], row["lane_distance"], bfs_ms,
+            "  ".join("d=%d: %d nodes, peak %d" % (d, row["nodes_d%d" % d], row["peak_memory_d%d" % d])
+                      for d in depths)))
+    return rows
 
 
 # ---------------------------------------------------------------------- reporting
@@ -302,7 +431,7 @@ def mean(values):
     return sum(values) / len(values) if values else 0.0
 
 
-def summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, args):
+def summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, rows_e, rows_f, args):
     out = ["# Experiment results", "",
            "Generated by `python experiments.py%s`." % (" --quick" if args.quick else ""), "",
            "- A *ply* is one move of one player. One game cycle = 2 plies (MAX moves, then MIN moves).",
@@ -310,8 +439,11 @@ def summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, args):
            "time complexity; seconds are given next to it.",
            "- **b\\*** = effective branching factor: the b for which a uniform tree of the same depth has the same "
            "number of nodes, `nodes = 1 + b* + b*^2 + ... + b*^m`.",
-           "- **Max ply** = deepest level reached. Depth-first search keeps one path in memory, so space is "
-           "O(b·m) and grows with this number, not with the number of nodes.",
+           "- **Max ply** = deepest level reached (m).",
+           "- **Peak memory** = most nodes held at once: the nodes on the current path plus the untried successors "
+           "of each of them. Depth-first search keeps O(b·m) nodes, so this grows with m, not with the number of "
+           "nodes visited. **TT** = transposition-table entries (stored states), the extra memory paid for "
+           "the table.",
            "- Per-search time budget: %ss." % args.budget, ""]
 
     if rows_a:
@@ -329,10 +461,11 @@ def summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, args):
                           "%.2f" % effective_branching_factor(n_ab, plies),
                           "%.4f" % mean(r["time_s"] for r in mm), "%.4f" % mean(r["time_s"] for r in ab),
                           max(r["max_ply"] for r in mm),
+                          max(r["peak_memory"] for r in mm), max(r["peak_memory"] for r in ab),
                           "%d/%d" % (sum(r["same_value"] for r in mm), len(mm))])
         out += [md_table(["m (plies)", "Minimax nodes", "Alpha-Beta nodes", "Reduction", "b* Minimax",
                           "b* Alpha-Beta", "Minimax time (s)", "Alpha-Beta time (s)", "Max ply",
-                          "Same minimax value"], table), "",
+                          "Peak memory Minimax", "Peak memory Alpha-Beta", "Same minimax value"], table), "",
                 "Nodes and times are averages over the positions.", ""]
         if infeasible:
             out += ["From the opening position of the classic map the tree is m = %d plies deep. "
@@ -353,15 +486,19 @@ def summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, args):
                     continue
                 if "nodes" not in r:
                     table.append([r["config"], r["depth"], r["plies"], "not run (shallower depth timed out)"]
-                                 + ["—"] * 6)
+                                 + ["—"] * 8)
                 elif r["timed_out"]:
                     table.append([r["config"], r["depth"], r["plies"], "> %d (timeout)" % r["nodes"], "—", "—",
-                                  "—", r["max_ply"], "> %.0f" % r["time_s"], "—"])
+                                  "—", r["max_ply"], "—", "—", "> %.0f" % r["time_s"], "—"])
                 else:
                     table.append([r["config"], r["depth"], r["plies"], r["nodes"], r["leaves"], r["cutoffs"],
-                                  r["b_star"], r["max_ply"], "%.4f" % r["time_s"], r["value"]])
+                                  r["b_star"], r["max_ply"], r["peak_memory"], r["tt_entries"] or "—",
+                                  "%.4f" % r["time_s"], r["value"]])
             out += [md_table(["Config", "Depth d (cycles)", "Plies", "Nodes", "Leaves evaluated", "Cutoffs", "b*",
-                              "Max ply", "Time (s)", "Value"], table), ""]
+                              "Max ply", "Peak memory", "TT entries", "Time (s)", "Value"], table), ""]
+        out += ["Ablation: each \"H-AB: ...\" line adds one optimization to the line above it; "
+                "\"Heuristic Alpha-Beta\" is the full agent (tactical ordering + killer moves + history "
+                "heuristic + transposition table). All of them return the same minimax value.", ""]
 
     if rows_c:
         out += ["## C. Decision quality on the endgame positions (%d positions)" % len({r["scenario"] for r in rows_c}),
@@ -389,10 +526,50 @@ def summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, args):
             times = [r["p1_avg_ms"] if r["p1"] == name else r["p2_avg_ms"] for r in games]
             maxes = [r["p1_max_ms"] if r["p1"] == name else r["p2_max_ms"] for r in games]
             nodes = [r["p1_avg_nodes"] if r["p1"] == name else r["p2_avg_nodes"] for r in games]
+            max_nodes = [r["p1_max_nodes"] if r["p1"] == name else r["p2_max_nodes"] for r in games]
             table.append([name, len(games), wins, draws, len(games) - wins - draws,
-                          "%.1f" % mean(times), "%.1f" % max(maxes), "%.0f" % mean(nodes)])
+                          "%.1f" % mean(times), "%.1f" % max(maxes), "%.0f" % mean(nodes), max(max_nodes)])
         out += [md_table(["Agent", "Games", "Wins", "Draws", "Losses", "Avg ms/move", "Max ms/move",
-                          "Avg nodes/move"], table), ""]
+                          "Avg nodes/move", "Max nodes/move"], table), ""]
+        if GUI_AGENT_NAME in names_d:
+            out += ["`%s` is the agent of the GUI: Heuristic Alpha-Beta with iterative deepening under a %d ms "
+                    "budget; like the four configurations it always plays a root move of best minimax value. "
+                    "`%s` is the optional variant that, with probability %.1f, plays a random root move within "
+                    "%d points of the best minimax value: it makes games between two copies of the same agent "
+                    "differ, and this table shows what that costs." % (
+                        GUI_AGENT_NAME, int(GUI_TIME_LIMIT * 1000), RANDOMIZED_AGENT_NAME,
+                        RANDOM_TIE_PROBABILITY, int(NEAR_TIE_MARGIN)), ""]
+    if rows_e:
+        out += ["## E. Real-time play: %s against Heuristic Minimax (depth 2), whole games" % GUI_AGENT_NAME, "",
+                "Iterative deepening with a %d ms budget per move; depth is the deepest *completed* iteration "
+                "(in cycles). Latency is measured around `choose_action`." % int(GUI_TIME_LIMIT * 1000), ""]
+        out += [md_table(["Map", "Games (W/D/L)", "Moves", "ms p50", "ms p95", "ms max", "Depth avg (min-max)",
+                          "Nodes/move avg", "Nodes/move max", "Peak memory max", "TT entries max",
+                          "Moves cut by the budget"],
+                         [[r["map"], "%d (%d/%d/%d)" % (r["games"], r["wins"], r["draws"], r["losses"]), r["moves"],
+                           r["ms_p50"], r["ms_p95"], r["ms_max"],
+                           "%.2f (%d-%d)" % (r["depth_avg"], r["depth_min"], r["depth_max"]), r["nodes_avg"],
+                           r["nodes_max"], r["peak_memory_max"], r["tt_max"], "%.1f%%" % r["timed_out_pct"]]
+                          for r in rows_e]), ""]
+    if rows_f:
+        depths = sorted(int(k[7:]) for k in rows_f[0] if k.startswith("nodes_d"))
+        out += ["## F. Map scaling: Heuristic Alpha-Beta from the opening position of generated maps", "",
+                "Point-symmetric maps built by `scaled_map(n)`. *Lane distance* = moves the tank needs to reach "
+                "a cell with a clear firing line on the enemy base (the BFS distance used by EVAL). "
+                "*BFS field* = time to compute one distance field over the whole grid, O(H·W), cached per wall "
+                "layout.", ""]
+        out += [md_table(["Map", "Cells", "Legal actions b", "Lane distance (moves)", "BFS field (ms)"]
+                         + ["Nodes d=%d" % d for d in depths] + ["b* d=%d" % depths[-1],
+                                                                 "Peak memory d=%d" % depths[-1],
+                                                                 "Time d=%d (ms)" % depths[-1]],
+                         [[r["map"], r["cells"], r["legal_actions"], r["lane_distance"], r["bfs_field_ms"]]
+                          + [r["nodes_d%d" % d] for d in depths]
+                          + [r["b_star_d%d" % depths[-1]], r["peak_memory_d%d" % depths[-1]],
+                             r["time_ms_d%d" % depths[-1]]] for r in rows_f]), "",
+                "The number of nodes at a fixed cutoff depth and the peak memory do not grow with the map: "
+                "they depend on b (at most 6 actions) and on the depth only. The distance to the targets "
+                "grows with the map and soon exceeds the cutoff depth, so the search alone cannot see them; "
+                "the BFS distance fields in EVAL (linear in the number of cells) guide the tank there.", ""]
     with open(os.path.join(RESULTS_DIR, "summary.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
 
@@ -428,7 +605,7 @@ def plot(rows_a, rows_b):
                   and not r["timed_out"]]
             if not rs:
                 continue
-            style = "--" if "Alpha" in name else "-"
+            style = "--" if ("Alpha" in name or name.startswith("H-AB")) else "-"
             marker = "o" if name.startswith("Heuristic") else "s"
             axes[0].plot([r["plies"] for r in rs], [r["nodes"] for r in rs], style, marker=marker, label=name)
             axes[1].plot([r["plies"] for r in rs], [r["time_s"] for r in rs], style, marker=marker, label=name)
@@ -449,7 +626,7 @@ def main():
     parser.add_argument("--quick", action="store_true", help="smaller settings for a fast run")
     parser.add_argument("--budget", type=float, default=None, help="time budget per search (s)")
     parser.add_argument("--tournament-depth", type=int, default=2)
-    parser.add_argument("--skip", default="", help="experiments to skip, e.g. 'D' or 'BD'")
+    parser.add_argument("--skip", default="", help="experiments to skip, e.g. 'D' or 'BDE'")
     args = parser.parse_args()
     if args.budget is None:
         args.budget = 10.0 if args.quick else 30.0
@@ -457,7 +634,7 @@ def main():
     args.maps = ["duel"] if args.quick else ["duel", "open"]
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
-    rows_a = infeasible = rows_b = rows_c = rows_d = []
+    rows_a = infeasible = rows_b = rows_c = rows_d = rows_e = rows_f = []
     names_d = []
     endgames = []
     if "A" not in args.skip or "C" not in args.skip:
@@ -474,8 +651,14 @@ def main():
     if "D" not in args.skip:
         rows_d, names_d = experiment_tournament(args.tournament_depth, args.maps, 100, include_id=not args.quick)
         write_csv(os.path.join(RESULTS_DIR, "exp_d_tournament.csv"), rows_d)
+    if "E" not in args.skip:
+        rows_e = experiment_realtime(["classic", "duel", "open"], 1 if args.quick else 3)
+        write_csv(os.path.join(RESULTS_DIR, "exp_e_realtime.csv"), rows_e)
+    if "F" not in args.skip:
+        rows_f = experiment_map_scaling([7, 13, 25] if args.quick else [7, 13, 25, 49], [3, 4])
+        write_csv(os.path.join(RESULTS_DIR, "exp_f_map_scaling.csv"), rows_f)
     plot(rows_a, rows_b)
-    summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, args)
+    summarize(rows_a, infeasible, rows_b, rows_c, rows_d, names_d, rows_e, rows_f, args)
     print("\nResults written to", RESULTS_DIR)
 
 

@@ -100,4 +100,5 @@ class Match:
             "avg_time": [sum(t) / len(t) if t else 0.0 for t in times],
             "max_time": [max(t) if t else 0.0 for t in times],
             "avg_nodes": [sum(n) / len(n) if n else 0.0 for n in nodes],
+            "max_nodes": [max(n) if n else 0 for n in nodes],
         }
